@@ -1,0 +1,7 @@
+Flask
+nanoid
+SQLAlchemy
+psycopg2
+pymongo
+gunicorn
+alembic
