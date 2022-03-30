@@ -1,8 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from cms.domain import beneficiary
 from cms.domain import member
-from cms.repository.postgres_objects import Base, Member
+from cms.repository.postgres_objects import Base, Beneficiary, Member
 
 
 class PostgresRepo:
@@ -35,6 +36,20 @@ class PostgresRepo:
             for q in results
         ]
 
+
+    def _create_beneficiary_objects(self, results):
+        return [
+            beneficiary.Beneficiary(
+                beneficiary_id=q.beneficiary_id,
+                fname=q.fname,
+                lname=q.lname,
+                mname=q.mname,
+                phone=q.phone,
+                email=q.email
+            )
+            for q in results
+        ]
+
     def member_list(self, filters=None):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
@@ -57,3 +72,25 @@ class PostgresRepo:
             query = query.filter(Member.govt_id == filters["govt_id__eq"])
 
         return self._create_member_objects(query.all())
+
+    
+    def beneficiary_list(self, filters=None):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+
+        query = session.query(Beneficiary)
+
+        if filters is None:
+            return self._create_beneficiary_objects(query.all())
+
+        if "beneficiary_id__eq" in filters:
+            query = query.filter(Beneficiary.beneficiary_id == filters["beneficiary_id__eq"])
+
+        if "phone__eq" in filters:
+            query = query.filter(Beneficiary.phone == filters["phone__eq"])
+
+        if "email__eq" in filters:
+            query = query.filter(Beneficiary.email == filters["email__eq"])
+
+
+        return self._create_beneficiary_objects(query.all())
