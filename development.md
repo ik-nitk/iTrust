@@ -66,7 +66,7 @@ Running psql command inside database
 Insert some values into the member table
 ````
 insert into member (member_id, govt_id, id_type, fname, is_core, phone, email) values ('sample-111', 'gid-1111', 'AADHAAR' , 'sample' , false,  '99872000', 'email@sample');
-
+````
 Insert some values into the beneficiary table
 ````
 insert into beneficiary (beneficiary_id,  fname, phone, email) values ('sample-301', 'sample' , '9946000', 'bemail@sample');
