@@ -60,4 +60,52 @@ def test_repository_list_with_email_equal_filter(
     assert len(repo_members) == 1
     assert repo_members[0].member_id == "i.mem.2222"
 
+#--------------------------------------------------
+#each table seperate test file?
+def test_repository_beneficiary_list_without_parameters(
+    app_configuration, pg_session, pg_test_data_beneficiary
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+
+    repo_beneficiarys = repo.beneficiary_list()
+
+    assert set([r.beneficiary_id for r in repo_beneficiarys]) == set(
+        [r["beneficiary_id"] for r in pg_test_data_beneficiary]
+    )
+
+
+def test_repository_beneficiary_list_with_phone_equal_filter(
+    app_configuration, pg_session, pg_test_data_beneficiary
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+
+    repo_beneficiarys = repo.beneficiary_list(
+        filters={"phone__eq": "984561111"}
+    )
+
+    assert len(repo_beneficiarys) == 1
+    assert repo_beneficiarys[0].beneficiary_id == "i.ben.1111"
+
+
+def test_repository_beneficiary_list_with_member_id_equal_filter(
+    app_configuration, pg_session, pg_test_data_beneficiary
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+
+    repo_beneficiarys = repo.beneficiary_list(filters={"beneficiary_id__eq": "i.ben.3333"})
+
+    assert len(repo_beneficiarys) == 1
+    assert repo_beneficiarys[0].beneficiary_id == "i.ben.3333"
+
+
+def test_repository_beneficiary_list_with_email_equal_filter(
+    app_configuration, pg_session, pg_test_data_beneficiary
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+
+    repo_beneficiarys = repo.beneficiary_list(filters={"email__eq": "sample.2222@gmail.com"})
+
+    assert len(repo_beneficiarys) == 1
+    assert repo_beneficiarys[0].beneficiary_id == "i.ben.2222"
+
 

@@ -1,7 +1,7 @@
 import sqlalchemy
 import pytest
 
-from cms.repository.postgres_objects import Base, Member
+from cms.repository.postgres_objects import Base, Member, Beneficiary
 from cms.domain.id_type import IDType
 
 
@@ -79,8 +79,46 @@ def pg_test_data():
     ]
 
 
+@pytest.fixture(scope="session")
+def pg_test_data_beneficiary():
+    return [
+        {
+            "beneficiary_id": "i.ben.1111",
+            "fname": 'fname1',
+            "lname": 'lname1',
+            "phone" : "984561111",
+            "mname" : None,
+            "email" : 'sample.1111@gmail.com'
+         },
+         {
+            "beneficiary_id": "i.ben.2222",
+            "fname": 'fname2',
+            "lname": 'lname2',
+            "phone" : "984562222",
+            "mname" : None,
+            "email" : 'sample.2222@gmail.com'
+         },
+         {
+            "beneficiary_id": "i.ben.3333",
+            "fname": 'fname3',
+            "lname": 'lname3',
+            "phone" : "984563333",
+            "mname" : None,
+            "email" : 'sample.3333@gmail.com'
+         },
+         {
+            "beneficiary_id": "i.ben.4444",
+            "fname": 'fname4',
+            "lname": 'lname4',
+            "phone" : "984564444",
+            "mname" : None,
+            "email" : 'sample.4444@gmail.com'
+         },
+    ]
+
+
 @pytest.fixture(scope="function")
-def pg_session(pg_session_empty, pg_test_data):
+def pg_session(pg_session_empty, pg_test_data, pg_test_data_beneficiary):
     for r in pg_test_data:
         new_member = Member(
             member_id=r["member_id"],
@@ -95,6 +133,19 @@ def pg_session(pg_session_empty, pg_test_data):
         pg_session_empty.add(new_member)
         pg_session_empty.commit()
 
+    for r in pg_test_data_beneficiary:
+        new_beneficiary = Beneficiary(
+            beneficiary_id=r["beneficiary_id"],
+            phone=r["phone"],
+            email=r["email"],
+            fname=r["fname"],
+            lname=r["lname"]
+        )
+        pg_session_empty.add(new_beneficiary)
+        pg_session_empty.commit()
+
     yield pg_session_empty
 
     pg_session_empty.query(Member).delete()
+    pg_session_empty.query(Beneficiary).delete()
+
