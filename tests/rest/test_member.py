@@ -29,7 +29,7 @@ members = [Member.from_dict(member_dict)]
 def test_get(mock_use_case, client):
     mock_use_case.return_value = ResponseSuccess(members)
 
-    http_response = client.get("/members")
+    http_response = client.get("/api/v1/members")
 
     assert json.loads(http_response.data.decode("UTF-8")) == [member_dict]
 
@@ -46,7 +46,7 @@ def test_get_with_filters(mock_use_case, client):
     mock_use_case.return_value = ResponseSuccess(members)
 
     http_response = client.get(
-        "/members?filter_phone__eq=984561111&filter_govt_id__eq=abcd1111"
+        "/api/v1/members?filter_phone__eq=984561111&filter_govt_id__eq=abcd1111"
     )
 
     assert json.loads(http_response.data.decode("UTF-8")) == [member_dict]
@@ -79,7 +79,7 @@ def test_get_response_failures(
         message="Just an error message",
     )
 
-    http_response = client.get("/members?dummy_request_string")
+    http_response = client.get("/api/v1/members?dummy_request_string")
 
     mock_use_case.assert_called()
 

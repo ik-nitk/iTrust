@@ -27,7 +27,7 @@ pip install -r requirements/dev.txt
 ### Unit-Test
 Running full test cases
 ````
-pytest -svv --cov=itrust --cov-report=term-missing
+pytest -svv --cov=. --cov-report=term-missing
 ````
 Running unit test on single file
 ````
@@ -43,7 +43,7 @@ Running integration tests.
 Note: Install docker in your environment.
 Build the docker container
 ````
-./manage.py compose build web
+./manage.py compose build
 ````
 If this is successful you can run Docker Compose
 ````

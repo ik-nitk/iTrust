@@ -4,4 +4,6 @@ SQLAlchemy
 psycopg2
 pymongo
 gunicorn
+flask-bootstrap
 alembic
+requests
