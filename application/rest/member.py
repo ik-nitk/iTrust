@@ -17,7 +17,7 @@ STATUS_CODES = {
 }
 
 
-@blueprint.route("/members", methods=["GET"])
+@blueprint.route("/api/v1/members", methods=["GET"])
 def member_list():
     qrystr_params = {
         "filters": {},

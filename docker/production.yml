@@ -11,7 +11,7 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-  web:
+  application:
     build:
       context: ${PWD}
       dockerfile: docker/web/Dockerfile.production
@@ -24,6 +24,21 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_PORT: ${POSTGRES_PORT}
     command: gunicorn -w 4 -b 0.0.0.0 wsgi:app
+    volumes:
+      - ${PWD}:/opt/code
+  web:
+    build:
+      context: ${PWD}
+      dockerfile: docker/web/Dockerfile.production
+    environment:
+      FLASK_ENV: ${FLASK_ENV}
+      FLASK_CONFIG: ${FLASK_CONFIG}
+      APPLICATION_DB: ${APPLICATION_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_HOSTNAME: "db"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    command: gunicorn -w 4 -b 0.0.0.0 wsgi_web:app
     volumes:
       - ${PWD}:/opt/code
   nginx:
