@@ -1,4 +1,4 @@
-from cms.responses import (
+from common.responses import (
     ResponseSuccess,
     ResponseFailure,
     ResponseTypes,

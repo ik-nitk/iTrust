@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<h3> Test page for uploading files.  </h3>
+<h4> Will be used in Case create page </h4>
+<a href="http://docs.dropzone.dev" target="_blank" rel="nofollow">documentation</a>
+<form action="/fms/api/v1/documents"
+      class="dropzone"
+      id="my-awesome-dropzone"></form>
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+{% endblock %}
+

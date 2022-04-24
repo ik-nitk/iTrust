@@ -75,6 +75,17 @@ open http://localhost:8080/members with your browser you will see a successful r
 
 You can follow also instructions from [this](https://www.thedigitalcatbooks.com/pycabook-chapter-08/)
 
+#### Debugging
+For now you can use the below code to print the logs to stderror
+````
+import sys
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+eprint("Some logging here")
+````
+
 
 
 
