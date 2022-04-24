@@ -5,7 +5,7 @@ import pytest
 
 from cms.domain.member import Member
 from cms.domain.id_type import IDType
-from cms.responses import (
+from common.responses import (
     ResponseFailure,
     ResponseSuccess,
     ResponseTypes,

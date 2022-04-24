@@ -6,7 +6,7 @@ from cms.domain.member import Member
 from cms.domain.id_type import IDType
 from cms.use_cases.member_list import member_list_use_case
 from cms.requests.member_list import build_member_list_request
-from cms.responses import ResponseTypes
+from common.responses import ResponseTypes
 
 
 @pytest.fixture

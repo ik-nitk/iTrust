@@ -37,7 +37,7 @@
   },
   {
     "name": "MONGODB_PORT",
-    "value": "27018"
+    "value": "27017"
   },
   {
     "name": "MONGODB_PASSWORD",

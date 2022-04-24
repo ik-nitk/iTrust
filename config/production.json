@@ -30,5 +30,25 @@
   {
     "name": "APPLICATION_DB",
     "value": "application"
+  },
+  {
+    "name": "MONGODB_USER",
+    "value": "root"
+  },
+  {
+    "name": "MONGODB_HOSTNAME",
+    "value": "localhost"
+  },
+  {
+    "name": "MONGODB_PORT",
+    "value": "27017"
+  },
+  {
+    "name": "MONGODB_PASSWORD",
+    "value": "mongodb"
+  },
+  {
+    "name": "UPLOAD_FOLDER",
+    "value": "/opt/uploads"
   }
 ]

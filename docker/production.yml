@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+    ports:
+      - "${MONGODB_PORT}:27017"
+    volumes:
+      - mongodata:/data/db
   db:
     image: postgres
     environment:
@@ -26,7 +35,7 @@ services:
     command: gunicorn -w 4 -b 0.0.0.0 wsgi:app
     volumes:
       - ${PWD}:/opt/code
-  web:
+  fms:
     build:
       context: ${PWD}
       dockerfile: docker/web/Dockerfile.production
@@ -34,10 +43,22 @@ services:
       FLASK_ENV: ${FLASK_ENV}
       FLASK_CONFIG: ${FLASK_CONFIG}
       APPLICATION_DB: ${APPLICATION_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_HOSTNAME: "db"
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_PORT: ${POSTGRES_PORT}
+      MONGODB_USER: ${MONGODB_USER}
+      MONGODB_HOSTNAME: "mongo"
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_PORT: ${MONGODB_PORT}
+      UPLOAD_FOLDER: ${UPLOAD_FOLDER}
+    command: gunicorn -w 4 -b 0.0.0.0 wsgi_fms:app
+    volumes:
+      - ${PWD}:/opt/code
+      - uploads:/opt/uploads
+  web:
+    build:
+      context: ${PWD}
+      dockerfile: docker/web/Dockerfile.production
+    environment:
+      FLASK_ENV: ${FLASK_ENV}
+      FLASK_CONFIG: ${FLASK_CONFIG}
     command: gunicorn -w 4 -b 0.0.0.0 wsgi_web:app
     volumes:
       - ${PWD}:/opt/code
@@ -50,3 +71,5 @@ services:
 
 volumes:
   pgdata:
+  mongodata:
+  uploads:
