@@ -1,5 +1,7 @@
 import os
 from flask import Flask
+import redis
+from rq import Queue
 
 from application.rest import member
 from cms.repository.postgresrepo import PostgresRepo
@@ -25,6 +27,12 @@ def create_app(config_name):
         if config_name == "testing":
             app.config['REPO'] = MemRepo([])
         else:
+            # get redis connection
+            redis_connection = redis.from_url(os.environ.get("REDIS_URL"))
+            # get rq queue with redis connection
+            queue = Queue(connection=redis_connection)
+            app.config['QUEUE'] = queue
+            # Postgress installtion.
             app.config['REPO'] = PostgresRepo(postgres_configuration)
 
     return app

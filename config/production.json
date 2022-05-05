@@ -50,5 +50,9 @@
   {
     "name": "UPLOAD_FOLDER",
     "value": "/opt/uploads"
+  },
+  {
+    "name": "REDIS_URL",
+    "value": "redis://redis:6379/0"
   }
 ]

@@ -7,3 +7,6 @@ gunicorn
 flask-bootstrap
 alembic
 requests
+redis
+rq
+rq-dashboard

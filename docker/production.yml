@@ -32,6 +32,7 @@ services:
       POSTGRES_HOSTNAME: "db"
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_PORT: ${POSTGRES_PORT}
+      REDIS_URL: ${REDIS_URL}
     command: gunicorn -w 4 -b 0.0.0.0 wsgi:app
     volumes:
       - ${PWD}:/opt/code
@@ -68,8 +69,24 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - 8080:8080
-
+  redis:
+    command: redis-server --appendonly yes
+    image: redis:6.2-alpine
+    volumes:
+      - redis-data:/data
+  worker:
+    build:
+      context: ${PWD}
+      dockerfile: docker/web/Dockerfile.production
+    environment:
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      - redis
+    command: rq worker --url redis://redis:6379/0 --with-scheduler
+    volumes:
+      - ${PWD}:/opt/code
 volumes:
   pgdata:
   mongodata:
   uploads:
+  redis-data:
