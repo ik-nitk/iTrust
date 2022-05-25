@@ -2,13 +2,13 @@ import json
 
 from flask import Blueprint, request, Response, current_app,jsonify
 
-from cms.use_cases.member_list import member_list_use_case
-from cms.serializers.member import MemberJsonEncoder
-from cms.requests.member_list import build_member_list_request
+from cms.use_cases.beneficiary_list import beneficiary_list_use_case
+from cms.serializers.beneficiary import BeneficiaryJsonEncoder
+from cms.requests.beneficiary_list import build_beneficiary_list_request
 from common.responses import ResponseTypes
-from cms.use_cases.create_member import create_new_member
+from cms.use_cases.create_beneficiary import create_new_beneficiary
 
-blueprint = Blueprint("member", __name__)
+blueprint = Blueprint("beneficiary", __name__)
 
 STATUS_CODES = {
     ResponseTypes.SUCCESS: 200,
@@ -18,8 +18,8 @@ STATUS_CODES = {
 }
 
 
-@blueprint.route("/api/v1/members", methods=["GET"])
-def member_list():
+@blueprint.route("/api/v1/beneficiaries", methods=["GET"])
+def beneficiary_list():
     qrystr_params = {
         "filters": {},
     }
@@ -28,30 +28,25 @@ def member_list():
         if arg.startswith("filter_"):
             qrystr_params["filters"][arg.replace("filter_", "")] = values
 
-    request_object = build_member_list_request(
+    request_object = build_beneficiary_list_request(
         filters=qrystr_params["filters"]
     )
 
-    response = member_list_use_case(current_app.config.get('REPO'), request_object)
+    response = beneficiary_list_use_case(current_app.config.get('REPO'), request_object)
 
     return Response(
-        json.dumps(response.value, cls=MemberJsonEncoder),
+        json.dumps(response.value, cls=BeneficiaryJsonEncoder),
         mimetype="application/json",
         status=STATUS_CODES[response.type],
     )
 
-
-@blueprint.route("/api/v1/members", methods=["POST"])
-def create_member():
-    govtId = request.json['govtId']
-    idType = request.json['idType']
+@blueprint.route("/api/v1/beneficiaries", methods=["POST"])
+def create_beneficiary():
     firstName = request.json['firstName']
     lastName = request.json['lastName']
     middleName = request.json['middleName']
-    isCore = request.json['isCore']
     phone = request.json['phone']
     email = request.json['email']
-    print(isCore)
     # if request.method == 'POST':
     #     # content will return eather parse data as JSON
     #     # Or None incase there is no data
@@ -59,11 +54,11 @@ def create_member():
     #     print(content)
     #     # The content could be displayed in html page if serialized as json
     #     return jsonify(content) # Return null if there is content
-    response = create_new_member(current_app.config['REPO'],govtId,idType,firstName,lastName,middleName,isCore,phone,email)
+    response = create_new_beneficiary(current_app.config['REPO'],firstName,lastName,middleName,phone,email)
     return Response(
-        json.dumps(response.value, cls=MemberJsonEncoder),
+        json.dumps(response.value, cls=BeneficiaryJsonEncoder),
         mimetype="application/json",
         status=STATUS_CODES[response.type],
     )
 
-# curl   -X POST -H "Content-Type: application/json" -d '{"memberId":"sample-113","govtId":"gid-1112","idType":"AADHAAR","firstName":"sample","lastName":"lname","middleName":"mname","isCore":false,"phone":"99872111","email":"email2@sample"}'  http://localhost:8000/api/v1/members/create
+    # curl   -X POST -H "Content-Type: application/json" -d '{"firstName":"sample","lastName":"lname","middleName":"mname","phone":"99872111","email":"email2@sample"}'  http://localhost:8000/api/v1/beneficiaries
