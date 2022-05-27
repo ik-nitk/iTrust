@@ -4,6 +4,7 @@ import redis
 from rq import Queue
 
 from application.rest import member
+from application.rest import beneficiary
 from cms.repository.postgresrepo import PostgresRepo
 from cms.repository.memrepo import MemRepo
 
@@ -22,6 +23,7 @@ def create_app(config_name):
     config_module = f"application.config.{config_name.capitalize()}Config"
     app.config.from_object(config_module)
     app.register_blueprint(member.blueprint)
+    app.register_blueprint(beneficiary.blueprint)
 
     with app.app_context():
         if config_name == "testing":

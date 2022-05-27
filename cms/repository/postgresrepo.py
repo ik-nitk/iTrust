@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from nanoid import generate
 
 from cms.domain import beneficiary
 from cms.domain import member
@@ -94,3 +95,21 @@ class PostgresRepo:
 
 
         return self._create_beneficiary_objects(query.all())
+
+    def create_member(self, govt_id, id_type, fname,lname,mname, is_core, phone, email):
+        member_id = f"i.mem.{generate()}"
+        new_member = Member(member_id = member_id,govt_id = govt_id,id_type = id_type,fname = fname,lname=lname,mname = mname,is_core = is_core,phone = phone,email=email)
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        session.add(new_member)
+        session.commit()
+        return new_member.member_id
+
+    def create_beneficiary(self, fname,lname,mname, phone, email):
+        beneficiary_id = f"i.ben.{generate()}"
+        new_beneficiary = Beneficiary(beneficiary_id = beneficiary_id,fname = fname,lname=lname,mname = mname,phone = phone,email=email)
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        session.add(new_beneficiary)
+        session.commit()
+        return new_beneficiary.beneficiary_id

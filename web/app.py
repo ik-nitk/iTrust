@@ -4,6 +4,8 @@ from flask_bootstrap import Bootstrap
 from web.member import views as members
 from web.home import views as home
 from web.upload import views as upload
+from web.beneficiary import views as beneficiaries
+
 from web.backend_api_builder import BackendApiBuilder
 
 def create_app(config_name):
@@ -17,6 +19,7 @@ def create_app(config_name):
     app.register_blueprint(members.blueprint)
     app.register_blueprint(home.blueprint)
     app.register_blueprint(upload.blueprint)
+    app.register_blueprint(beneficiaries.blueprint)
     app.config['api'] = api
     app.config['session'] = session
 
