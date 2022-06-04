@@ -87,7 +87,7 @@ def test_repository_beneficiary_list_with_phone_equal_filter(
     assert repo_beneficiarys[0].beneficiary_id == "i.ben.1111"
 
 
-def test_repository_beneficiary_list_with_member_id_equal_filter(
+def test_repository_beneficiary_list_with_beneficiary_id_equal_filter(
     app_configuration, pg_session, pg_test_data_beneficiary
 ):
     repo = postgresrepo.PostgresRepo(app_configuration)

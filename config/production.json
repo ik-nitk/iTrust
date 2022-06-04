@@ -1,58 +1,58 @@
 [
-  {
-    "name": "FLASK_ENV",
-    "value": "production"
-  },
-  {
-    "name": "FLASK_CONFIG",
-    "value": "production"
-  },
-  {
-    "name": "POSTGRES_DB",
-    "value": "postgres"
-  },
-  {
-    "name": "POSTGRES_USER",
-    "value": "postgres"
-  },
-  {
-    "name": "POSTGRES_HOSTNAME",
-    "value": "localhost"
-  },
-  {
-    "name": "POSTGRES_PORT",
-    "value": "5432"
-  },
-  {
-    "name": "POSTGRES_PASSWORD",
-    "value": "postgres"
-  },
-  {
-    "name": "APPLICATION_DB",
-    "value": "application"
-  },
-  {
-    "name": "MONGODB_USER",
-    "value": "root"
-  },
-  {
-    "name": "MONGODB_HOSTNAME",
-    "value": "localhost"
-  },
-  {
-    "name": "MONGODB_PORT",
-    "value": "27017"
-  },
-  {
-    "name": "MONGODB_PASSWORD",
-    "value": "mongodb"
-  },
-  {
-    "name": "UPLOAD_FOLDER",
-    "value": "/opt/uploads"
-  },
-  {
-    "name": "REDIS_URL",
-    "value": "redis://redis:6379/0"
-  }
+    {
+        "name": "FLASK_ENV",
+        "value": "development"
+    },
+    {
+        "name": "FLASK_CONFIG",
+        "value": "production"
+    },
+    {
+        "name": "POSTGRES_DB",
+        "value": "postgres"
+    },
+    {
+        "name": "POSTGRES_USER",
+        "value": "postgres"
+    },
+    {
+        "name": "POSTGRES_HOSTNAME",
+        "value": "localhost"
+    },
+    {
+        "name": "POSTGRES_PORT",
+        "value": "5432"
+    },
+    {
+        "name": "POSTGRES_PASSWORD",
+        "value": "postgres"
+    },
+    {
+        "name": "APPLICATION_DB",
+        "value": "application"
+    },
+    {
+        "name": "MONGODB_USER",
+        "value": "root"
+    },
+    {
+        "name": "MONGODB_HOSTNAME",
+        "value": "localhost"
+    },
+    {
+        "name": "MONGODB_PORT",
+        "value": "27017"
+    },
+    {
+        "name": "MONGODB_PASSWORD",
+        "value": "mongodb"
+    },
+    {
+        "name": "UPLOAD_FOLDER",
+        "value": "/opt/uploads"
+    },
+    {
+        "name": "REDIS_URL",
+        "value": "redis://redis:6379/0"
+    }
 ]
