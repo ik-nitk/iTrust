@@ -1,4 +1,3 @@
-from crypt import methods
 from flask import Blueprint, render_template, current_app, request
 
 blueprint = Blueprint(
@@ -38,7 +37,6 @@ def create_member():
         session = current_app.config.get('session')
         url = api.members
         response = session.post(url, json = {"govtId":govtId,"idType":idType,"firstName":firstName,"lastName":lastName,"middleName":middleName,"isCore":isCore,"phone":phone,"email":email})
-        #response.raise_for_status()
         response = session.get(url)
         response.raise_for_status()
         members=response.json()

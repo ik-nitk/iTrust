@@ -1,0 +1,24 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+    <table id="data" class="table table-striped table-sm mx-auto text-center">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for beneficy in beneficiaries %}
+            <tr>
+                <td>{{ beneficy.beneficiary_id}}</td>
+                <td>{{ beneficy.fname }}</td>
+                <td>{{ beneficy.phone }}</td>
+                <td>{{ beneficy.email }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
