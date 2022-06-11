@@ -1,232 +1,200 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
 <div class="container">
-    <table class="table table-striped">
-        <thead>
-            <meta charset="UTF-8" />
-            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1.0"
-            />
-            <title>Create Beneficiary</title>
-            <link
-                href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"
-                rel="stylesheet"
-                id="bootstrap-css"
-            />
-            <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-            <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        </thead>
-        <tbody>
-            <tr>
-                <td colspan="1">
-                    <form
-                        class="well form-horizontal"
-                        method="post"
-                        action="/members"
+    <form
+    class="well form-horizontal"
+    method="post"
+    action="/members/create"
+>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >Govt Id</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i
+                            class="glyphicon glyphicon-user"
+                        ></i></span
+                    ><input
+                        id="govt_id"
+                        name="govt_id"
+                        class="form-control"
+                        required="true"
+                        value=""
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >ID TYPE</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span
+                        class="input-group-addon"
+                        style="max-width: 100%"
+                        ><i
+                            class="glyphicon glyphicon-list"
+                        ></i
+                    ></span>
+                    <select
+                        class="selectpicker form-control"
+                        id="id_type"
+                        name="id_type"
                     >
-                        <fieldset>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label"
-                                    >Govt Id</label
-                                >
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"
-                                            ><i
-                                                class="glyphicon glyphicon-user"
-                                            ></i></span
-                                        ><input
-                                            id="govt_id"
-                                            name="govt_id"
-                                            placeholder="GOVT ID"
-                                            class="form-control"
-                                            required="true"
-                                            value=""
-                                            type="text"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label"
-                                    >ID TYPE</label
-                                >
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group">
-                                        <span
-                                            class="input-group-addon"
-                                            style="max-width: 100%"
-                                            ><i
-                                                class="glyphicon glyphicon-list"
-                                            ></i
-                                        ></span>
-                                        <select
-                                            class="selectpicker form-control"
-                                            id="id_type"
-                                            name="id_type"
-                                        >
-                                            <option>Select ID Type</option>
-                                            <option>AADHAAR</option>
-                                            <option>LICENSE</option>
-                                            <option>PASSPORT</option>
-                                            <option>OTHER</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label"
-                                    >First Name</label
-                                >
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"
-                                            ><i
-                                                class="glyphicon glyphicon-user"
-                                            ></i></span
-                                        ><input
-                                            id="first_name"
-                                            name="first_name"
-                                            placeholder="FIRST NAME"
-                                            class="form-control"
-                                            required="true"
-                                            value=""
-                                            type="text"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label"
-                                    >Middle Name</label
-                                >
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"
-                                            ><i
-                                                class="glyphicon glyphicon-user"
-                                            ></i></span
-                                        ><input
-                                            id="middle_name"
-                                            name="middle_name"
-                                            placeholder="MIDDLE NAME"
-                                            class="form-control"
-                                            required="true"
-                                            value=""
-                                            type="text"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label"
-                                    >Last Name</label
-                                >
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"
-                                            ><i
-                                                class="glyphicon glyphicon-user"
-                                            ></i></span
-                                        ><input
-                                            id="last_name"
-                                            name="last_name"
-                                            placeholder="LAST NAME"
-                                            class="form-control"
-                                            required="true"
-                                            value=""
-                                            type="text"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label"
-                                    >Is Core</label
-                                >
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group">
-                                        <div class="maxl">
-                                            <label class="radio inline">
-                                                <input
-                                                    type="radio"
-                                                    name="is_core"
-                                                    value="True"
-                                                    checked
-                                                />
-                                                <span> Yes </span>
-                                            </label>
-                                            <label class="radio inline">
-                                                <input
-                                                    type="radio"
-                                                    name="is_core"
-                                                    value="False"
-                                                />
-                                                <span>No </span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label"
-                                    >Phone Number</label
-                                >
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"
-                                            ><i
-                                                class="glyphicon glyphicon-earphone"
-                                            ></i></span
-                                        ><input
-                                            id="phone_no"
-                                            name="phone_no"
-                                            placeholder="Phone Number"
-                                            class="form-control"
-                                            required="true"
-                                            value=""
-                                            type="text"
-                                            maxlength="10"
-                                            minlength="10"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label"
-                                    >Email</label
-                                >
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"
-                                            ><i
-                                                class="glyphicon glyphicon-envelope"
-                                            ></i></span
-                                        ><input
-                                            id="email"
-                                            name="email"
-                                            placeholder="Email"
-                                            class="form-control"
-                                            required="true"
-                                            value=""
-                                            type="text"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <button
-                                type="submit"
-                                id="btnSubmit"
-                                style="margin-left: 50%"
-                            >
-                                SUBMIT
-                            </button>
-                        </fieldset>
-                    </form>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+                        <option>Select ID Type</option>
+                        <option>AADHAAR</option>
+                        <option>LICENSE</option>
+                        <option>PASSPORT</option>
+                        <option>OTHER</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >First Name</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i
+                            class="glyphicon glyphicon-user"
+                        ></i></span
+                    ><input
+                        id="first_name"
+                        name="first_name"
+                        class="form-control"
+                        required="true"
+                        value=""
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >Middle Name</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i
+                            class="glyphicon glyphicon-user"
+                        ></i></span
+                    ><input
+                        id="middle_name"
+                        name="middle_name"
+                        class="form-control"
+                        value=""
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >Last Name</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i
+                            class="glyphicon glyphicon-user"
+                        ></i></span
+                    ><input
+                        id="last_name"
+                        name="last_name"
+                        class="form-control"
+                        value=""
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >Is Core</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <div class="maxl">
+                        <label class="radio inline">
+                            <input
+                                type="radio"
+                                name="is_core"
+                                value="True"
+                                checked
+                            />
+                            <span> Yes </span>
+                        </label>
+                        <label class="radio inline">
+                            <input
+                                type="radio"
+                                name="is_core"
+                                value="False"
+                            />
+                            <span>No </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >Phone Number</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i
+                            class="glyphicon glyphicon-earphone"
+                        ></i></span
+                    ><input
+                        id="phone_no"
+                        name="phone_no"
+                        class="form-control"
+                        required="true"
+                        value=""
+                        type="text"
+                        maxlength="10"
+                        minlength="10"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >Email</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i
+                            class="glyphicon glyphicon-envelope"
+                        ></i></span
+                    ><input
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        required="true"
+                        value=""
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <button
+            type="submit" class="btn btn-primary"
+            id="submit"
+            style="margin-left: 25%"
+        >
+            Submit
+        </button>
+</form>
 </div>
 {% endblock %}
