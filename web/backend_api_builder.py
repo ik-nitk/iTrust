@@ -21,3 +21,19 @@ class BackendApiBuilder:
         :return: member endpoint
         """
         return self.members + '/{}'.format(member_id)
+
+    @property
+    def beneficiaries(self):
+        """
+        Generates endpoint for creating beneficiaries resource
+        :return: create beneficiaries endpoint
+        """
+        return self.base + 'beneficiaries'
+
+    def beneficiary_id(self, beneficiary_id):
+        """
+        Generates endpoint for retrieving/updating task with given beneficiary_id
+        :param beneficiary_id: unique beneficiary id
+        :return: member endpoint
+        """
+        return self.beneficiaries + '/{}'.format(beneficiary_id)

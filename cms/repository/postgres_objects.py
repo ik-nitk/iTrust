@@ -1,4 +1,3 @@
-import email
 from sqlalchemy import Column, Integer, String, Float, Enum, TIMESTAMP, BOOLEAN
 from sqlalchemy.sql import func
 from cms.domain.id_type import IDType
