@@ -51,14 +51,6 @@ def create_member():
     isCore = request.json['isCore']
     phone = request.json['phone']
     email = request.json['email']
-    print(isCore)
-    # if request.method == 'POST':
-    #     # content will return eather parse data as JSON
-    #     # Or None incase there is no data
-    #     content = request.get_json()
-    #     print(content)
-    #     # The content could be displayed in html page if serialized as json
-    #     return jsonify(content) # Return null if there is content
     response = create_new_member(current_app.config['REPO'],govtId,idType,firstName,lastName,middleName,isCore,phone,email)
     return Response(
         json.dumps(response.value, cls=MemberJsonEncoder),

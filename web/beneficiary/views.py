@@ -6,18 +6,17 @@ blueprint = Blueprint(
              __name__
         )
 
-# @blueprint.route("/beneficiaries")
-# def beneficiary_list_view():
-#     api = current_app.config.get('api')
-#     session = current_app.config.get('session')
-#     url = api.beneficiaries
-#     response = session.get(url)
-#     response.raise_for_status()
-#     beneficiaries=response.json()
-#     #print(f'=====================///////////////////////////-------------------{url}--------{response}-------==========')
-#     return render_template("beneficiaries/list.html", beneficiaries=beneficiaries)
+@blueprint.route("/beneficiaries")
+def beneficiary_list_view():
+    api = current_app.config.get('api')
+    session = current_app.config.get('session')
+    url = api.beneficiaries
+    response = session.get(url)
+    response.raise_for_status()
+    beneficiaries=response.json()
+    return render_template("beneficiaries/list.html", beneficiaries=beneficiaries)
 
-@blueprint.route("/beneficiaries",methods = ["GET","POST"])
+@blueprint.route("/beneficiaries/create",methods = ["GET","POST"])
 def create_beneficiary():
     if request.method == 'GET':
         return render_template("beneficiaries/create.html")

@@ -47,13 +47,6 @@ def create_beneficiary():
     middleName = request.json['middleName']
     phone = request.json['phone']
     email = request.json['email']
-    # if request.method == 'POST':
-    #     # content will return eather parse data as JSON
-    #     # Or None incase there is no data
-    #     content = request.get_json()
-    #     print(content)
-    #     # The content could be displayed in html page if serialized as json
-    #     return jsonify(content) # Return null if there is content
     response = create_new_beneficiary(current_app.config['REPO'],firstName,lastName,middleName,phone,email)
     return Response(
         json.dumps(response.value, cls=BeneficiaryJsonEncoder),
