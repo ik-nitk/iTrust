@@ -18,7 +18,7 @@ blueprint = Blueprint(
 #     return render_template("beneficiaries/list.html", beneficiaries=beneficiaries)
 
 @blueprint.route("/beneficiaries",methods = ["GET","POST"])
-def create_member():
+def create_beneficiary():
     if request.method == 'GET':
         return render_template("beneficiaries/create.html")
     else:
