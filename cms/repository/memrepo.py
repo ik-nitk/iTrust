@@ -1,5 +1,6 @@
 from cms.domain.member import Member
 from cms.domain.beneficiary import Beneficiary
+from cms.domain.case import Case
 
 
 class MemRepo:
@@ -52,5 +53,28 @@ class MemRepo:
                 result = [
                     r for r in result if r.email == filters["email__eq"]
                 ]
+
+            return result
+
+    def case_list(self, filters=None):
+
+            result = [Case.from_dict(i) for i in self.data]
+
+            if filters is None:
+                return result
+
+            if "beneficiary__id__eq" in filters:
+                result = [r for r in result if r.beneficiary_id == filters["beneficiary__id__eq"]]
+
+            if "title__eq" in filters:
+                result = [
+                    r for r in result if r.phone == filters["title__eq"]
+                ]
+
+            if "purpose__eq" in filters:
+                result = [
+                    r for r in result if r.email == filters["purpose__eq"]
+                ]
+            #TODO- more filters to be added
 
             return result

@@ -2,6 +2,7 @@ from flask import Flask, render_template
 import requests
 from flask_bootstrap import Bootstrap
 from web.member import views as members
+from web.case import views as cases
 from web.home import views as home
 from web.upload import views as upload
 from web.beneficiary import views as beneficiaries
@@ -20,6 +21,7 @@ def create_app(config_name):
     app.register_blueprint(home.blueprint)
     app.register_blueprint(upload.blueprint)
     app.register_blueprint(beneficiaries.blueprint)
+    app.register_blueprint(cases.blueprint)
     app.config['api'] = api
     app.config['session'] = session
 
