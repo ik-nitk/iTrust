@@ -41,4 +41,19 @@ class Case(Base):
     __tablename__ = "t_case"
 
     case_id = Column(String(40), primary_key=True)
-
+    case_state = Column(String)
+    is_flagged = Column(BOOLEAN)
+    is_urgent = Column(BOOLEAN)
+    beneficiary__id = Column(String(40))
+    purpose = Column(String)
+    title = Column(String)
+    description = Column(String)
+    family_details = Column(String)
+    avg_monthly_income: Column(Integer)
+    contact_details = Column(String)
+    contact_address = Column(String)
+    referred__by = Column(String(40))
+    assigned__for_verification = Column(String(40))
+    assigned__for_accounting = Column(String(40))
+    closed__by = Column(String(40))
+    updated_by = Column(String(40))

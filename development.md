@@ -103,6 +103,12 @@ Insert some values into the beneficiary table
 insert into beneficiary (beneficiary_id,  fname, phone, email) values ('sample-301', 'sample' , '9946000', 'bemail@sample');
 ```
 
+Insert some values into the case table (not complete - need to update the not null fields)
+
+```
+insert into case (case_id, title, purpose, contact_details) values ('case-111', 'edu 2rd grade', 'education' , '599872000');
+```
+
 open http://localhost:8080/members with your browser you will see a successful response, with data above.
 
 You can follow also instructions from [this](https://www.thedigitalcatbooks.com/pycabook-chapter-08/)
