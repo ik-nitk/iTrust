@@ -37,3 +37,8 @@ class Beneficiary(Base):
     phone = Column(String(20))
     email = Column(String)
 
+class Case(Base):
+    __tablename__ = "t_case"
+
+    case_id = Column(String(40), primary_key=True)
+

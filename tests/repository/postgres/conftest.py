@@ -1,7 +1,7 @@
 import sqlalchemy
 import pytest
 
-from cms.repository.postgres_objects import Base, Member, Beneficiary
+from cms.repository.postgres_objects import Base, Member, Beneficiary, Case
 from cms.domain.id_type import IDType
 
 
@@ -78,6 +78,16 @@ def pg_test_data():
          },
     ]
 
+@pytest.fixture(scope="session")
+def pg_test_data_case():
+    return [
+        {
+            "case_id": "i.case.1111",
+        },
+        {
+            "case_id": "i.case.2222",
+        }
+    ]
 
 @pytest.fixture(scope="session")
 def pg_test_data_beneficiary():
@@ -118,7 +128,11 @@ def pg_test_data_beneficiary():
 
 
 @pytest.fixture(scope="function")
-def pg_session(pg_session_empty, pg_test_data, pg_test_data_beneficiary):
+def pg_session(pg_session_empty,
+    pg_test_data,
+    pg_test_data_beneficiary,
+    pg_test_data_case):
+
     for r in pg_test_data:
         new_member = Member(
             member_id=r["member_id"],
@@ -144,8 +158,16 @@ def pg_session(pg_session_empty, pg_test_data, pg_test_data_beneficiary):
         pg_session_empty.add(new_beneficiary)
         pg_session_empty.commit()
 
+    for r in pg_test_data_case:
+        new_case = Case(
+            case_id=r["case_id"]
+        )
+        pg_session_empty.add(new_case)
+        pg_session_empty.commit()
+
     yield pg_session_empty
 
+    pg_session_empty.query(Case).delete()
     pg_session_empty.query(Member).delete()
     pg_session_empty.query(Beneficiary).delete()
 

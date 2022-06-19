@@ -4,7 +4,8 @@ from nanoid import generate
 
 from cms.domain import beneficiary
 from cms.domain import member
-from cms.repository.postgres_objects import Base, Beneficiary, Member
+from cms.domain import case
+from cms.repository.postgres_objects import Base, Beneficiary, Member, Case
 
 
 class PostgresRepo:
@@ -37,6 +38,13 @@ class PostgresRepo:
             for q in results
         ]
 
+    def _create_case_objects(self, results):
+        return [
+            case.Case(
+                case_id=q.case_id,
+            )
+            for q in results
+        ]
 
     def _create_beneficiary_objects(self, results):
         return [
@@ -50,6 +58,12 @@ class PostgresRepo:
             )
             for q in results
         ]
+
+    def case_list(self, filters=None):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        query = session.query(Case)
+        return self._create_case_objects(query.all())
 
     def member_list(self, filters=None):
         DBSession = sessionmaker(bind=self.engine)

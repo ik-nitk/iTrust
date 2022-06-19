@@ -4,6 +4,18 @@ from cms.repository import postgresrepo
 pytestmark = pytest.mark.integration
 
 
+## CASE TESTING -------------------------------
+def test_case_list_without_parameters(
+    app_configuration, pg_session, pg_test_data_case
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+    repo_case = repo.case_list()
+
+    assert set([r.case_id for r in repo_case]) == set(
+        [r["case_id"] for r in pg_test_data_case]
+    )
+
+## MEMBERS TESTING -------------------------------
 def test_repository_list_without_parameters(
     app_configuration, pg_session, pg_test_data
 ):
