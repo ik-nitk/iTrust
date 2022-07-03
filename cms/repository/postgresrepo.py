@@ -4,7 +4,8 @@ from nanoid import generate
 
 from cms.domain import beneficiary
 from cms.domain import member
-from cms.repository.postgres_objects import Base, Beneficiary, Member
+from cms.domain import case
+from cms.repository.postgres_objects import Base, Beneficiary, Member, Case
 
 
 class PostgresRepo:
@@ -37,7 +38,6 @@ class PostgresRepo:
             for q in results
         ]
 
-
     def _create_beneficiary_objects(self, results):
         return [
             beneficiary.Beneficiary(
@@ -47,6 +47,36 @@ class PostgresRepo:
                 mname=q.mname,
                 phone=q.phone,
                 email=q.email
+            )
+            for q in results
+        ]
+
+    def case_list(self, filters=None):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        query = session.query(Case)
+        return self._create_case_objects(query.all())
+
+    def _create_case_objects(self, results):
+        return [
+            case.Case(
+                case_id=q.case_id,
+                case_state= q.fname,
+                is_flagged= q.lname,
+                is_urgent= q.mname,
+                beneficiary__id= q.phone,
+                purpose= q.email,
+                title= q.title,
+                description= q.description,
+                family_details= q.family_details,
+                avg_monthly_income= q.avg_monthly_income,
+                contact_details= q.contact_details,
+                contact_address= q.contact_address,
+                referred__by= q.referred__by,
+                assigned__for_verification= q.assigned__for_verification,
+                assigned__for_accounting= q.assigned__for_accounting,
+                closed__by= q.closed__by,
+                updated_by= q.updated_by
             )
             for q in results
         ]
@@ -74,7 +104,7 @@ class PostgresRepo:
 
         return self._create_member_objects(query.all())
 
-    
+
     def beneficiary_list(self, filters=None):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
@@ -96,6 +126,27 @@ class PostgresRepo:
 
         return self._create_beneficiary_objects(query.all())
 
+    def case_list(self, filters=None):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+
+        query = session.query(Case)
+
+        if filters is None:
+            return self._create_case_objects(query.all())
+
+        if "beneficiary__id__eq" in filters:
+            query = query.filter(Beneficiary.beneficiary_id == filters["beneficiary__id__eq"])
+
+        if "title__eq" in filters:
+            query = query.filter(Beneficiary.phone == filters["title__eq"])
+
+        if "purpose__eq" in filters:
+            query = query.filter(Beneficiary.email == filters["purpose__eq"])
+
+
+        return self._create_case_objects(query.all())
+
     def create_member(self, govt_id, id_type, fname,lname,mname, is_core, phone, email):
         member_id = f"i.mem.{generate()}"
         new_member = Member(member_id = member_id,govt_id = govt_id,id_type = id_type,fname = fname,lname=lname,mname = mname,is_core = is_core,phone = phone,email=email)
@@ -113,3 +164,13 @@ class PostgresRepo:
         session.add(new_beneficiary)
         session.commit()
         return new_beneficiary.beneficiary_id
+
+    def create_case(self, title,purpose,description, contact_details, contact_address):
+        case_id = f"i.case.{generate()}"
+        new_case = Case(case_id = case_id,title = title,purpose=purpose,description = description,contact_details = contact_details,contact_address=contact_address)
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        session.add(new_case)
+        session.commit()
+        return new_case.case_id
+

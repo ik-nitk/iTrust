@@ -5,6 +5,7 @@ from rq import Queue
 
 from application.rest import member
 from application.rest import beneficiary
+from application.rest import case
 from cms.repository.postgresrepo import PostgresRepo
 from cms.repository.memrepo import MemRepo
 
@@ -24,6 +25,7 @@ def create_app(config_name):
     app.config.from_object(config_module)
     app.register_blueprint(member.blueprint)
     app.register_blueprint(beneficiary.blueprint)
+    app.register_blueprint(case.blueprint)
 
     with app.app_context():
         if config_name == "testing":
