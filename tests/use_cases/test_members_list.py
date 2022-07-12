@@ -4,7 +4,7 @@ from unittest import mock
 
 from cms.domain.member import Member
 from cms.domain.id_type import IDType
-from cms.use_cases.member_list import member_list_use_case
+from cms.use_cases.member import member_list_use_case,create_new_member
 from cms.requests.member_list import build_member_list_request
 from common.responses import ResponseTypes
 
@@ -60,6 +60,25 @@ def domain_members():
     )
 
     return [member_1, member_2, member_3, member_4]
+
+def test_create_member():
+    repo = mock.Mock()
+    repo.create_member.return_value = "i.mem.xxxx"
+
+    response = create_new_member(repo, "gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com")
+
+    assert bool(response) is True
+    repo.create_member.assert_called_with("gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com")
+    assert response.value == "i.mem.xxxx"
+
+def test_create_member_exception():
+    repo = mock.Mock()
+    repo.create_member.side_effect = Exception("error")
+
+    response = create_new_member(repo, "gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com")
+
+    assert bool(response) is False
+    repo.create_member.assert_called_with("gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com")
 
 
 def test_member_list_without_parameters(domain_members):

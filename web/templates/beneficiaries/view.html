@@ -1,0 +1,96 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+    <form class="well form-horizontal">
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">First Name</label>
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i class="glyphicon glyphicon-user"></i></span
+                    ><input
+                        id="first_name"
+                        name="first_name"
+                        class="form-control"
+                        required="true"
+                        value="{{beneficiaries[0].fname}}"
+                        type="text"
+                        readonly
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Middle Name</label>
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i class="glyphicon glyphicon-user"></i></span
+                    ><input
+                        id="middle_name"
+                        name="middle_name"
+                        class="form-control"
+                        value="{{beneficiaries[0].mname}}"
+                        type="text"
+                        readonly
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Last Name</label>
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i class="glyphicon glyphicon-user"></i></span
+                    ><input
+                        id="last_name"
+                        name="last_name"
+                        class="form-control"
+                        value="{{beneficiaries[0].lname}}"
+                        type="text"
+                        readonly
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Phone Number</label>
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i class="glyphicon glyphicon-earphone"></i></span
+                    ><input
+                        id="phone_no"
+                        name="phone_no"
+                        class="form-control"
+                        required="true"
+                        value="{{beneficiaries[0].phone}}"
+                        type="text"
+                        maxlength="10"
+                        minlength="10"
+                        readonly
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i class="glyphicon glyphicon-envelope"></i></span
+                    ><input
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        required="true"
+                        value="{{beneficiaries[0].email}}"
+                        type="text"
+                        readonly
+                    />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

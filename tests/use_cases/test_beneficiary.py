@@ -3,10 +3,9 @@ from nanoid import generate
 from unittest import mock
 
 from cms.domain.beneficiary import Beneficiary
-from cms.use_cases.beneficiary_list import beneficiary_list_use_case
+from cms.use_cases.beneficiary import beneficiary_list_use_case,create_new_beneficiary
 from cms.requests.beneficiary_list import build_beneficiary_list_request
 from common.responses import ResponseTypes
-
 
 @pytest.fixture
 def domain_beneficiaries():
@@ -47,6 +46,25 @@ def domain_beneficiaries():
     )
 
     return [beneficiary_1, beneficiary_2,beneficiary_3,beneficiary_4]
+
+def test_create_beneficiary():
+    repo = mock.Mock()
+    repo.create_beneficiary.return_value = "i.ben.xxxx"
+
+    response = create_new_beneficiary(repo, "fname","mname","lname","968612","sample@gmail.com")
+
+    assert bool(response) is True
+    repo.create_beneficiary.assert_called_with("fname","mname","lname","968612","sample@gmail.com")
+    assert response.value == "i.ben.xxxx"
+
+def test_create_beneficiary_exception():
+    repo = mock.Mock()
+    repo.create_beneficiary.side_effect = Exception("error")
+
+    response = create_new_beneficiary(repo, "fname","mname","lname","968612","sample@gmail.com")
+
+    assert bool(response) is False
+    repo.create_beneficiary.assert_called_with("fname","mname","lname","968612","sample@gmail.com")
 
 
 def test_member_list_without_parameters(domain_beneficiaries):
