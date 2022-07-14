@@ -23,6 +23,10 @@ class BackendApiBuilder:
         return self.members + '/{}'.format(member_id)
 
     @property
+    def member_search(self):
+        return self.base + 'members/search'
+
+    @property
     def beneficiaries(self):
         """
         Generates endpoint for creating beneficiaries resource
@@ -37,6 +41,9 @@ class BackendApiBuilder:
         :return: member endpoint
         """
         return self.beneficiaries + '/{}'.format(beneficiary_id)
+
+    def beneficiary_search(self):
+        return self.base + 'beneficiaries/search'
 
     @property
     def cases(self):
@@ -53,3 +60,4 @@ class BackendApiBuilder:
         :return: member endpoint
         """
         return self.cases + '/{}'.format(case_id)
+    

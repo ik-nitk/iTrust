@@ -2,11 +2,14 @@ import json
 
 from flask import Blueprint, request, Response, current_app,jsonify
 
-from cms.use_cases.member_list import member_list_use_case
+from cms.use_cases.member import member_list_use_case
 from cms.serializers.member import MemberJsonEncoder
 from cms.requests.member_list import build_member_list_request
 from common.responses import ResponseTypes
-from cms.use_cases.create_member import create_new_member
+from cms.use_cases.member import create_new_member
+from cms.use_cases.member import search_member
+from cms.use_cases.member import view_member
+from cms.use_cases.member import update_member
 
 blueprint = Blueprint("member", __name__)
 
@@ -52,6 +55,43 @@ def create_member():
     phone = request.json['phone']
     email = request.json['email']
     response = create_new_member(current_app.config['REPO'],govtId,idType,firstName,lastName,middleName,isCore,phone,email)
+    return Response(
+        json.dumps(response.value, cls=MemberJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/members/search", methods=["POST"])
+def member_search():
+    search_input = request.json['search_input']
+    response = search_member(current_app.config.get('REPO'), search_input)
+    print(response)
+    return Response(
+        json.dumps(response.value, cls=MemberJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/members/<id>", methods=["GET"])
+def member_view(id):
+    response = view_member(current_app.config.get('REPO'), id)
+    return Response(
+        json.dumps(response.value, cls=MemberJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/members/<id>", methods=["POST"])
+def member_update(id):
+    govtId = request.json['govtId']
+    idType = request.json['idType']
+    firstName = request.json['firstName']
+    lastName = request.json['lastName']
+    middleName = request.json['middleName']
+    isCore = request.json['isCore']
+    phone = request.json['phone']
+    email = request.json['email']
+    response = update_member(current_app.config['REPO'],id,govtId,idType,firstName,lastName,middleName,isCore,phone,email)
     return Response(
         json.dumps(response.value, cls=MemberJsonEncoder),
         mimetype="application/json",

@@ -174,3 +174,102 @@ class PostgresRepo:
         session.commit()
         return new_case.case_id
 
+    def search_member(self, search_input):
+
+        DBSession = sessionmaker(bind=self.engine)
+
+        session = DBSession()
+
+        query = session.query(Member)\
+            .with_entities(Member)\
+                .filter(Member.fname.like("%"+search_input+"%") | Member.mname.like("%"+search_input+"%") | Member.lname.like("%"+search_input+"%") | Member.govt_id.like("%"+search_input+"%")).all()
+        
+        return query
+        
+    def search_beneficiary(self, search_input):
+
+        DBSession = sessionmaker(bind=self.engine)
+        
+        session = DBSession()
+
+        query = session.query(Beneficiary)\
+            .with_entities(Beneficiary)\
+                .filter(Beneficiary.fname.like("%"+search_input+"%") | Beneficiary.mname.like("%"+search_input+"%") | Beneficiary.lname.like("%"+search_input+"%") ).all()
+        
+        return query
+
+    def view_member(self, member_id):
+
+        DBSession = sessionmaker(bind=self.engine)
+        
+        session = DBSession()
+
+        query = session.query(Member)\
+            .with_entities(Member)\
+                .filter_by(member_id = member_id ).all()
+        
+        return query
+
+    def update_member(self, member_id,govt_id,id_type,fname,mname,lname,is_core,phone,email):
+        DBSession = sessionmaker(bind=self.engine)
+        
+        session = DBSession()
+
+        member = session.query(Member)\
+            .with_entities(Member)\
+                .filter_by(member_id = member_id ).first()
+        
+        
+        member.govt_id = govt_id
+        member.id_type = id_type
+        member.fname = fname
+        member.mname = mname
+        member.lname = lname
+        member.is_core = is_core
+        member.phone = phone
+        member.email = email
+
+        session.commit()
+
+        return member
+
+def view_beneficiary(self, beneficiary_id):
+
+        DBSession = sessionmaker(bind=self.engine)
+        
+        session = DBSession()
+
+        query = session.query(Beneficiary)\
+            .with_entities(Beneficiary)\
+                .filter_by(beneficiary_id = beneficiary_id ).all()
+        
+        return query
+
+def update_beneficiary(self, beneficiary_id,fname,lname,mname, phone, email):
+        DBSession = sessionmaker(bind=self.engine)
+        
+        session = DBSession()
+
+        beneficiary = session.query(Beneficiary)\
+            .with_entities(Beneficiary)\
+                .filter_by(beneficiary_id = beneficiary_id ).first()
+        
+        
+        beneficiary.fname = fname
+        beneficiary.mname = mname
+        beneficiary.lname = lname
+        beneficiary.phone = phone
+        beneficiary.email = email
+
+        session.commit()
+
+        return beneficiary
+
+
+
+
+
+
+        
+        
+        

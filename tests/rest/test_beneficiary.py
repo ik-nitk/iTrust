@@ -80,3 +80,16 @@ def test_get_response_failures(
     mock_use_case.assert_called()
 
     assert http_response.status_code == expected_status_code
+
+
+@mock.patch("application.rest.beneficiary.create_new_beneficiary")
+def test_post(mock_use_case, client):
+    
+    mock_use_case.return_value = ResponseSuccess(beneficiaries)
+    data = {"firstName": "fname", "lastName":"lname", "middleName":"mname", "phone":"23456","email":"abc@gmail.com" }
+
+    res = client.post("/api/v1/beneficiaries",json=data)
+
+    assert res.status_code == 200
+    assert res.mimetype == "application/json"
+

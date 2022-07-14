@@ -84,3 +84,15 @@ def test_get_response_failures(
     mock_use_case.assert_called()
 
     assert http_response.status_code == expected_status_code
+
+
+@mock.patch("application.rest.member.create_new_member")
+def test_post(mock_use_case, client):
+    
+    mock_use_case.return_value = ResponseSuccess(members)
+    data = {"govtId": "g-123", "idType":"lname", "firstName":"fname","lastName":"lname","middleName":"mname","isCore":True, "phone":"23456","email":"abc@gmail.com" }
+
+    res = client.post("/api/v1/members",json=data)
+
+    assert res.status_code == 200
+    assert res.mimetype == "application/json"

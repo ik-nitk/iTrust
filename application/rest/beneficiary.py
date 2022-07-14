@@ -2,11 +2,12 @@ import json
 
 from flask import Blueprint, request, Response, current_app,jsonify
 
-from cms.use_cases.beneficiary_list import beneficiary_list_use_case
+from cms.use_cases.beneficiary import beneficiary_list_use_case,create_new_beneficiary,search_beneficiary,update_beneficiary,view_beneficiary
 from cms.serializers.beneficiary import BeneficiaryJsonEncoder
 from cms.requests.beneficiary_list import build_beneficiary_list_request
 from common.responses import ResponseTypes
-from cms.use_cases.create_beneficiary import create_new_beneficiary
+
+
 
 blueprint = Blueprint("beneficiary", __name__)
 
@@ -54,4 +55,37 @@ def create_beneficiary():
         status=STATUS_CODES[response.type],
     )
 
-    # curl   -X POST -H "Content-Type: application/json" -d '{"firstName":"sample","lastName":"lname","middleName":"mname","phone":"99872111","email":"email2@sample"}'  http://localhost:8000/api/v1/beneficiaries
+@blueprint.route("/api/v1/beneficiaries/search", methods=["POST"])
+def beneficiary_search():
+    search_input = request.json['search_input']
+    response = search_beneficiary(current_app.config.get('REPO'), search_input)
+    return Response(
+        json.dumps(response.value, cls=BeneficiaryJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/beneficiaries/<id>", methods=["GET"])
+def beneficiary_view(id):
+    response = view_beneficiary(current_app.config.get('REPO'), id)
+    return Response(
+        json.dumps(response.value, cls=BeneficiaryJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/beneficiaries/<id>", methods=["POST"])
+def beneficiary_update(id):
+    firstName = request.json['firstName']
+    lastName = request.json['lastName']
+    middleName = request.json['middleName']
+    phone = request.json['phone']
+    email = request.json['email']
+    response = update_beneficiary(current_app.config['REPO'],id,firstName,lastName,middleName,phone,email)
+    return Response(
+        json.dumps(response.value, cls=BeneficiaryJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+    

@@ -4,7 +4,7 @@ from unittest import mock
 from cms.domain.id_type import IDType
 
 from cms.domain.member import Member
-from cms.use_cases.create_member import create_new_member
+from cms.use_cases.member import create_new_member
 from common.responses import ResponseTypes
 
 
