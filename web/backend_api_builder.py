@@ -48,16 +48,15 @@ class BackendApiBuilder:
     @property
     def cases(self):
         """
-        Generates endpoint for creating beneficiaries resource
-        :return: create beneficiaries endpoint
+        Generates endpoint for creating cases resource
+        :return: create cases endpoint
         """
-        return self.base + 'beneficiaries'
+        return self.base + 'cases'
 
     def case_id(self, case_id):
         """
-        Generates endpoint for retrieving/updating task with given beneficiary_id
-        :param beneficiary_id: unique beneficiary id
-        :return: member endpoint
+        Generates endpoint for retrieving/updating task with given cases_id
+        :param cases_id: unique cases id
+        :return: case endpoint
         """
         return self.cases + '/{}'.format(case_id)
-    

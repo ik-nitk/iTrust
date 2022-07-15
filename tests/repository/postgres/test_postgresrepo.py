@@ -1,3 +1,4 @@
+from cms.domain.case_type import CaseType
 import pytest
 from cms.repository import postgresrepo
 
@@ -14,6 +15,16 @@ def test_case_list_without_parameters(
     assert set([r.case_id for r in repo_case]) == set(
         [r["case_id"] for r in pg_test_data_case]
     )
+
+## CREATE CASE TESTING -------------------------------
+def test_create_case(
+    app_configuration, pg_session, pg_test_data_case
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.121', purpose=CaseType.EDUCATION, description='')
+    repo_case = repo.find_case(case_id)
+
+    assert repo_case.title == 't.121'
 
 ## MEMBERS TESTING -------------------------------
 def test_repository_list_without_parameters(

@@ -1,5 +1,5 @@
 from crypt import methods
-from flask import Blueprint,redirect, render_template, current_app, request,jsonify
+from flask import Blueprint, render_template, current_app, request, redirect, url_for, jsonify
 
 blueprint = Blueprint(
             'beneficiary',
@@ -31,42 +31,39 @@ def create_beneficiary():
         url = api.beneficiaries
         response = session.post(url, json = {"firstName":firstName,"lastName":lastName,"middleName":middleName,"phone":phone,"email":email})
         response.raise_for_status()
-        response = session.get(url)
-        response.raise_for_status()
-        beneficiaries=response.json()
-        return render_template("beneficiaries/list.html", beneficiaries=beneficiaries)
+        return redirect(url_for('beneficiary.beneficiary_list_view'))
 
-@blueprint.route("/beneficiaries/search",methods = ["GET","POST"])  
+@blueprint.route("/beneficiaries/search",methods = ["GET","POST"])
 def beneficiary_search():
     if request.method == 'GET':
         return render_template("beneficiaries/search.html")
     else:
         search_input = request.form.get('query')
         api = current_app.config.get('api')
-        session = current_app.config.get('session') 
+        session = current_app.config.get('session')
         url = api.beneficiary_search
         response = session.post(url, json = {"search_input":search_input})
         response.raise_for_status()
         beneficiaries = response.json()
         return jsonify({'htmlresponse': render_template("beneficiaries/search_response.html", beneficiaries=beneficiaries)})
 
-@blueprint.route("/beneficiaries/view/<id>",methods = ["GET"])  
+@blueprint.route("/beneficiaries/view/<id>",methods = ["GET"])
 def beneficiary_view(id):
     api = current_app.config.get('api')
-    session = current_app.config.get('session') 
+    session = current_app.config.get('session')
     url = api.beneficiary_id(id)
     print(url)
     response = session.get(url)
     response.raise_for_status()
     beneficiaries = response.json()
-    return render_template("beneficiaries/view.html", beneficiaries=beneficiaries) 
+    return render_template("beneficiaries/view.html", beneficiaries=beneficiaries)
 
 
-@blueprint.route("/beneficiaries/update/<id>",methods = ["GET","POST"])  
+@blueprint.route("/beneficiaries/update/<id>",methods = ["GET","POST"])
 def beneficiary_update(id):
     if request.method == "GET":
         api = current_app.config.get('api')
-        session = current_app.config.get('session') 
+        session = current_app.config.get('session')
         url = api.beneficiary_id(id)
         response = session.get(url)
         response.raise_for_status()
