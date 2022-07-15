@@ -91,7 +91,7 @@ def member_update(id):
     isCore = request.json['isCore']
     phone = request.json['phone']
     email = request.json['email']
-    response = update_member(current_app.config['REPO'],id,govtId,idType,firstName,lastName,middleName,isCore,phone,email)
+    response = update_member(current_app.config['REPO'],id,govtId,idType,firstName,middleName,lastName,isCore,phone,email)
     return Response(
         json.dumps(response.value, cls=MemberJsonEncoder),
         mimetype="application/json",

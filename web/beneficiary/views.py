@@ -77,7 +77,7 @@ def beneficiary_update(id):
         email = request.form.get('email')
         api = current_app.config.get('api')
         session = current_app.config.get('session')
-        url = api.beneficiaries
+        url = api.beneficiary_id(id)
         response = session.post(url, json = {"firstName":firstName,"lastName":lastName,"middleName":middleName,"phone":phone,"email":email}) 
         return redirect("/beneficiaries")
 
