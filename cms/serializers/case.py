@@ -6,11 +6,11 @@ class CaseJsonEncoder(json.JSONEncoder):
         try:
             to_serialize = {
                 "case_id": o.case_id,
-                "case_state": o.fname,
-                "is_flagged": o.lname,
-                "is_urgent": o.mname,
-                "beneficiary__id": o.phone,
-                "purpose": o.email,
+                "case_state": o.case_state,
+                "is_flagged": o.is_flagged,
+                "is_urgent": o.is_urgent,
+                "beneficiary__id": o.beneficiary__id,
+                "purpose": o.purpose,
                 "title": o.title,
                 "description": o.description,
                 "family_details": o.family_details,
@@ -18,8 +18,6 @@ class CaseJsonEncoder(json.JSONEncoder):
                 "contact_details": o.contact_details,
                 "contact_address": o.contact_address,
                 "referred__by": o.referred__by,
-                "assigned__for_verification": o.assigned__for_verification,
-                "assigned__for_accounting": o.assigned__for_accounting,
                 "closed__by": o.closed__by,
                 "updated_by": o.updated_by
             }

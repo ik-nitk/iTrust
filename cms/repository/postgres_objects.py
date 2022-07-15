@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float, Enum, TIMESTAMP, BOOLEAN
-from sqlalchemy.sql import func
+from sqlalchemy import Column, Integer, String, ForeignKey, Enum, TIMESTAMP, BOOLEAN
+from sqlalchemy.sql import func, expression
 from cms.domain.id_type import IDType
+from cms.domain.case_type import CaseType
+from cms.domain.case_state import CaseState
 from sqlalchemy.ext.declarative import declarative_base
 
 
@@ -41,19 +43,17 @@ class Case(Base):
     __tablename__ = "t_case"
 
     case_id = Column(String(40), primary_key=True)
-    case_state = Column(String)
-    is_flagged = Column(BOOLEAN)
-    is_urgent = Column(BOOLEAN)
-    beneficiary__id = Column(String(40))
-    purpose = Column(String)
+    case_state = Column(Enum(CaseState))
+    is_flagged = Column(BOOLEAN, server_default=expression.false())
+    is_urgent = Column(BOOLEAN, server_default=expression.false())
+    beneficiary__id = Column(String(40), ForeignKey("beneficiary.beneficiary_id"))
+    purpose = Column(Enum(CaseType))
     title = Column(String)
     description = Column(String)
     family_details = Column(String)
-    avg_monthly_income: Column(Integer)
+    avg_monthly_income= Column(Integer)
     contact_details = Column(String)
     contact_address = Column(String)
-    referred__by = Column(String(40))
-    assigned__for_verification = Column(String(40))
-    assigned__for_accounting = Column(String(40))
+    referred__by = Column(String(40), ForeignKey("member.member_id"))
     closed__by = Column(String(40))
     updated_by = Column(String(40))

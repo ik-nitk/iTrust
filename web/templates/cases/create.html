@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <form
+    class="well form-horizontal"
+    method="post"
+    action="/cases/create"
+>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >Beneficiary Id</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i
+                            class="glyphicon glyphicon-user"
+                        ></i></span
+                    ><input
+                        id="beneficiary_id"
+                        name="beneficiary_id"
+                        class="form-control"
+                        required="true"
+                        value=""
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >Purpose</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span
+                        class="input-group-addon"
+                        style="max-width: 100%"
+                        ><i
+                            class="glyphicon glyphicon-list"
+                        ></i
+                    ></span>
+                    <select
+                        class="selectpicker form-control"
+                        id="purpose"
+                        name="purpose"
+                    >
+                        <option>Select purpose</option>
+                        <option>EDUCATION</option>
+                        <option>HOSPITAL</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >Title</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i
+                            class="glyphicon glyphicon-user"
+                        ></i></span
+                    ><input
+                        id="title"
+                        name="title"
+                        class="form-control"
+                        required="true"
+                        value=""
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"
+                >Description</label
+            >
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i
+                            class="glyphicon glyphicon-user"
+                        ></i></span
+                    ><input
+                        id="description"
+                        name="description"
+                        class="form-control"
+                        value=""
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <button
+            type="submit" class="btn btn-primary"
+            id="submit"
+            style="margin-left: 25%"
+        >
+            Submit
+        </button>
+</form>
+</div>
+{% endblock %}

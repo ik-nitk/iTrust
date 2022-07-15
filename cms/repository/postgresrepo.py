@@ -5,6 +5,7 @@ from nanoid import generate
 from cms.domain import beneficiary
 from cms.domain import member
 from cms.domain import case
+from cms.domain.case_state import CaseState
 from cms.repository.postgres_objects import Base, Beneficiary, Member, Case
 
 
@@ -57,15 +58,14 @@ class PostgresRepo:
         query = session.query(Case)
         return self._create_case_objects(query.all())
 
-    def _create_case_objects(self, results):
-        return [
-            case.Case(
+    def _create_case_object(self, q):
+        return case.Case(
                 case_id=q.case_id,
-                case_state= q.fname,
-                is_flagged= q.lname,
-                is_urgent= q.mname,
-                beneficiary__id= q.phone,
-                purpose= q.email,
+                case_state= q.case_state,
+                is_flagged= q.is_flagged,
+                is_urgent= q.is_urgent,
+                beneficiary__id= q.beneficiary__id,
+                purpose= q.purpose,
                 title= q.title,
                 description= q.description,
                 family_details= q.family_details,
@@ -73,12 +73,13 @@ class PostgresRepo:
                 contact_details= q.contact_details,
                 contact_address= q.contact_address,
                 referred__by= q.referred__by,
-                assigned__for_verification= q.assigned__for_verification,
-                assigned__for_accounting= q.assigned__for_accounting,
                 closed__by= q.closed__by,
                 updated_by= q.updated_by
             )
-            for q in results
+
+    def _create_case_objects(self, results):
+        return [
+            self._create_case_object(q) for q in results
         ]
 
     def member_list(self, filters=None):
@@ -156,7 +157,7 @@ class PostgresRepo:
         session.commit()
         return new_member.member_id
 
-    def create_beneficiary(self, fname,lname,mname, phone, email):
+    def create_beneficiary(self, fname,lname, mname, phone, email):
         beneficiary_id = f"i.ben.{generate()}"
         new_beneficiary = Beneficiary(beneficiary_id = beneficiary_id,fname = fname,lname=lname,mname = mname,phone = phone,email=email)
         DBSession = sessionmaker(bind=self.engine)
@@ -165,9 +166,9 @@ class PostgresRepo:
         session.commit()
         return new_beneficiary.beneficiary_id
 
-    def create_case(self, title,purpose,description, contact_details, contact_address):
+    def create_case(self, beneficiary_id, purpose, title, description='', contact_details='', contact_address=''):
         case_id = f"i.case.{generate()}"
-        new_case = Case(case_id = case_id,title = title,purpose=purpose,description = description,contact_details = contact_details,contact_address=contact_address)
+        new_case = Case(case_id = case_id, beneficiary__id=beneficiary_id, case_state=CaseState.DRAFT, title=title, purpose=purpose, description=description, contact_details=contact_details,contact_address=contact_address)
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         session.add(new_case)
@@ -215,24 +216,29 @@ class PostgresRepo:
         session.commit()
         return member
 
-def view_beneficiary(self, beneficiary_id):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        query = session.query(Beneficiary)\
-            .with_entities(Beneficiary)\
-                .filter_by(beneficiary_id = beneficiary_id ).all()
-        return query
+    def view_beneficiary(self, beneficiary_id):
+            DBSession = sessionmaker(bind=self.engine)
+            session = DBSession()
+            query = session.query(Beneficiary)\
+                .with_entities(Beneficiary)\
+                    .filter_by(beneficiary_id = beneficiary_id ).all()
+            return query
 
-def update_beneficiary(self, beneficiary_id,fname,lname,mname, phone, email):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        beneficiary = session.query(Beneficiary)\
-            .with_entities(Beneficiary)\
-                .filter_by(beneficiary_id = beneficiary_id ).first()
-        beneficiary.fname = fname
-        beneficiary.mname = mname
-        beneficiary.lname = lname
-        beneficiary.phone = phone
-        beneficiary.email = email
-        session.commit()
-        return beneficiary
+    def update_beneficiary(self, beneficiary_id,fname,lname,mname, phone, email):
+            DBSession = sessionmaker(bind=self.engine)
+            session = DBSession()
+            beneficiary = session.query(Beneficiary)\
+                .with_entities(Beneficiary)\
+                    .filter_by(beneficiary_id = beneficiary_id ).first()
+            beneficiary.fname = fname
+            beneficiary.mname = mname
+            beneficiary.lname = lname
+            beneficiary.phone = phone
+            beneficiary.email = email
+            session.commit()
+            return beneficiary
+
+    def find_case(self, case_id):
+            DBSession = sessionmaker(bind=self.engine)
+            session = DBSession()
+            return self._create_case_object(session.query(Case).get(case_id))
