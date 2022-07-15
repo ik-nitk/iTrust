@@ -1,0 +1,103 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+    <form
+        class="well form-horizontal"
+        method="post"
+        action="/beneficiaries/update/{{beneficiaries[0].beneficiary_id}}"
+    >
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">First Name</label>
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i class="glyphicon glyphicon-user"></i></span
+                    ><input
+                        id="first_name"
+                        name="first_name"
+                        class="form-control"
+                        required="true"
+                        value="{{beneficiaries[0].fname}}"
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Middle Name</label>
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i class="glyphicon glyphicon-user"></i></span
+                    ><input
+                        id="middle_name"
+                        name="middle_name"
+                        class="form-control"
+                        value="{{beneficiaries[0].mname}}"
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Last Name</label>
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i class="glyphicon glyphicon-user"></i></span
+                    ><input
+                        id="last_name"
+                        name="last_name"
+                        class="form-control"
+                        value="{{beneficiaries[0].lname}}"
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Phone Number</label>
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i class="glyphicon glyphicon-earphone"></i></span
+                    ><input
+                        id="phone_no"
+                        name="phone_no"
+                        class="form-control"
+                        required="true"
+                        value="{{beneficiaries[0].phone}}"
+                        type="text"
+                        maxlength="10"
+                        minlength="10"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i class="glyphicon glyphicon-envelope"></i></span
+                    ><input
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        required="true"
+                        value="{{beneficiaries[0].email}}"
+                        type="text"
+                    />
+                </div>
+            </div>
+        </div>
+        <button
+            type="submit"
+            class="btn btn-primary"
+            id="submit"
+            style="margin-left: 25%"
+        >
+            Submit
+        </button>
+    </form>
+</div>
+{% endblock %}

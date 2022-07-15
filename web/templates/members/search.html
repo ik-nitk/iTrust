@@ -1,0 +1,97 @@
+{% extends "base.html" %} {% block content %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Search Member</title>
+        <link
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+            rel="stylesheet"
+            id="bootstrap-css"
+        />
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                function load_data(query) {
+                    $.ajax({
+                        url: "/members/search",
+                        method: "POST",
+                        data: { query: query },
+                        success: function (data) {
+                            $("#result").html(data);
+                            $("#result").append(data.htmlresponse);
+                        },
+                    });
+                }
+                const debounce = (func, wait, immediate) => {
+                    var timeout;
+
+                    return function executedFunction() {
+                        var context = this;
+                        var args = arguments;
+
+                        var later = function () {
+                            timeout = null;
+                            if (!immediate) func.apply(context, args);
+                        };
+
+                        var callNow = immediate && !timeout;
+
+                        clearTimeout(timeout);
+
+                        timeout = setTimeout(later, wait);
+
+                        if (callNow) func.apply(context, args);
+                    };
+                };
+                $("#search_text").keyup(
+                    debounce(function () {
+                        var search = $(this).val();
+                        if (search.length > 2) {
+                            load_data(search);
+                        } 
+                    }, 1000)
+                );
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container search-table">
+            <div class="search-box">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h5>Search Members</h5>
+                    </div>
+                    <div class="col-md-9">
+                        <input
+                            type="text"
+                            name="search_text"
+                            id="search_text"
+                            class="form-control"
+                            placeholder="Search By Name Or GovtID"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div id="result"></div>
+        </div>
+        <style>
+            .search-table {
+                padding: 10%;
+                margin-top: -6%;
+            }
+            .search-box {
+                background: #c1c1c1;
+                border: 1px solid #ababab;
+                padding: 3%;
+            }
+            .search-box input:focus {
+                box-shadow: none;
+                border: 2px solid #eeeeee;
+            }
+        </style>
+    </body>
+</html>
+{% endblock %}

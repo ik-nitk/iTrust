@@ -1,28 +1,37 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container">
-  <a class="btn btn-primary" href="{{ url_for('member.create_member') }}" role="button">Create</a>
-  <div class="col-xs-12" style="height:25px;"></div>
-  <table id="data" class="table table-striped table-sm mx-auto text-center">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Phone Number</th>
-        <th>Email</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for member in members %}
-        <tr>
-          <td>{{ member.member_id}}</td>
-          <td>{{ member.fname }}</td>
-          <td>{{ member.phone }}</td>
-          <td>{{ member.email }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <a
+        class="btn btn-primary"
+        href="{{ url_for('member.create_member') }}"
+        role="button"
+        >Create</a
+    >
+    <a
+        class="btn btn-primary"
+        href="{{ url_for('member.member_search') }}"
+        role="button"
+        >Search</a
+    >
+    <div class="col-xs-12" style="height: 25px"></div>
+    <table id="data" class="table table-striped table-sm mx-auto text-center">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in members %}
+            <tr>
+                <td>{{ member.member_id}}</td>
+                <td>{{ member.fname }}</td>
+                <td>{{ member.phone }}</td>
+                <td>{{ member.email }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
