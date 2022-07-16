@@ -180,7 +180,7 @@ class PostgresRepo:
         session = DBSession()
         query = session.query(Member)\
             .with_entities(Member)\
-                .filter(Member.fname.like("%"+search_input+"%") | Member.mname.like("%"+search_input+"%") | Member.lname.like("%"+search_input+"%") | Member.govt_id.like("%"+search_input+"%")).all()
+                .filter(Member.fname.ilike("%"+search_input+"%") | Member.mname.ilike("%"+search_input+"%") | Member.lname.ilike("%"+search_input+"%") | Member.govt_id.ilike("%"+search_input+"%")).all()
         return query
 
     def search_beneficiary(self, search_input):
@@ -188,7 +188,7 @@ class PostgresRepo:
         session = DBSession()
         query = session.query(Beneficiary)\
             .with_entities(Beneficiary)\
-                .filter(Beneficiary.fname.like("%"+search_input+"%") | Beneficiary.mname.like("%"+search_input+"%") | Beneficiary.lname.like("%"+search_input+"%") ).all()
+                .filter(Beneficiary.fname.ilike("%"+search_input+"%") | Beneficiary.mname.ilike("%"+search_input+"%") | Beneficiary.lname.ilike("%"+search_input+"%") ).all()
         return query
 
     def view_member(self, member_id):

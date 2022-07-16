@@ -57,15 +57,12 @@ def member_search():
 
 @blueprint.route("/members/view/<id>",methods = ["GET"])
 def member_view(id):
-    print(id)
     api = current_app.config.get('api')
     session = current_app.config.get('session')
     url = api.member_id(id)
-    print(url)
     response = session.get(url)
     response.raise_for_status()
     members = response.json()
-    print(members)
     return render_template("members/view.html", members=members)
 
 

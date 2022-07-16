@@ -24,7 +24,7 @@ class BackendApiBuilder:
 
     @property
     def member_search(self):
-        return self.base + 'members/search'
+        return self.members + '/search'
 
     @property
     def beneficiaries(self):
@@ -42,8 +42,9 @@ class BackendApiBuilder:
         """
         return self.beneficiaries + '/{}'.format(beneficiary_id)
 
+    @property
     def beneficiary_search(self):
-        return self.base + 'beneficiaries/search'
+        return self.beneficiaries + '/search'
 
     @property
     def cases(self):
