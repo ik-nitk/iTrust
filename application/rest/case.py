@@ -2,11 +2,11 @@ import json
 
 from flask import Blueprint, request, Response, current_app,jsonify
 
-from cms.use_cases.case_list import case_list_use_case
+from cms.use_cases.case import case_list_use_case
 from cms.serializers.case import CaseJsonEncoder
 from cms.requests.case_list import build_case_list_request
 from common.responses import ResponseTypes
-from cms.use_cases.create_case import create_new_case
+from cms.use_cases.case import create_new_case
 
 blueprint = Blueprint("case", __name__)
 

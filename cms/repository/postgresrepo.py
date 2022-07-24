@@ -5,8 +5,9 @@ from nanoid import generate
 from cms.domain import beneficiary
 from cms.domain import member
 from cms.domain import case
+from cms.domain import case_docs
 from cms.domain.case_state import CaseState
-from cms.repository.postgres_objects import Base, Beneficiary, Member, Case
+from cms.repository.postgres_objects import Base, Beneficiary, Member, Case, CaseDocs
 
 
 class PostgresRepo:
@@ -38,6 +39,24 @@ class PostgresRepo:
             )
             for q in results
         ]
+
+    def _create_case_docs_objects(self, results):
+        return [
+            case_docs.CaseDocs(
+                case_id=q.case_id,
+                doc_type=q.doc_type,
+                doc_id=q.doc_id,
+                doc_name=q.doc_name,
+                doc_url=q.doc_url
+            )
+            for q in results
+        ]
+
+    def case_doc_list(self, case_id):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        query = session.query(CaseDocs)
+        return self._create_case_docs_objects(query.filter(CaseDocs.case_id == case_id))
 
     def _create_beneficiary_objects(self, results):
         return [
@@ -156,6 +175,39 @@ class PostgresRepo:
         session.add(new_member)
         session.commit()
         return new_member.member_id
+
+    def create_case_doc(self, case_id, doc_type, doc_name, doc_url):
+        doc_id = f"i.doc.{generate()}"
+        new_doc = CaseDocs(doc_id=doc_id, doc_type=doc_type, case_id=case_id, doc_url=doc_url, doc_name=doc_name)
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        session.add(new_doc)
+        session.commit()
+        return new_doc.doc_id
+
+    def add_case_docs(self, doc_list: list[case_docs.CaseDocs]):
+        db_doc_objs = [
+            CaseDocs(
+                case_id=q.case_id,
+                doc_type=q.doc_type,
+                doc_id=q.doc_id if q.doc_id else f"i.doc.{generate()}",
+                doc_name=q.doc_name,
+                doc_url=q.doc_url
+            )
+            for q in doc_list
+        ]
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        session.add_all(db_doc_objs)
+        session.commit()
+        return
+
+    def delete_case_doc(self, doc_id):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        doc = session.query(CaseDocs).get(doc_id)
+        session.delete(doc)
+        session.commit()
 
     def create_beneficiary(self, fname,lname, mname, phone, email):
         beneficiary_id = f"i.ben.{generate()}"
