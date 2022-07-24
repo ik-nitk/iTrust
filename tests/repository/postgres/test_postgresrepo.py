@@ -1,6 +1,9 @@
+from cms.domain import case_docs
+from cms.domain import doc_type
 from cms.domain.case_type import CaseType
 import pytest
 from cms.repository import postgresrepo
+from cms.domain.doc_type import DocType
 
 pytestmark = pytest.mark.integration
 
@@ -25,6 +28,36 @@ def test_create_case(
     repo_case = repo.find_case(case_id)
 
     assert repo_case.title == 't.121'
+
+
+## CREATE CASE AND ADD DOCUMENT TEST-------------------------------
+def test_create_case_add_doc(
+    app_configuration, pg_session, pg_test_data_case
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.555', purpose=CaseType.EDUCATION, description='')
+    # Add 2 docuemnts to the case
+    doc1 = repo.create_case_doc(case_id, doc_type=DocType.INITIAL_CASE_DOC, doc_name='', doc_url='some_url')
+    doc2 = repo.create_case_doc(case_id, doc_type=DocType.INITIAL_CASE_DOC, doc_name='', doc_url='some_url')
+    docs = [
+        case_docs.CaseDocs(
+            case_id=case_id,
+            doc_id=str(i),
+            doc_name=str(i),
+            doc_url=str(i),
+            doc_type=DocType.INITIAL_CASE_DOC
+        )
+        for i in range(2)
+    ]
+    repo.add_case_docs(docs)
+    repo_case_docs = repo.case_doc_list(case_id)
+
+    repo.delete_case_doc(doc1)
+    repo.delete_case_doc(doc2)
+    repo.delete_case_doc('0')
+    repo.delete_case_doc('1')
+
+    assert len(repo_case_docs) == 4
 
 ## MEMBERS TESTING -------------------------------
 def test_repository_list_without_parameters(

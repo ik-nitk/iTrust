@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<h3> Upload case related documents here </h3>
+<a href="http://docs.dropzone.dev" target="_blank" rel="nofollow">documentation</a>
+<form action="/fms/api/v1/documents"
+      class="dropzone"
+      id="my-awesome-dropzone"></form>
+
+<form action="/cases/{{id}}/submit_files" method="post" id="files">
+      <div id="entries"></div>
+      <input type="submit" value="Submit">
+</form>
+
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script language="javascript">
+  Dropzone.options.myAwesomeDropzone = { // camelized version of the `id`
+    maxFilesize: 5, // MB
+    init: function() {
+      this.on("success", (file, response) => {
+            const files = JSON.parse(file.xhr.response);
+            console.log(files);
+            add(files.files)
+      });
+    }
+  };
+
+  function add(files) {
+
+      //Create an input type dynamically.
+      var element = document.createElement("input");
+
+      //Assign different attributes to the element.
+      element.setAttribute("type", 'text');
+      element.setAttribute("value", files[0].name);
+      element.setAttribute("name", files[0].url);
+
+
+      var foo = document.getElementById("entries");
+
+      //Append the element in page (in span).
+      foo.appendChild(element);
+
+}
+</script>
+{% endblock %}
+

@@ -15,7 +15,16 @@ def case_list_view():
     cases=response.json()
     return render_template("cases/list.html", cases=cases)
 
-@blueprint.route("/cases/create",methods = ["GET","POST"])
+
+@blueprint.route("/cases/<id>/submit_files", methods = ["POST"])
+def submit_case_docs(id):
+    return "200"
+
+@blueprint.route("/cases/<id>/upload", methods = ["GET"])
+def upload_case_docs(id):
+    return render_template('cases/upload_case_docs.html', id=id)
+
+@blueprint.route("/cases/create", methods = ["GET","POST"])
 def create_case():
     if request.method == 'GET':
         return render_template("cases/create.html")

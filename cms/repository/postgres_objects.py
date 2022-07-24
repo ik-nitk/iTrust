@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Enum, TIMESTAMP, BOO
 from sqlalchemy.sql import func, expression
 from cms.domain.id_type import IDType
 from cms.domain.case_type import CaseType
+from cms.domain.doc_type import DocType
 from cms.domain.case_state import CaseState
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -38,6 +39,14 @@ class Beneficiary(Base):
     mname = Column(String)
     phone = Column(String(20))
     email = Column(String)
+
+class CaseDocs(Base):
+    __tablename__ = "t_case_docs"
+    doc_id = Column(String(40), primary_key=True)
+    doc_type = Column(Enum(DocType))
+    doc_url = Column(String)
+    case_id = Column(String(40), ForeignKey("t_case.case_id"))
+    doc_name = Column(String)
 
 class Case(Base):
     __tablename__ = "t_case"
