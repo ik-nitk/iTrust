@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block content %}
-<div class="container">
+<div class="container-fluid" style="width: 40rem;">
     <a
         class="btn btn-primary"
         href="{{ url_for('beneficiary.create_beneficiary') }}"
@@ -23,12 +23,15 @@
             </tr>
         </thead>
         <tbody>
-            {% for beneficy in beneficiaries %}
+            {% for beneficiary in beneficiaries %}
             <tr>
-                <td>{{ beneficy.beneficiary_id}}</td>
-                <td>{{ beneficy.fname }}</td>
-                <td>{{ beneficy.phone }}</td>
-                <td>{{ beneficy.email }}</td>
+                <td><td><a
+                    href="{{ url_for('beneficiary.beneficiary_view', id=beneficiary.beneficiary_id) }}"
+                    >view beneficiary</a>
+                </td>
+                <td>{{ beneficiary.fname }}</td>
+                <td>{{ beneficiary.phone }}</td>
+                <td>{{ beneficiary.email }}</td>
             </tr>
             {% endfor %}
         </tbody>

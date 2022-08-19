@@ -54,6 +54,12 @@ class BackendApiBuilder:
         """
         return self.base + 'cases'
 
+    def case_initial_docs(self, case_id):
+        return self.cases + '/{}'.format(case_id) + '/add_initial_documents'
+
+    def case_doc_list(self, case_id, doc_type):
+        return self.case_id(case_id) + '/docs?doc_type={}'.format(doc_type)
+
     def case_id(self, case_id):
         """
         Generates endpoint for retrieving/updating task with given cases_id

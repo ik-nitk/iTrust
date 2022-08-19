@@ -29,6 +29,13 @@ def test_create_case(
 
     assert repo_case.title == 't.121'
 
+## CREATE CASE TESTING NOT FOUND-------------------------------
+def test_create_case_not_found(
+    app_configuration, pg_session, pg_test_data_case
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+    repo_case = repo.find_case('i.ben.not_found')
+    assert repo_case == None
 
 ## CREATE CASE AND ADD DOCUMENT TEST-------------------------------
 def test_create_case_add_doc(
@@ -45,19 +52,19 @@ def test_create_case_add_doc(
             doc_id=str(i),
             doc_name=str(i),
             doc_url=str(i),
-            doc_type=DocType.INITIAL_CASE_DOC
+            doc_type=DocType.CASE_PAYMENT_RECEIPTS
         )
         for i in range(2)
     ]
     repo.add_case_docs(docs)
-    repo_case_docs = repo.case_doc_list(case_id)
+    repo_case_docs = repo.case_doc_list(case_id, DocType.INITIAL_CASE_DOC)
 
     repo.delete_case_doc(doc1)
     repo.delete_case_doc(doc2)
     repo.delete_case_doc('0')
     repo.delete_case_doc('1')
 
-    assert len(repo_case_docs) == 4
+    assert len(repo_case_docs) == 2
 
 ## MEMBERS TESTING -------------------------------
 def test_repository_list_without_parameters(

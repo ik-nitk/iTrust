@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from nanoid import generate
 
@@ -52,11 +52,15 @@ class PostgresRepo:
             for q in results
         ]
 
-    def case_doc_list(self, case_id):
+    def case_doc_list(self, case_id, doc_type):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         query = session.query(CaseDocs)
-        return self._create_case_docs_objects(query.filter(CaseDocs.case_id == case_id))
+        return self._create_case_docs_objects(query.filter(
+            and_(
+                CaseDocs.case_id == case_id,
+                CaseDocs.doc_type == doc_type
+        )))
 
     def _create_beneficiary_objects(self, results):
         return [
@@ -78,6 +82,8 @@ class PostgresRepo:
         return self._create_case_objects(query.all())
 
     def _create_case_object(self, q):
+        if q is None:
+            return None
         return case.Case(
                 case_id=q.case_id,
                 case_state= q.case_state,

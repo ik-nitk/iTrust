@@ -1,5 +1,14 @@
 {% extends "base.html" %} {% block content %}
-<div class="container">
+<div class="container-fluid" style="width: 40rem;">
+    <a
+        class="btn btn-primary"
+        href="{{ url_for('case.create_case', for=beneficiaries[0].beneficiary_id) }}"
+        role="button"
+            >Create case</a
+    >
+    <br/>
+    <br/>
+    <br/>
     <form class="well form-horizontal">
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">First Name</label>

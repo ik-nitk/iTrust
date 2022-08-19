@@ -2,11 +2,10 @@ import json
 
 from flask import Blueprint, request, Response, current_app,jsonify
 
-from cms.use_cases.case import case_list_use_case
-from cms.serializers.case import CaseJsonEncoder
+from cms.use_cases.case import case_list_use_case, create_new_case, add_initial_documents_use_case, view_case, doc_list
+from cms.serializers.case import CaseJsonEncoder, CaseDocsJsonEncoder
 from cms.requests.case_list import build_case_list_request
 from common.responses import ResponseTypes
-from cms.use_cases.case import create_new_case
 
 blueprint = Blueprint("case", __name__)
 
@@ -17,6 +16,35 @@ STATUS_CODES = {
     ResponseTypes.SYSTEM_ERROR: 500,
 }
 
+
+@blueprint.route("/api/v1/cases/<case_id>/add_initial_documents", methods=["POST"])
+def add_initial_documents(case_id):
+    doc_list = request.json['doc_list']
+    response = add_initial_documents_use_case(current_app.config.get('REPO'), case_id, doc_list)
+    return Response(
+        json.dumps(response.value, cls=CaseJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/cases/<id>", methods=["GET"])
+def case_view(id):
+    response = view_case(current_app.config.get('REPO'), id)
+    return Response(
+        json.dumps(response.value, cls=CaseJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/cases/<id>/docs", methods=["GET"])
+def doc_list_api(id):
+    doc_type = request.args.get('doc_type')
+    response = doc_list(current_app.config.get('REPO'), id, doc_type)
+    return Response(
+        json.dumps(response.value, cls=CaseDocsJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
 
 @blueprint.route("/api/v1/cases", methods=["GET"])
 def case_list():
