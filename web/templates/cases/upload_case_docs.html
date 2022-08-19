@@ -2,20 +2,60 @@
 
 
 {% block content %}
+<div class="container-fluid" style="width: 40rem;">
 <h3> Upload case related documents here </h3>
-<a href="http://docs.dropzone.dev" target="_blank" rel="nofollow">documentation</a>
 <form action="/fms/api/v1/documents"
       class="dropzone"
       id="my-awesome-dropzone"></form>
-
-<form action="/cases/{{id}}/submit_files" method="post" id="files">
-      <div id="entries"></div>
-      <input type="submit" value="Submit">
-</form>
+<h4 id="message"></h4>
+<div class="card" style="width: 40rem;">
+      <div class="card-body">
+          <ul id="entries" class="list-group">
+          </ul>
+      </div>
+</div>
+<button class="btn btn-outline-success" id='submit' disabled onclick="submit_files()">Submit</button>
 
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 <script language="javascript">
+
+  // Gobal files
+  const doc_list = [];
+  const url = "/cases/{{id}}/add_initial_documents";
+
+async function submit_files() {
+      console.log(`Submitting files ${doc_list} to ${url}`);
+      document.getElementById("message").innerHTML = '';
+      document.getElementById("submit").disabled = true;
+      try {
+            const response  = await fetch(url, {
+                  method: 'POST',
+                  headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({doc_list: doc_list})
+            });
+            if (!response.ok) {
+                  throw response;
+            }
+            const content = await response.json();
+            console.log(content);
+            document.getElementById("submit").disabled = false;
+            window.location.pathname = content.redirect;
+      } catch(err) {
+            if (err.text) {
+              err.text().then( errorMessage => {
+                  document.getElementById("message").innerHTML = errorMessage;
+              })
+            } else {
+                  document.getElementById("message").innerHTML = err.message;
+            }
+      }
+
+  }
+
   Dropzone.options.myAwesomeDropzone = { // camelized version of the `id`
     maxFilesize: 5, // MB
     init: function() {
@@ -27,23 +67,23 @@
     }
   };
 
-  function add(files) {
+function add(files) {
 
-      //Create an input type dynamically.
-      var element = document.createElement("input");
+      document.getElementById("submit").disabled = false;
+      // Create an <li> dynamically.
+      var element = document.createElement("li");
+      element.classList.add("list-group-item");
 
       //Assign different attributes to the element.
-      element.setAttribute("type", 'text');
-      element.setAttribute("value", files[0].name);
-      element.setAttribute("name", files[0].url);
-
-
+      element.innerHTML = files[0].name;
       var foo = document.getElementById("entries");
 
       //Append the element in page (in span).
       foo.appendChild(element);
+      doc_list.push({'doc_url': files[0].url, 'doc_name': files[0].name})
 
 }
 </script>
+</div>
 {% endblock %}
 

@@ -52,7 +52,6 @@ def beneficiary_view(id):
     api = current_app.config.get('api')
     session = current_app.config.get('session')
     url = api.beneficiary_id(id)
-    print(url)
     response = session.get(url)
     response.raise_for_status()
     beneficiaries = response.json()

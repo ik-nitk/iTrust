@@ -20,11 +20,13 @@ def case_list_use_case(repo, request):
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
 
-def add_initial_documents(repo, case_id, doc_list):
+def add_initial_documents_use_case(repo, case_id, doc_list):
     try:
         case = repo.find_case(case_id=case_id)
+        if case is None:
+            return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Case not found")
         if case.case_state is not CaseState.DRAFT:
-            raise Exception("Adding documents after case is published is not allowed")
+            return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Adding documents after case is published is not allowed")
         case_docs = [
             CaseDocs(
                 case_id=case_id,
@@ -40,9 +42,9 @@ def add_initial_documents(repo, case_id, doc_list):
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
-def doc_list(repo, case_id):
+def doc_list(repo, case_id, doc_type=DocType.INITIAL_CASE_DOC):
     try:
-        docs = repo.case_doc_list(case_id=case_id)
+        docs = repo.case_doc_list(case_id, doc_type)
         return ResponseSuccess(docs)
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
@@ -51,5 +53,14 @@ def create_new_case(repo, beneficiary_id, purpose, title, description):
     try:
         id = repo.create_case(beneficiary_id=beneficiary_id, purpose=purpose, title=title, description=description)
         return ResponseSuccess(id)
+    except Exception as exc:
+        return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
+
+def view_case(repo, case_id):
+    try:
+        case = repo.find_case(case_id)
+        if case is None:
+            raise Exception("Case not found")
+        return ResponseSuccess(case)
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)

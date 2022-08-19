@@ -7,7 +7,7 @@ from cms.domain.case import Case
 from cms.domain.case_state import CaseState
 from cms.domain.doc_type import DocType
 from cms.domain.case_type import CaseType
-from cms.use_cases.case import create_new_case, add_initial_documents
+from cms.use_cases.case import create_new_case, add_initial_documents_use_case
 from common.responses import ResponseTypes
 
 
@@ -50,7 +50,7 @@ def test_add_documents():
         purpose=CaseType.EDUCATION,
         beneficiary__id='i.ben.1234'
     )
-    response = add_initial_documents(repo, case_id='case_id', doc_list=[
+    response = add_initial_documents_use_case(repo, case_id='case_id', doc_list=[
         {"doc_url":"url1", "doc_name": "doc_name1"},
         {"doc_url":"url2", "doc_name": "doc_name2"}
     ])

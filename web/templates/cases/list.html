@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid" style="width: 40rem;">
   <a class="btn btn-primary" href="{{ url_for('case.create_case') }}" role="button">Create</a>
   <div class="col-xs-12" style="height:25px;"></div>
   <table id="data" class="table table-striped table-sm mx-auto text-center">
@@ -16,7 +16,10 @@
     <tbody>
       {% for case in cases %}
         <tr>
-          <td>{{ case.case_id}}</td>
+          <td><a
+            href="{{ url_for('case.case_view', id=case.case_id) }}"
+            >view case</a>
+            </td>
           <td>{{ case.title }}</td>
           <td>{{ case.purpose }}</td>
           <td>{{ case.contact_details }}</td>

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid" style="width: 40rem;">
     <form
     class="well form-horizontal"
     method="post"
@@ -22,7 +22,7 @@
                         name="beneficiary_id"
                         class="form-control"
                         required="true"
-                        value=""
+                        value="{{beneficiary.beneficiary_id if beneficiary else ''}}"
                         type="text"
                     />
                 </div>
