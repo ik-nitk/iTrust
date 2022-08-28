@@ -2,7 +2,13 @@ import json
 
 from flask import Blueprint, request, Response, current_app,jsonify
 
-from cms.use_cases.case import case_list_use_case, create_new_case, add_initial_documents_use_case, view_case, doc_list
+from cms.use_cases.case import (
+    case_list_use_case,
+    create_new_case,
+    add_initial_documents_use_case,
+    view_case,
+    doc_list,
+    publish_case_use_case)
 from cms.serializers.case import CaseJsonEncoder, CaseDocsJsonEncoder
 from cms.requests.case_list import build_case_list_request
 from common.responses import ResponseTypes
@@ -16,6 +22,14 @@ STATUS_CODES = {
     ResponseTypes.SYSTEM_ERROR: 500,
 }
 
+@blueprint.route("/api/v1/cases/<case_id>/publish", methods=["POST"])
+def publish_case(case_id):
+    response = publish_case_use_case(current_app.config.get('REPO'), case_id)
+    return Response(
+        json.dumps(response.value, cls=CaseJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
 
 @blueprint.route("/api/v1/cases/<case_id>/add_initial_documents", methods=["POST"])
 def add_initial_documents(case_id):

@@ -57,6 +57,9 @@ class BackendApiBuilder:
     def case_initial_docs(self, case_id):
         return self.cases + '/{}'.format(case_id) + '/add_initial_documents'
 
+    def publish_case(self, case_id):
+        return self.cases + '/{}'.format(case_id) + '/publish'
+
     def case_doc_list(self, case_id, doc_type):
         return self.case_id(case_id) + '/docs?doc_type={}'.format(doc_type)
 

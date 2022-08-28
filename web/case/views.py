@@ -1,5 +1,8 @@
+from turtle import title
+from cms.domain.case_state import CaseState
 from flask import Blueprint, render_template, current_app, request, redirect, url_for, Response
 import requests
+from cms.domain.utils import isNotBlank
 from concurrent.futures import ThreadPoolExecutor, wait
 import json
 
@@ -36,9 +39,10 @@ def get_beneficiary_details(api, session, id):
     response = session.get(url)
     response.raise_for_status()
     beneficiaries = response.json()
+    assert beneficiaries and len(beneficiaries) > 0, "Invalid beneficiary_id"
     return beneficiaries[0]
 
-@blueprint.route("/cases/view/<id>",methods = ["GET"])
+@blueprint.route("/cases/view/<id>", methods = ["GET"])
 def case_view(id):
     api = current_app.config.get('api')
     session = current_app.config.get('session')
@@ -49,7 +53,21 @@ def case_view(id):
     case = futures[0].result()
     initial_doc_list=futures[1].result()
     beneficiary = get_beneficiary_details(api, session, case['beneficiary__id'])
-    return render_template("cases/view.html", case=case, beneficiary=beneficiary, initial_doc_list=initial_doc_list)
+    return render_template("cases/view.html",
+        case=case,
+        beneficiary=beneficiary,
+        initial_doc_list=initial_doc_list,
+        publish_disable=((case['case_state'] != CaseState.DRAFT) or (case['case_state'] == CaseState.DRAFT and len(initial_doc_list) == 0))
+    )
+
+@blueprint.route("/cases/<id>/publish", methods = ["POST"])
+def publish_case(id):
+    api = current_app.config.get('api')
+    session = current_app.config.get('session')
+    url = api.publish_case(id)
+    response = session.post(url)
+    response.raise_for_status()
+    return redirect('/cases/view/' + id)
 
 @blueprint.route("/cases/<id>/add_initial_documents", methods = ["POST"])
 def add_initial_case_documents(id):
@@ -83,26 +101,33 @@ def upload_case_docs(id):
 
 @blueprint.route("/cases/create", methods = ["GET","POST"])
 def create_case():
-    if request.method == 'GET':
-        for_ben = request.args.get('for')
-        beneficiary = None
-        if for_ben:
-            api = current_app.config.get('api')
-            session = current_app.config.get('session')
-            url = api.beneficiary_id(for_ben)
-            response = session.get(url)
-            response.raise_for_status()
-            beneficiary = response.json()[0]
-        return render_template("cases/create.html", beneficiary=beneficiary)
-    else:
-        beneficiary_id = request.form.get('beneficiary_id')
-        purpose = request.form.get('purpose')
-        title = request.form.get('title')
-        description = request.form.get('description')
-        api = current_app.config.get('api')
-        session = current_app.config.get('session')
-        url = api.cases
-        response = session.post(url, json = {"beneficiary_id":beneficiary_id,"purpose":purpose,"title":title,"description":description})
-        response.raise_for_status()
-        return redirect(url_for('case.case_list_view'))
+    try:
+        if request.method == 'GET':
+            for_ben = request.args.get('for')
+            beneficiary = None
+            if for_ben:
+                api = current_app.config.get('api')
+                session = current_app.config.get('session')
+                url = api.beneficiary_id(for_ben)
+                response = session.get(url)
+                response.raise_for_status()
+                beneficiary = response.json()[0]
+            return render_template("cases/create.html", beneficiary=beneficiary)
+        else:
+                beneficiary_id = request.form.get('beneficiary_id')
+                purpose = request.form.get('purpose')
+                title = request.form.get('title')
+                description = request.form.get('description')
+                api = current_app.config.get('api')
+                session = current_app.config.get('session')
+                url = api.cases
+                assert isNotBlank(beneficiary_id) and isNotBlank(title) and isNotBlank(description), "values can't be empty"
+                beneficiary = get_beneficiary_details(api, session, beneficiary_id)
+                assert beneficiary
+                response = session.post(url, json = {"beneficiary_id":beneficiary_id,"purpose":purpose,"title":title,"description":description})
+                response.raise_for_status()
+                case_id = response.json()
+                return redirect('/cases/view/' + case_id)
+    except Exception as e:
+        return render_template("error.html", error_msg=str(e))
 

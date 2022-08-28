@@ -43,4 +43,3 @@ def update_beneficiary(repo, beneficiary_id,fname,mname,lname,phone,email):
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
-        
