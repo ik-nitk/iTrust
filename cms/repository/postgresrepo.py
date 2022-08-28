@@ -233,6 +233,18 @@ class PostgresRepo:
         session.commit()
         return new_case.case_id
 
+    def update_case_state(self, case_id, new_state):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        session.query(
+            Case
+        ).filter(
+            Case.case_id == case_id
+        ).update({
+            Case.case_state: new_state
+        })
+        session.commit()
+
     def search_member(self, search_input):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()

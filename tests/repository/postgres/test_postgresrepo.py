@@ -1,6 +1,7 @@
 from cms.domain import case_docs
 from cms.domain import doc_type
 from cms.domain.case_type import CaseType
+from cms.domain.case_state import CaseState
 import pytest
 from cms.repository import postgresrepo
 from cms.domain.doc_type import DocType
@@ -36,6 +37,16 @@ def test_create_case_not_found(
     repo = postgresrepo.PostgresRepo(app_configuration)
     repo_case = repo.find_case('i.ben.not_found')
     assert repo_case == None
+
+## CREATE CASE WITH CHANGE STATE
+def test_create_case_change_state(
+    app_configuration, pg_session, pg_test_data_case
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.121', purpose=CaseType.EDUCATION, description='')
+    repo.update_case_state(case_id, CaseState.PUBLISHED)
+    repo_case = repo.find_case(case_id)
+    assert repo_case.case_state == CaseState.PUBLISHED
 
 ## CREATE CASE AND ADD DOCUMENT TEST-------------------------------
 def test_create_case_add_doc(

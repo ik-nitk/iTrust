@@ -19,10 +19,22 @@ def case_list_use_case(repo, request):
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
+def publish_case_use_case(repo, case_id):
+    try:
+        case = repo.find_case(case_id)
+        if case is None:
+            return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Case not found")
+        if case.case_state is not CaseState.DRAFT:
+            return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Publishing non Draft case is not allowed!!")
+        ## change case state to publish.
+        repo.update_case_state(case_id, CaseState.PUBLISHED)
+        return ResponseSuccess('case_published')
+    except Exception as e:
+        return ResponseFailure(ResponseTypes.SYSTEM_ERROR, e)
 
 def add_initial_documents_use_case(repo, case_id, doc_list):
     try:
-        case = repo.find_case(case_id=case_id)
+        case = repo.find_case(case_id)
         if case is None:
             return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Case not found")
         if case.case_state is not CaseState.DRAFT:

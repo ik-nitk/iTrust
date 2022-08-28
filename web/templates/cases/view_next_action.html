@@ -1,0 +1,19 @@
+<div class="d-flex justify-content-end">
+{% if case.case_state == 'DRAFT' %}
+        {% if publish_disable == true %}
+        <form action="/cases/{{case.case_id}}/publish" method="post">
+            <button disabled class="btn btn-outline-success">
+                Publish
+            </button>
+        </form>
+        {% else %}
+        <form action="/cases/{{case.case_id}}/publish" method="post">
+            <button class="btn btn-outline-success">
+                Publish
+            </button>
+        </form>
+        {% endif %}
+{% elif case.case_state == 'PUBLISHED' %}
+    <a href="/cases/{{case.case_id}}/verify" class="btn btn-info" role="button">Verify</a>
+{% endif %}
+</div>
