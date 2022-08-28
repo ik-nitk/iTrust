@@ -127,7 +127,7 @@ def create_case():
                 response = session.post(url, json = {"beneficiary_id":beneficiary_id,"purpose":purpose,"title":title,"description":description})
                 response.raise_for_status()
                 case_id = response.json()
-                return redirect(url_for('case.case_view', case_id))
+                return redirect('/cases/view/' + case_id)
     except Exception as e:
         return render_template("error.html", error_msg=str(e))
 
