@@ -47,15 +47,22 @@ def beneficiary_search():
         beneficiaries = response.json()
         return jsonify({'htmlresponse': render_template("beneficiaries/search_response.html", beneficiaries=beneficiaries)})
 
+def get_case_details_with_beneficiary_id(api, session, id):
+    url = api.case_list(id)
+    response = session.get(url)
+    response.raise_for_status()
+    return response.json()
+
 @blueprint.route("/beneficiaries/view/<id>",methods = ["GET"])
 def beneficiary_view(id):
     api = current_app.config.get('api')
     session = current_app.config.get('session')
+    cases = get_case_details_with_beneficiary_id(api,session,id)
     url = api.beneficiary_id(id)
     response = session.get(url)
     response.raise_for_status()
     beneficiaries = response.json()
-    return render_template("beneficiaries/view.html", beneficiaries=beneficiaries)
+    return render_template("beneficiaries/view.html", beneficiaries=beneficiaries,cases = cases)
 
 
 @blueprint.route("/beneficiaries/update/<id>",methods = ["GET","POST"])

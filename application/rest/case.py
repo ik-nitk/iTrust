@@ -8,7 +8,8 @@ from cms.use_cases.case import (
     add_initial_documents_use_case,
     view_case,
     doc_list,
-    publish_case_use_case)
+    publish_case_use_case,
+    case_list_from_beneficiary_id)
 from cms.serializers.case import CaseJsonEncoder, CaseDocsJsonEncoder
 from cms.requests.case_list import build_case_list_request
 from common.responses import ResponseTypes
@@ -89,6 +90,15 @@ def create_case():
     title = request.json['title']
     description = request.json['description']
     response = create_new_case(current_app.config['REPO'],beneficiary_id, purpose, title, description)
+    return Response(
+        json.dumps(response.value, cls=CaseJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/cases/caselistfrombenificiaryid/<id>", methods=["GET"])
+def case_list_with_beneficiaryid(id):
+    response = case_list_from_beneficiary_id(current_app.config.get('REPO'), id)
     return Response(
         json.dumps(response.value, cls=CaseJsonEncoder),
         mimetype="application/json",

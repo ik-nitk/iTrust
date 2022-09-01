@@ -70,3 +70,11 @@ class BackendApiBuilder:
         :return: case endpoint
         """
         return self.cases + '/{}'.format(case_id)
+
+    def case_list(self,beneficiary_id):
+        """
+        Generates endpoint for retrieving/updating task with given cases_id
+        :param cases_id: unique cases id
+        :return: case endpoint
+        """
+        return self.cases + '/caselistfrombenificiaryid'+'/{}'.format(beneficiary_id)
