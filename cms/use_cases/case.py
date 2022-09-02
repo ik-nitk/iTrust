@@ -77,9 +77,9 @@ def view_case(repo, case_id):
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
-def case_list_from_beneficiary_id(repo, beneficiary_id):
+def case_clist(repo, beneficiary_id):
     try:
-        case = repo.case_list_with_beneficiaryid(beneficiary_id)
+        case = repo.case_clist(beneficiary_id)
         return ResponseSuccess(case)
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)

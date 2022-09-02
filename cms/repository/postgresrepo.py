@@ -313,7 +313,7 @@ class PostgresRepo:
             session = DBSession()
             return self._create_case_object(session.query(Case).get(case_id))
 
-    def case_list_with_beneficiaryid(self, beneficiary_id):
+    def case_clist(self, beneficiary_id):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         query = session.query(Case)

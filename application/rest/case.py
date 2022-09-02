@@ -9,7 +9,7 @@ from cms.use_cases.case import (
     view_case,
     doc_list,
     publish_case_use_case,
-    case_list_from_beneficiary_id)
+    case_clist)
 from cms.serializers.case import CaseJsonEncoder, CaseDocsJsonEncoder
 from cms.requests.case_list import build_case_list_request
 from common.responses import ResponseTypes
@@ -96,9 +96,9 @@ def create_case():
         status=STATUS_CODES[response.type],
     )
 
-@blueprint.route("/api/v1/cases/caselistfrombenificiaryid/<id>", methods=["GET"])
+@blueprint.route("/api/v1/cases/<id>/beneficiary_id", methods=["GET"])
 def case_list_with_beneficiaryid(id):
-    response = case_list_from_beneficiary_id(current_app.config.get('REPO'), id)
+    response = case_clist(current_app.config.get('REPO'), id)
     return Response(
         json.dumps(response.value, cls=CaseJsonEncoder),
         mimetype="application/json",

@@ -77,4 +77,4 @@ class BackendApiBuilder:
         :param cases_id: unique cases id
         :return: case endpoint
         """
-        return self.cases + '/caselistfrombenificiaryid'+'/{}'.format(beneficiary_id)
+        return self.case_id(beneficiary_id) + '/beneficiary_id?beneficiary_id={}'.format(beneficiary_id)
