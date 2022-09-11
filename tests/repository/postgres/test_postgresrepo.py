@@ -1,6 +1,7 @@
 from cms.domain import case_docs
 from cms.domain import doc_type
 from cms.domain.case_type import CaseType
+from cms.domain.comment_type import CommentType
 from cms.domain.case_state import CaseState
 import pytest
 from cms.repository import postgresrepo
@@ -76,6 +77,25 @@ def test_create_case_add_doc(
     repo.delete_case_doc('1')
 
     assert len(repo_case_docs) == 2
+
+
+## CREATE CASE AND ADD COMMENTS TEST-------------------------------
+def test_create_case_add_comments(
+    app_configuration, pg_session, pg_test_data_case
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.555', purpose=CaseType.EDUCATION, description='')
+    # Add 2 docuemnts to the case
+    comment1 = repo.create_case_comment(case_id, comment_type=CommentType.APPROVAL_COMMENTS, comment='comment', comment_data={}, c_by='i.mem.2222')
+    comment2 = repo.create_case_comment(case_id, comment_type=CommentType.VERIFICATION_COMMENTS, comment='comment', comment_data={'data': 'sample'}, c_by='i.mem.2222')
+
+    approved_case_comments = repo.case_comment_list(case_id, CommentType.APPROVAL_COMMENTS)
+    all_case_comments = repo.case_comment_list(case_id, None)
+    repo.delete_case_comment(comment1)
+    repo.delete_case_comment(comment2)
+
+    assert len(approved_case_comments) == 1
+    assert len(all_case_comments) == 2
 
 ## MEMBERS TESTING -------------------------------
 def test_repository_list_without_parameters(

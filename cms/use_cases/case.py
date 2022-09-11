@@ -8,6 +8,7 @@ from common.responses import (
 from cms.domain.case_state import CaseState
 from cms.domain.case_docs import CaseDocs
 from cms.domain.doc_type import DocType
+from cms.domain.comment_type import CommentType
 from nanoid import generate
 
 def case_list_use_case(repo, request):
@@ -31,6 +32,25 @@ def publish_case_use_case(repo, case_id):
         return ResponseSuccess('case_published')
     except Exception as e:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, e)
+
+def add_case_verification_details(repo, case_id, comment, verification_by):
+    try:
+        case = repo.find_case(case_id)
+        if case is None:
+            return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Case not found")
+        if case.case_state is not CaseState.PUBLISHED:
+            return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Verification comments now not allowed")
+        comment_id = repo.create_case_comment(case_id, comment_type=CommentType.VERIFICATION_COMMENTS, comment=comment, comment_data={}, c_by=verification_by)
+        return ResponseSuccess(comment_id)
+    except Exception as e:
+        return ResponseFailure(ResponseTypes.SYSTEM_ERROR, e)
+
+def comment_list(repo, case_id, comment_type):
+    try:
+        comments = repo.case_comment_list(case_id, comment_type)
+        return ResponseSuccess(comments)
+    except Exception as exc:
+        return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
 def add_initial_documents_use_case(repo, case_id, doc_list):
     try:

@@ -8,8 +8,10 @@ from cms.use_cases.case import (
     add_initial_documents_use_case,
     view_case,
     doc_list,
+    comment_list,
+    add_case_verification_details,
     publish_case_use_case)
-from cms.serializers.case import CaseJsonEncoder, CaseDocsJsonEncoder
+from cms.serializers.case import CaseJsonEncoder, CaseDocsJsonEncoder, CaseCommentJsonEncoder
 from cms.requests.case_list import build_case_list_request
 from common.responses import ResponseTypes
 
@@ -46,6 +48,27 @@ def case_view(id):
     response = view_case(current_app.config.get('REPO'), id)
     return Response(
         json.dumps(response.value, cls=CaseJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/cases/<case_id>/add_case_verification_details", methods=["POST"])
+def add_verification_comment_to_case(case_id):
+    comment = request.json['comment']
+    # TODO - update the verified by
+    response = add_case_verification_details(current_app.config.get('REPO'), case_id, comment, 'test')
+    return Response(
+        json.dumps(response.value, cls=CaseJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/cases/<id>/comments", methods=["GET"])
+def comments_list_api(id):
+    comment_type = request.args.get('comment_type')
+    response = comment_list(current_app.config.get('REPO'), id, comment_type)
+    return Response(
+        json.dumps(response.value, cls=CaseCommentJsonEncoder),
         mimetype="application/json",
         status=STATUS_CODES[response.type],
     )

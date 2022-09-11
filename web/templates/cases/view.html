@@ -71,12 +71,28 @@
                   <a target="_blank" rel="noopener noreferrer"
                     href="{{ doc.doc_url }}"
                     >{{doc.doc_name}}</a>
-                    </td>
                  </li>
                 {% endfor %}
               </ul>
         </div>
     </div>
+    {% if verification_done == true %}
+    <div class="card" style="width: 40rem;">
+        <div class="card-body">
+            <div class="d-flex">
+                <h5> Verification details </h5>
+            </div>
+            <ul class="list-group">
+                {% for x in verification_comments %}
+                 <li class="list-group-item">
+                    [{{x.commented_by}}] : {{x.comment}}
+                 </li>
+                {% endfor %}
+              </ul>
+        </div>
+    </div>
+
+    {% endif %}
 </div>
 </div>
 {% endblock %}

@@ -57,11 +57,19 @@ class BackendApiBuilder:
     def case_initial_docs(self, case_id):
         return self.cases + '/{}'.format(case_id) + '/add_initial_documents'
 
+    def case_verification_details(self, case_id):
+         return self.cases + '/{}'.format(case_id) + '/add_case_verification_details'
+
     def publish_case(self, case_id):
         return self.cases + '/{}'.format(case_id) + '/publish'
 
     def case_doc_list(self, case_id, doc_type):
         return self.case_id(case_id) + '/docs?doc_type={}'.format(doc_type)
+
+    def case_comment_list(self, case_id, comment_type=None):
+        if comment_type == None:
+            return self.case_id(case_id) + '/comments'
+        return self.case_id(case_id) + '/comments?comment_type={}'.format(comment_type)
 
     def case_id(self, case_id):
         """
