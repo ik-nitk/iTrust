@@ -54,16 +54,22 @@ def member_search():
         members = response.json()
         return jsonify({'htmlresponse': render_template("members/search_response.html", members=members)})
 
+def get_case_details_with_member_id(api, session, id):
+    url = api.case_list(id)
+    response = session.get(url)
+    response.raise_for_status()
+    return response.json()
 
 @blueprint.route("/members/view/<id>",methods = ["GET"])
 def member_view(id):
     api = current_app.config.get('api')
     session = current_app.config.get('session')
+    cases = get_case_details_with_member_id(api,session,id)
     url = api.member_id(id)
     response = session.get(url)
     response.raise_for_status()
     members = response.json()
-    return render_template("members/view.html", members=members)
+    return render_template("members/view.html", members=members,cases = cases)
 
 
 @blueprint.route("/members/update/<id>",methods = ["GET","POST"])

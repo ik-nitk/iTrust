@@ -161,11 +161,11 @@ class PostgresRepo:
         if filters is None:
             return self._create_case_objects(query.all())
 
-        if "beneficiary__id__eq" in filters:
-            query = query.filter(Beneficiary.beneficiary_id == filters["beneficiary__id__eq"])
+        if "beneficiary_id__eq" in filters:
+            query = query.filter(Case.beneficiary__id == filters["beneficiary_id__eq"])
 
-        if "title__eq" in filters:
-            query = query.filter(Beneficiary.phone == filters["title__eq"])
+        if "member_id__eq" in filters:
+            query = query.filter(Case.referred__by == filters["member_id__eq"])
 
         if "purpose__eq" in filters:
             query = query.filter(Beneficiary.email == filters["purpose__eq"])

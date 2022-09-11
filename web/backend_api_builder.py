@@ -71,10 +71,8 @@ class BackendApiBuilder:
         """
         return self.cases + '/{}'.format(case_id)
 
-    def case_list(self,beneficiary_id):
-        """
-        Generates endpoint for retrieving/updating task with given cases_id
-        :param cases_id: unique cases id
-        :return: case endpoint
-        """
-        return self.case_id(beneficiary_id) + '/beneficiary_id?beneficiary_id={}'.format(beneficiary_id)
+    def case_list(self,id):
+        if id.startswith("i.ben"):
+            return self.cases +  '?filter_beneficiary_id__eq={}'.format(id)
+        elif id.startswith("i.mem"):
+            return self.cases +  '?filter_member_id__eq={}'.format(id)
