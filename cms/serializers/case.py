@@ -38,3 +38,18 @@ class CaseDocsJsonEncoder(json.JSONEncoder):
             return to_serialize
         except AttributeError:  # pragma: no cover
             return super().default(o)
+
+class CaseCommentJsonEncoder(json.JSONEncoder):
+    def default(self, o):
+        try:
+            to_serialize = {
+                "case_id": o.case_id,
+                "comment": o.comment,
+                "comment_id": o.comment_id,
+                "comment_data": o.comment_data,
+                "commented_by": o.commented_by,
+                "comment_type": o.comment_type
+            }
+            return to_serialize
+        except AttributeError:  # pragma: no cover
+            return super().default(o)

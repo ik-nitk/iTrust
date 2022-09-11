@@ -1,5 +1,7 @@
+from crypt import methods
 from turtle import title
 from cms.domain.case_state import CaseState
+from cms.domain.comment_type import CommentType
 from flask import Blueprint, render_template, current_app, request, redirect, url_for, Response
 import requests
 from cms.domain.utils import isNotBlank
@@ -28,6 +30,12 @@ def get_case_details(api, session, id):
     response.raise_for_status()
     return response.json()
 
+def get_case_comments(api, session, id):
+    url = api.case_comment_list(id)
+    response = session.get(url)
+    response.raise_for_status()
+    return response.json()
+
 def get_case_initial_documents(api, session, id):
     doc_url = api.case_doc_list(id, 'INITIAL_CASE_DOC')
     response = session.get(doc_url)
@@ -44,21 +52,29 @@ def get_beneficiary_details(api, session, id):
 
 @blueprint.route("/cases/view/<id>", methods = ["GET"])
 def case_view(id):
-    api = current_app.config.get('api')
-    session = current_app.config.get('session')
-    futures = []
-    futures.append(pool.submit(get_case_details, api, session, id))
-    futures.append(pool.submit(get_case_initial_documents, api, session, id))
-    wait(futures)
-    case = futures[0].result()
-    initial_doc_list=futures[1].result()
-    beneficiary = get_beneficiary_details(api, session, case['beneficiary__id'])
-    return render_template("cases/view.html",
-        case=case,
-        beneficiary=beneficiary,
-        initial_doc_list=initial_doc_list,
-        publish_disable=((case['case_state'] != CaseState.DRAFT) or (case['case_state'] == CaseState.DRAFT and len(initial_doc_list) == 0))
-    )
+    try:
+        api = current_app.config.get('api')
+        session = current_app.config.get('session')
+        futures = []
+        futures.append(pool.submit(get_case_details, api, session, id))
+        futures.append(pool.submit(get_case_initial_documents, api, session, id))
+        futures.append(pool.submit(get_case_comments, api, session, id))
+        wait(futures)
+        case = futures[0].result()
+        initial_doc_list=futures[1].result()
+        case_comments=futures[2].result()
+        verification_comments = list(filter(lambda x: (x['comment_type'] == CommentType.VERIFICATION_COMMENTS), case_comments))
+        beneficiary = get_beneficiary_details(api, session, case['beneficiary__id'])
+        return render_template("cases/view.html",
+            case=case,
+            beneficiary=beneficiary,
+            initial_doc_list=initial_doc_list,
+            publish_disable=((case['case_state'] != CaseState.DRAFT) or (case['case_state'] == CaseState.DRAFT and len(initial_doc_list) == 0)),
+            verification_done=(len(verification_comments) > 0), #atleast one verification comment added.
+            verification_comments=verification_comments
+        )
+    except Exception as e:
+        return render_template("error.html", error_msg=str(e))
 
 @blueprint.route("/cases/<id>/publish", methods = ["POST"])
 def publish_case(id):
@@ -87,13 +103,28 @@ def add_initial_case_documents(id):
             mimetype="application/json",
             status=response.status_code,
         )
-    print('Uploading success to case: ' + id)
-    print('rediecting to cases/view/' + id)
     return Response(
         json.dumps({'redirect': '/cases/view/' + id}),
         mimetype="application/json",
         status=200,
     )
+
+@blueprint.route("/cases/<case_id>/add_verification_details", methods = ["GET", "POST"])
+def add_verification_details(case_id):
+    try:
+        if request.method == "GET":
+            return render_template('cases/add_verification_details.html', case_id=case_id)
+        else:
+            api = current_app.config.get('api')
+            session = current_app.config.get('session')
+            comment = request.form.get('comment')
+            print(comment)
+            url = api.case_verification_details(case_id)
+            response = session.post(url, json = {'comment':comment})
+            response.raise_for_status()
+            return redirect('/cases/view/' + case_id)
+    except Exception as e:
+        return render_template("error.html", error_msg=str(e))
 
 @blueprint.route("/cases/<id>/upload", methods = ["GET"])
 def upload_case_docs(id):

@@ -14,6 +14,10 @@
         </form>
         {% endif %}
 {% elif case.case_state == 'PUBLISHED' %}
-    <a href="/cases/{{case.case_id}}/verify" class="btn btn-info" role="button">Verify</a>
+   {% if verification_done == true %}
+        <a href="/cases/{{case.case_id}}/approve_reject" class="btn btn-info" role="button">Approve or Reject</a>
+    {% else %}
+        <a href="/cases/{{case.case_id}}/add_verification_details" class="btn btn-info" role="button">Verify</a>
+    {% endif %}
 {% endif %}
 </div>

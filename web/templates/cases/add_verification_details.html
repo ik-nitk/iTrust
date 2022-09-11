@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="container-fluid" style="width: 40rem;">
+<h3> Add case verification details here </h3>
+<form action="/cases/{{case_id}}/add_verification_details" method="post">
+      <div class="form-group">
+        <label for="comment">Verification details</label>
+        <input type="text" name="comment" class="form-control" id="comment" placeholder="Enter details">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}
+

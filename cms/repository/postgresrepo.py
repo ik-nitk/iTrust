@@ -6,8 +6,9 @@ from cms.domain import beneficiary
 from cms.domain import member
 from cms.domain import case
 from cms.domain import case_docs
+from cms.domain import case_comments
 from cms.domain.case_state import CaseState
-from cms.repository.postgres_objects import Base, Beneficiary, Member, Case, CaseDocs
+from cms.repository.postgres_objects import Base, Beneficiary, Member, Case, CaseDocs, CaseComments
 
 
 class PostgresRepo:
@@ -181,6 +182,50 @@ class PostgresRepo:
         session.add(new_member)
         session.commit()
         return new_member.member_id
+
+    def _create_case_comment_objects(self, results):
+        return [
+            case_comments.CaseComment(
+                case_id=q.case_id,
+                comment_type=q.comment_type,
+                comment_id=q.comment_id,
+                comment=q.comment,
+                commented_by=q.commented__by,
+                comment_data=q.comment_data
+            )
+            for q in results
+        ]
+
+    def case_comment_list(self, case_id, comment_type):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        query = session.query(CaseComments)
+        if comment_type == None:
+            return self._create_case_comment_objects(query.filter(
+                CaseComments.case_id == case_id
+            ))
+        else:
+            return self._create_case_comment_objects(query.filter(
+                and_(
+                    CaseComments.case_id == case_id,
+                    CaseComments.comment_type == comment_type
+            )))
+
+    def create_case_comment(self, case_id, comment_type, comment, comment_data, c_by):
+        comment_id = f"i.comment.{generate()}"
+        new_comment = CaseComments(comment_id=comment_id, comment_type=comment_type, case_id=case_id, comment=comment, comment_data=comment_data, commented__by=c_by)
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        session.add(new_comment)
+        session.commit()
+        return new_comment.comment_id
+
+    def delete_case_comment(self, comment_id):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        comment = session.query(CaseComments).get(comment_id)
+        session.delete(comment)
+        session.commit()
 
     def create_case_doc(self, case_id, doc_type, doc_name, doc_url):
         doc_id = f"i.doc.{generate()}"

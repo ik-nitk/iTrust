@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum, TIMESTAMP, BOOLEAN
+from sqlalchemy import Column, Integer, String, ForeignKey, Enum, TIMESTAMP, BOOLEAN, JSON
 from sqlalchemy.sql import func, expression
 from cms.domain.id_type import IDType
 from cms.domain.case_type import CaseType
 from cms.domain.doc_type import DocType
+from cms.domain.comment_type import CommentType
 from cms.domain.case_state import CaseState
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -47,6 +48,16 @@ class CaseDocs(Base):
     doc_url = Column(String)
     case_id = Column(String(40), ForeignKey("t_case.case_id"))
     doc_name = Column(String)
+
+
+class CaseComments(Base):
+    __tablename__ = "t_case_comments"
+    comment_id = Column(String(40), primary_key=True)
+    comment_type = Column(Enum(CommentType))
+    case_id = Column(String(40), ForeignKey("t_case.case_id"))
+    comment = Column(String)
+    commented__by = Column(String(40))
+    comment_data = Column(JSON)
 
 class Case(Base):
     __tablename__ = "t_case"
