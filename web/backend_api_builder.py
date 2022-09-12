@@ -78,3 +78,9 @@ class BackendApiBuilder:
         :return: case endpoint
         """
         return self.cases + '/{}'.format(case_id)
+
+    def case_list(self,id):
+        if id.startswith("i.ben"):
+            return self.cases +  '?filter_beneficiary_id__eq={}'.format(id)
+        elif id.startswith("i.mem"):
+            return self.cases +  '?filter_member_id__eq={}'.format(id)

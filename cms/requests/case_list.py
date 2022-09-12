@@ -24,7 +24,7 @@ class CaseListValidRequest:
 
 
 def build_case_list_request(filters=None):
-    accepted_filters = ["case_id__eq", "title__eq", "epurpose__eq"]
+    accepted_filters = ["case_id__eq", "title__eq", "epurpose__eq","beneficiary_id__eq","member_id__eq"]
     invalid_req = CaseListInvalidRequest()
 
     if filters is not None:
