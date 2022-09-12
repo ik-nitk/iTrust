@@ -100,5 +100,38 @@
             </div>
         </div>
     </form>
+    <div class="card" style="width: 40rem">
+        <div class="card-body">
+            <div class="d-flex justify-content-middle">
+                <h1>Cases</h1>
+            </div>
+            <table
+                id="data"
+                class="table table-striped table-sm mx-auto text-center"
+            >
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>title</th>
+                        <th>Case State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for case in cases %}
+                    <tr>
+                        <td>
+                            <a
+                                href="{{ url_for('case.case_view', id=case.case_id) }}"
+                                >view case</a
+                            >
+                        </td>
+                        <td>{{ case.title }}</td>
+                        <td>{{ case.case_state }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
