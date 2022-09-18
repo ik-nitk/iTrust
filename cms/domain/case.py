@@ -10,6 +10,8 @@ class Case:
     title: str
     description: str = ""
     family_details: str = ""
+    amount_needed: int = 0
+    amount_approved: int = 0
     avg_monthly_income: int = 0
     contact_details: str = ""
     contact_address: str = ""
