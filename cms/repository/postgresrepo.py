@@ -95,6 +95,8 @@ class PostgresRepo:
                 title= q.title,
                 description= q.description,
                 family_details= q.family_details,
+                amount_approved=q.amount_approved,
+                amount_needed=q.amount_needed,
                 avg_monthly_income= q.avg_monthly_income,
                 contact_details= q.contact_details,
                 contact_address= q.contact_address,

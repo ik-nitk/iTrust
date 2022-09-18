@@ -70,6 +70,8 @@ class Case(Base):
     purpose = Column(Enum(CaseType))
     title = Column(String)
     description = Column(String)
+    amount_needed = Column(Integer)
+    amount_approved = Column(Integer)
     family_details = Column(String)
     avg_monthly_income= Column(Integer)
     contact_details = Column(String)
