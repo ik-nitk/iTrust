@@ -3,7 +3,7 @@ from enum import Enum
 class CaseState(str, Enum):
     DRAFT = 'DRAFT'
     PUBLISHED = 'PUBLISHED'
-    VERIFICATION = 'VERFICATION'
+    VERIFICATION = 'VERIFICATION'
     VOTING = 'VOTING'
     APPROVED = 'APPROVED'
     REJECTED = 'REJECTED'

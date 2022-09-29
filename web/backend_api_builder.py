@@ -71,6 +71,12 @@ class BackendApiBuilder:
             return self.case_id(case_id) + '/comments'
         return self.case_id(case_id) + '/comments?comment_type={}'.format(comment_type)
 
+    def case_vote(self, case_id):
+         return self.cases + '/{}'.format(case_id) + '/add_vote_to_case'
+
+    def case_vote_list(self, case_id):
+        return self.case_id(case_id) + '/votes'
+
     def case_id(self, case_id):
         """
         Generates endpoint for retrieving/updating task with given cases_id

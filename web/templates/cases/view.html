@@ -1,98 +1,119 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container-fluid">
-<div class="container-fluid" style="width: 40rem;">
-    <h4>Case for <a
-        href="{{ url_for('beneficiary.beneficiary_view', id=case.beneficiary__id) }}"
-        >{{beneficiary.fname}}</a>
-          for the purpose of {{case.purpose}}
-    </h4>
-    <div class="card" style="width: 40rem;">
-        <div class="card-body">
-            {% include 'cases/view_next_action.html' %}
-            <form
-            class="well form-horizontal"
-        >
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label"
-                        >Title</label
-                    >
-                    <div class="col-sm-4 inputGroupContainer">
-                        <div class="input-group">
-                            <span class="input-group-addon"
-                                ><i
-                                    class="glyphicon glyphicon-user"
-                                ></i></span
-                            ><input
-                                id="title"
-                                name="title"
-                                class="form-control"
-                                required="true"
-                                value="{{case.title}}"
-                                type="text"
-                                readonly
-                            />
+    <div class="container-fluid" style="width: 40rem">
+        <h4>
+            Case for
+            <a
+                href="{{ url_for('beneficiary.beneficiary_view', id=case.beneficiary__id) }}"
+                >{{beneficiary.fname}}</a
+            >
+            for the purpose of {{case.purpose}}
+        </h4>
+        <div class="card" style="width: 40rem">
+            <div class="card-body">
+                {% include 'cases/view_next_action.html' %}
+                <form class="well form-horizontal">
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Title</label>
+                        <div class="col-sm-4 inputGroupContainer">
+                            <div class="input-group">
+                                <span class="input-group-addon"
+                                    ><i
+                                        class="glyphicon glyphicon-user"
+                                    ></i></span
+                                ><input
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    required="true"
+                                    value="{{case.title}}"
+                                    type="text"
+                                    readonly
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label"
-                        >Description</label
-                    >
-                    <div class="col-sm-4 inputGroupContainer">
-                        <div class="input-group">
-                            <span class="input-group-addon"
-                                ><i
-                                    class="glyphicon glyphicon-user"
-                                ></i></span
-                            ><input
-                                id="description"
-                                name="description"
-                                class="form-control"
-                                value="{{case.description}}"
-                                type="text"
-                                readonly
-                            />
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label"
+                            >Description</label
+                        >
+                        <div class="col-sm-4 inputGroupContainer">
+                            <div class="input-group">
+                                <span class="input-group-addon"
+                                    ><i
+                                        class="glyphicon glyphicon-user"
+                                    ></i></span
+                                ><input
+                                    id="description"
+                                    name="description"
+                                    class="form-control"
+                                    value="{{case.description}}"
+                                    type="text"
+                                    readonly
+                                />
+                            </div>
                         </div>
                     </div>
+                </form>
+            </div>
+        </div>
+        <div class="card" style="width: 40rem">
+            <div class="card-body">
+                <div class="d-flex justify-content-end">
+                    <a
+                        href="/cases/{{case.case_id}}/upload"
+                        class="btn btn-info"
+                        role="button"
+                        >Upload supporting documents</a
+                    >
                 </div>
-            </form>
-        </div>
-    </div>
-    <div class="card" style="width: 40rem;">
-        <div class="card-body">
-            <div class="d-flex justify-content-end">
-                <a href="/cases/{{case.case_id}}/upload" class="btn btn-info" role="button">Upload supporting documents</a>
+                <ul class="list-group">
+                    {% for doc in initial_doc_list %}
+                    <li class="list-group-item">
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="{{ doc.doc_url }}"
+                            >{{doc.doc_name}}</a
+                        >
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
-            <ul class="list-group">
-                {% for doc in initial_doc_list %}
-                 <li class="list-group-item">
-                  <a target="_blank" rel="noopener noreferrer"
-                    href="{{ doc.doc_url }}"
-                    >{{doc.doc_name}}</a>
-                 </li>
-                {% endfor %}
-              </ul>
         </div>
-    </div>
-    {% if verification_done == true %}
-    <div class="card" style="width: 40rem;">
-        <div class="card-body">
-            <div class="d-flex">
-                <h5> Verification details </h5>
+        {% if verification_done == true %}
+        <div class="card" style="width: 40rem">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h5>Verification details</h5>
+                </div>
+                <ul class="list-group">
+                    {% for x in verification_comments %}
+                    <li class="list-group-item">
+                        [{{x.commented_by}}] : {{x.comment}}
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
-            <ul class="list-group">
-                {% for x in verification_comments %}
-                 <li class="list-group-item">
-                    [{{x.commented_by}}] : {{x.comment}}
-                 </li>
-                {% endfor %}
-              </ul>
         </div>
-    </div>
 
-    {% endif %}
-</div>
+        {% endif %} {% if voting_done == true %}
+        <div class="card" style="width: 40rem">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h5>Voting details</h5>
+                </div>
+                <ul class="list-group">
+                    {% for vote in case_votes %}
+                    <li class="list-group-item">
+                        [{{vote.voted_by}}] : {{vote.comment}}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

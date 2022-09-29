@@ -10,8 +10,10 @@ from cms.use_cases.case import (
     doc_list,
     comment_list,
     add_case_verification_details,
+    add_vote,
+    vote_list,
     publish_case_use_case)
-from cms.serializers.case import CaseJsonEncoder, CaseDocsJsonEncoder, CaseCommentJsonEncoder
+from cms.serializers.case import CaseJsonEncoder, CaseDocsJsonEncoder, CaseCommentJsonEncoder,CaseVoteJsonEncoder
 from cms.requests.case_list import build_case_list_request
 from common.responses import ResponseTypes
 
@@ -69,6 +71,28 @@ def comments_list_api(id):
     response = comment_list(current_app.config.get('REPO'), id, comment_type)
     return Response(
         json.dumps(response.value, cls=CaseCommentJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/cases/<case_id>/add_vote_to_case", methods=["POST"])
+def add_vote_to_case(case_id):
+    comment = request.json['comment']
+    amount_suggested = request.json['amount_suggested']
+    response = add_vote(current_app.config.get('REPO'), case_id, comment,amount_suggested,'test')
+    print(response)
+    return Response(
+        json.dumps(response.value, cls=CaseJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/cases/<id>/votes", methods=["GET"])
+def votes_list_api(id):
+    response = vote_list(current_app.config.get('REPO'), id)
+    print(response)
+    return Response(
+        json.dumps(response.value, cls=CaseVoteJsonEncoder),
         mimetype="application/json",
         status=STATUS_CODES[response.type],
     )

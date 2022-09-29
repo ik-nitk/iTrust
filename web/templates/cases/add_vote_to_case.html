@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block content %}
+<div class="container-fluid" style="width: 40rem">
+    <h3>Add Vote To Case</h3>
+    <br />
+    <form action="/cases/{{case.case_id}}/add_vote_to_case" method="post">
+        <div class="form-group">
+            <label for="comment">Comment</label>
+            <input
+                type="text"
+                name="comment"
+                class="form-control"
+                id="comment"
+                placeholder="Enter details"
+            />
+            <br />
+            <label for="comment">Amount Required</label>
+            <input
+                type="text"
+                name="comment"
+                class="form-control"
+                id="comment"
+                readonly
+                value="{{case.amount_needed}}"
+            />
+            <br />
+            <label for="comment">Amount Suggested</label>
+            <input
+                type="number"
+                name="amount_suggested"
+                class="form-control"
+                id="amount_suggested"
+                placeholder="Enter details"
+            />
+        </div>
+        <br />
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}

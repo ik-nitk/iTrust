@@ -41,6 +41,7 @@ def add_case_verification_details(repo, case_id, comment, verification_by):
         if case.case_state is not CaseState.PUBLISHED:
             return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Verification comments now not allowed")
         comment_id = repo.create_case_comment(case_id, comment_type=CommentType.VERIFICATION_COMMENTS, comment=comment, comment_data={}, c_by=verification_by)
+        repo.update_case_state(case_id, CaseState.VERIFICATION)
         return ResponseSuccess(comment_id)
     except Exception as e:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, e)
@@ -49,6 +50,27 @@ def comment_list(repo, case_id, comment_type):
     try:
         comments = repo.case_comment_list(case_id, comment_type)
         return ResponseSuccess(comments)
+    except Exception as exc:
+        return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
+
+def add_vote(repo, case_id, comment,amount_suggested, voted_by):
+    try:
+        case = repo.find_case(case_id)
+        if case is None:
+            return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Case not found")
+        if  case.case_state is not CaseState.VOTING and case.case_state is not CaseState.VERIFICATION:
+            return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Voting not allowed")
+        vote_id = repo.create_case_vote(case_id, comment,amount_suggested,voted_by)
+        if case.case_state is CaseState.VERIFICATION:
+            repo.update_case_state(case_id, CaseState.VOTING)
+        return ResponseSuccess(vote_id)
+    except Exception as e:
+        return ResponseFailure(ResponseTypes.SYSTEM_ERROR, e)
+
+def vote_list(repo, case_id):
+    try:
+        votes = repo.case_vote_list(case_id)
+        return ResponseSuccess(votes)
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 

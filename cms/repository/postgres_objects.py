@@ -59,6 +59,15 @@ class CaseComments(Base):
     commented__by = Column(String(40))
     comment_data = Column(JSON)
 
+class CaseVotes(Base):
+    __tablename__ = "t_case_votes"
+    vote_id = Column(String(40), primary_key=True)
+    case_id = Column(String(40), ForeignKey("t_case.case_id"))
+    voted__by = Column(String(40))
+    amount_suggested = Column(Integer)
+    comment = Column(String)
+
+
 class Case(Base):
     __tablename__ = "t_case"
 

@@ -14,6 +14,8 @@ class CaseJsonEncoder(json.JSONEncoder):
                 "title": o.title,
                 "description": o.description,
                 "family_details": o.family_details,
+                "amount_approved":o.amount_approved,
+                "amount_needed":o.amount_needed,
                 "avg_monthly_income": o.avg_monthly_income,
                 "contact_details": o.contact_details,
                 "contact_address": o.contact_address,
@@ -49,6 +51,20 @@ class CaseCommentJsonEncoder(json.JSONEncoder):
                 "comment_data": o.comment_data,
                 "commented_by": o.commented_by,
                 "comment_type": o.comment_type
+            }
+            return to_serialize
+        except AttributeError:  # pragma: no cover
+            return super().default(o)
+
+class CaseVoteJsonEncoder(json.JSONEncoder):
+    def default(self, o):
+        try:
+            to_serialize = {
+                "case_id": o.case_id,
+                "vote_id": o.vote_id,
+                "voted_by": o.voted_by,
+                "amount_suggested":o.amount_suggested,
+                "comment": o.comment
             }
             return to_serialize
         except AttributeError:  # pragma: no cover

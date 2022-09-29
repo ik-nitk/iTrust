@@ -7,8 +7,9 @@ from cms.domain import member
 from cms.domain import case
 from cms.domain import case_docs
 from cms.domain import case_comments
+from cms.domain import case_votes
 from cms.domain.case_state import CaseState
-from cms.repository.postgres_objects import Base, Beneficiary, Member, Case, CaseDocs, CaseComments
+from cms.repository.postgres_objects import Base, Beneficiary, Member, Case, CaseDocs, CaseComments,CaseVotes
 
 
 class PostgresRepo:
@@ -229,6 +230,35 @@ class PostgresRepo:
         session.delete(comment)
         session.commit()
 
+    def _create_case_votes_objects(self, results):
+        return [
+            case_votes.CaseVote(
+                case_id=q.case_id,
+                vote_id = q.vote_id,
+                voted_by=q.voted__by,
+                amount_suggested=q.amount_suggested,
+                comment=q.comment
+            )
+            for q in results
+        ]
+
+    def create_case_vote(self, case_id, comment, amount_suggested, v_by):
+        vote_id = f"i.vote.{generate()}"
+        new_vote = CaseVotes(vote_id = vote_id, case_id=case_id, comment=comment,amount_suggested = amount_suggested, voted__by=v_by)
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        session.add(new_vote)
+        session.commit()
+        return new_vote.vote_id
+    
+    def case_vote_list(self, case_id):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        query = session.query(CaseVotes)
+        return self._create_case_votes_objects(query.filter(
+                CaseVotes.case_id == case_id
+            ))
+            
     def create_case_doc(self, case_id, doc_type, doc_name, doc_url):
         doc_id = f"i.doc.{generate()}"
         new_doc = CaseDocs(doc_id=doc_id, doc_type=doc_type, case_id=case_id, doc_url=doc_url, doc_name=doc_name)

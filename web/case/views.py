@@ -33,6 +33,15 @@ def get_case_details(api, session, id):
 def get_case_comments(api, session, id):
     url = api.case_comment_list(id)
     response = session.get(url)
+    print(response)
+    response.raise_for_status()
+    return response.json()
+
+def get_case_votes(api, session, id):
+    url = api.case_vote_list(id)
+    print(url)
+    response = session.get(url)
+    print(response)
     response.raise_for_status()
     return response.json()
 
@@ -59,10 +68,16 @@ def case_view(id):
         futures.append(pool.submit(get_case_details, api, session, id))
         futures.append(pool.submit(get_case_initial_documents, api, session, id))
         futures.append(pool.submit(get_case_comments, api, session, id))
+        futures.append(pool.submit(get_case_votes, api, session, id))
         wait(futures)
         case = futures[0].result()
+        print(case)
         initial_doc_list=futures[1].result()
         case_comments=futures[2].result()
+        print(case_comments) 
+        case_votes = futures[3].result()
+        print(case_votes)
+        print(len(case_votes))
         verification_comments = list(filter(lambda x: (x['comment_type'] == CommentType.VERIFICATION_COMMENTS), case_comments))
         beneficiary = get_beneficiary_details(api, session, case['beneficiary__id'])
         return render_template("cases/view.html",
@@ -71,7 +86,9 @@ def case_view(id):
             initial_doc_list=initial_doc_list,
             publish_disable=((case['case_state'] != CaseState.DRAFT) or (case['case_state'] == CaseState.DRAFT and len(initial_doc_list) == 0)),
             verification_done=(len(verification_comments) > 0), #atleast one verification comment added.
-            verification_comments=verification_comments
+            verification_comments=verification_comments,
+            voting_done = (len(case_votes) > 0),
+            case_votes = case_votes
         )
     except Exception as e:
         return render_template("error.html", error_msg=str(e))
@@ -121,6 +138,28 @@ def add_verification_details(case_id):
             print(comment)
             url = api.case_verification_details(case_id)
             response = session.post(url, json = {'comment':comment})
+            response.raise_for_status()
+            return redirect('/cases/view/' + case_id)
+    except Exception as e:
+        return render_template("error.html", error_msg=str(e))
+
+@blueprint.route("/cases/<case_id>/add_vote_to_case", methods = ["GET", "POST"])
+def add_vote_to_case(case_id):
+    try:
+        if request.method == "GET":
+            api = current_app.config.get('api')
+            session = current_app.config.get('session')
+            case = get_case_details(api, session, case_id)
+            print(case)
+            return render_template('cases/add_vote_to_case.html', case = case)
+        else:
+            api = current_app.config.get('api')
+            session = current_app.config.get('session')
+            comment = request.form.get('comment')
+            amount_suggested = request.form.get('amount_suggested')
+            print(comment)
+            url = api.case_vote(case_id)
+            response = session.post(url, json = {'comment':comment,'amount_suggested': amount_suggested})
             response.raise_for_status()
             return redirect('/cases/view/' + case_id)
     except Exception as e:
