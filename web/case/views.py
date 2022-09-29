@@ -33,15 +33,12 @@ def get_case_details(api, session, id):
 def get_case_comments(api, session, id):
     url = api.case_comment_list(id)
     response = session.get(url)
-    print(response)
     response.raise_for_status()
     return response.json()
 
 def get_case_votes(api, session, id):
     url = api.case_vote_list(id)
-    print(url)
     response = session.get(url)
-    print(response)
     response.raise_for_status()
     return response.json()
 
@@ -71,13 +68,9 @@ def case_view(id):
         futures.append(pool.submit(get_case_votes, api, session, id))
         wait(futures)
         case = futures[0].result()
-        print(case)
         initial_doc_list=futures[1].result()
         case_comments=futures[2].result()
-        print(case_comments) 
         case_votes = futures[3].result()
-        print(case_votes)
-        print(len(case_votes))
         verification_comments = list(filter(lambda x: (x['comment_type'] == CommentType.VERIFICATION_COMMENTS), case_comments))
         beneficiary = get_beneficiary_details(api, session, case['beneficiary__id'])
         return render_template("cases/view.html",
@@ -150,14 +143,12 @@ def add_vote_to_case(case_id):
             api = current_app.config.get('api')
             session = current_app.config.get('session')
             case = get_case_details(api, session, case_id)
-            print(case)
             return render_template('cases/add_vote_to_case.html', case = case)
         else:
             api = current_app.config.get('api')
             session = current_app.config.get('session')
             comment = request.form.get('comment')
             amount_suggested = request.form.get('amount_suggested')
-            print(comment)
             url = api.case_vote(case_id)
             response = session.post(url, json = {'comment':comment,'amount_suggested': amount_suggested})
             response.raise_for_status()
