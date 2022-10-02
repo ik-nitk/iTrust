@@ -36,10 +36,10 @@ def test_create_case():
     repo = mock.Mock()
     repo.create_case.return_value = "i.case.xxxx"
 
-    response = create_new_case(repo, beneficiary_id="i.ben.1235", purpose="", title="", description="")
+    response = create_new_case(repo, beneficiary_id="i.ben.1235", purpose="", title="", description="",amount_needed=0)
 
     assert bool(response) is True
-    repo.create_case.assert_called_with(beneficiary_id="i.ben.1235", purpose="", title="", description="")
+    repo.create_case.assert_called_with(beneficiary_id="i.ben.1235", purpose="", title="", description="",amount_needed=0)
     assert response.value == "i.case.xxxx"
 
 def test_add_documents():

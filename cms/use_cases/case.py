@@ -53,14 +53,14 @@ def comment_list(repo, case_id, comment_type):
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
-def add_vote(repo, case_id, comment,amount_suggested, voted_by):
+def add_vote(repo, case_id, vote,amount_suggested, voted_by):
     try:
         case = repo.find_case(case_id)
         if case is None:
             return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Case not found")
         if  case.case_state is not CaseState.VOTING and case.case_state is not CaseState.VERIFICATION:
             return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Voting not allowed")
-        vote_id = repo.create_case_vote(case_id, comment,amount_suggested,voted_by)
+        vote_id = repo.create_case_vote(case_id, vote,amount_suggested,voted_by)
         if case.case_state is CaseState.VERIFICATION:
             repo.update_case_state(case_id, CaseState.VOTING)
         return ResponseSuccess(vote_id)
@@ -103,9 +103,9 @@ def doc_list(repo, case_id, doc_type=DocType.INITIAL_CASE_DOC):
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
-def create_new_case(repo, beneficiary_id, purpose, title, description):
+def create_new_case(repo, beneficiary_id, purpose, title, description,amount_needed):
     try:
-        id = repo.create_case(beneficiary_id=beneficiary_id, purpose=purpose, title=title, description=description)
+        id = repo.create_case(beneficiary_id=beneficiary_id, purpose=purpose, title=title, description=description,amount_needed = amount_needed)
         return ResponseSuccess(id)
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)

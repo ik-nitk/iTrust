@@ -4,16 +4,14 @@
     <br />
     <form action="/cases/{{case.case_id}}/add_vote_to_case" method="post">
         <div class="form-group">
-            <label for="comment">Comment</label>
-            <input
-                type="text"
-                name="comment"
-                class="form-control"
-                id="comment"
-                placeholder="Enter details"
-            />
+            <label for="vote">Vote</label>
+            <select class="selectpicker form-control" id="vote" name="vote">
+                <option>Select Vote</option>
+                <option>APPROVE</option>
+                <option>REJECT</option>
+            </select>
             <br />
-            <label for="comment">Amount Required</label>
+            <label for="comment">Amount needed</label>
             <input
                 type="text"
                 name="comment"

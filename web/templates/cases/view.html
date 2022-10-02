@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block content %}
-<div class="container-fluid">
+<div class="container-fluid" style="overflow-wrap: 100%">
     <div class="container-fluid" style="width: 40rem">
         <h4>
             Case for
@@ -40,6 +40,27 @@
                         <div class="col-sm-4 inputGroupContainer">
                             <div class="input-group">
                                 <span class="input-group-addon"
+                                    ><i class="glyphicon glyphicon-user"></i
+                                ></span>
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    class="form-control"
+                                    value="{{case.title}}"
+                                    readonly
+                                >
+{{case.description}}</textarea
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label"
+                            >Amount Needed</label
+                        >
+                        <div class="col-sm-4 inputGroupContainer">
+                            <div class="input-group">
+                                <span class="input-group-addon"
                                     ><i
                                         class="glyphicon glyphicon-user"
                                     ></i></span
@@ -47,7 +68,7 @@
                                     id="description"
                                     name="description"
                                     class="form-control"
-                                    value="{{case.description}}"
+                                    value="{{case.amount_needed}}"
                                     type="text"
                                     readonly
                                 />
@@ -106,7 +127,8 @@
                 <ul class="list-group">
                     {% for vote in case_votes %}
                     <li class="list-group-item">
-                        [{{vote.voted_by}}] : {{vote.comment}}
+                        [{{vote.voted_by}}] : {{vote.vote}} : Amount Suggested -
+                        {{vote.amount_suggested}}
                     </li>
                     {% endfor %}
                 </ul>

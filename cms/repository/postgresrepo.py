@@ -237,14 +237,14 @@ class PostgresRepo:
                 vote_id = q.vote_id,
                 voted_by=q.voted__by,
                 amount_suggested=q.amount_suggested,
-                comment=q.comment
+                vote=q.vote
             )
             for q in results
         ]
 
-    def create_case_vote(self, case_id, comment, amount_suggested, v_by):
+    def create_case_vote(self, case_id, vote, amount_suggested, v_by):
         vote_id = f"i.vote.{generate()}"
-        new_vote = CaseVotes(vote_id = vote_id, case_id=case_id, comment=comment,amount_suggested = amount_suggested, voted__by=v_by)
+        new_vote = CaseVotes(vote_id = vote_id, case_id=case_id, vote=vote,amount_suggested = amount_suggested, voted__by=v_by)
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         session.add(new_vote)
@@ -258,6 +258,13 @@ class PostgresRepo:
         return self._create_case_votes_objects(query.filter(
                 CaseVotes.case_id == case_id
             ))
+
+    def delete_case_vote(self, vote_id):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        vote = session.query(CaseVotes).get(vote_id)
+        session.delete(vote)
+        session.commit()
             
     def create_case_doc(self, case_id, doc_type, doc_name, doc_url):
         doc_id = f"i.doc.{generate()}"
@@ -301,9 +308,9 @@ class PostgresRepo:
         session.commit()
         return new_beneficiary.beneficiary_id
 
-    def create_case(self, beneficiary_id, purpose, title, description='', contact_details='', contact_address=''):
+    def create_case(self, beneficiary_id, purpose, title, description='',amount_needed = 0, contact_details='', contact_address=''):
         case_id = f"i.case.{generate()}"
-        new_case = Case(case_id = case_id, beneficiary__id=beneficiary_id, case_state=CaseState.DRAFT, title=title, purpose=purpose, description=description, contact_details=contact_details,contact_address=contact_address)
+        new_case = Case(case_id = case_id, beneficiary__id=beneficiary_id, case_state=CaseState.DRAFT, title=title, purpose=purpose, description=description,amount_needed =  amount_needed,contact_details=contact_details,contact_address=contact_address)
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         session.add(new_case)

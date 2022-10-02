@@ -5,6 +5,7 @@ from cms.domain.case_type import CaseType
 from cms.domain.doc_type import DocType
 from cms.domain.comment_type import CommentType
 from cms.domain.case_state import CaseState
+from cms.domain.vote_type import VoteType
 from sqlalchemy.ext.declarative import declarative_base
 
 
@@ -65,7 +66,7 @@ class CaseVotes(Base):
     case_id = Column(String(40), ForeignKey("t_case.case_id"))
     voted__by = Column(String(40))
     amount_suggested = Column(Integer)
-    comment = Column(String)
+    vote = Column(Enum(VoteType))
 
 
 class Case(Base):

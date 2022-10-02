@@ -77,9 +77,9 @@ def comments_list_api(id):
 
 @blueprint.route("/api/v1/cases/<case_id>/add_vote_to_case", methods=["POST"])
 def add_vote_to_case(case_id):
-    comment = request.json['comment']
+    vote = request.json['vote']
     amount_suggested = request.json['amount_suggested']
-    response = add_vote(current_app.config.get('REPO'), case_id, comment,amount_suggested,'test')
+    response = add_vote(current_app.config.get('REPO'), case_id, vote,amount_suggested,'test')
     return Response(
         json.dumps(response.value, cls=CaseJsonEncoder),
         mimetype="application/json",
@@ -89,6 +89,7 @@ def add_vote_to_case(case_id):
 @blueprint.route("/api/v1/cases/<id>/votes", methods=["GET"])
 def votes_list_api(id):
     response = vote_list(current_app.config.get('REPO'), id)
+    print(response)
     return Response(
         json.dumps(response.value, cls=CaseVoteJsonEncoder),
         mimetype="application/json",
@@ -133,7 +134,8 @@ def create_case():
     purpose = request.json['purpose']
     title = request.json['title']
     description = request.json['description']
-    response = create_new_case(current_app.config['REPO'],beneficiary_id, purpose, title, description)
+    amount_needed = request.json['amount_needed']
+    response = create_new_case(current_app.config['REPO'],beneficiary_id, purpose, title, description,amount_needed)
     return Response(
         json.dumps(response.value, cls=CaseJsonEncoder),
         mimetype="application/json",
