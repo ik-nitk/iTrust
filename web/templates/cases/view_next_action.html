@@ -1,23 +1,25 @@
 <div class="d-flex justify-content-end">
-{% if case.case_state == 'DRAFT' %}
-        {% if publish_disable == true %}
-        <form action="/cases/{{case.case_id}}/publish" method="post">
-            <button disabled class="btn btn-outline-success">
-                Publish
-            </button>
-        </form>
-        {% else %}
-        <form action="/cases/{{case.case_id}}/publish" method="post">
-            <button class="btn btn-outline-success">
-                Publish
-            </button>
-        </form>
-        {% endif %}
-{% elif case.case_state == 'PUBLISHED' %}
-   {% if verification_done == true %}
-        <a href="/cases/{{case.case_id}}/approve_reject" class="btn btn-info" role="button">Approve or Reject</a>
+    {% if case.case_state == 'DRAFT' %} {% if publish_disable == true %}
+    <form action="/cases/{{case.case_id}}/publish" method="post">
+        <button disabled class="btn btn-outline-success">Publish</button>
+    </form>
     {% else %}
-        <a href="/cases/{{case.case_id}}/add_verification_details" class="btn btn-info" role="button">Verify</a>
+    <form action="/cases/{{case.case_id}}/publish" method="post">
+        <button class="btn btn-outline-success">Publish</button>
+    </form>
+    {% endif %} {% elif case.case_state == 'PUBLISHED' %}
+    <a
+        href="/cases/{{case.case_id}}/add_verification_details"
+        class="btn btn-info"
+        role="button"
+        >Verify</a
+    >
+    {% elif case.case_state == 'VERIFICATION' or case.case_state == 'VOTING' %}
+    <a
+        href="/cases/{{case.case_id}}/add_vote_to_case"
+        class="btn btn-info"
+        role="button"
+        >Approve or Reject</a
+    >
     {% endif %}
-{% endif %}
 </div>

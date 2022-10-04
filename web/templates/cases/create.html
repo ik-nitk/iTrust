@@ -1,12 +1,6 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="container-fluid" style="width: 40rem;">
-    <form
-    class="well form-horizontal"
-    method="post"
-    action="/cases/create"
->
+{% extends "base.html" %} {% block content %}
+<div class="container-fluid" style="width: 40rem">
+    <form class="well form-horizontal" method="post" action="/cases/create">
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label"
                 >{{beneficiary.fname}} Id</label
@@ -14,9 +8,7 @@
             <div class="col-sm-4 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
-                        ><i
-                            class="glyphicon glyphicon-user"
-                        ></i></span
+                        ><i class="glyphicon glyphicon-user"></i></span
                     ><input
                         id="beneficiary_id"
                         name="beneficiary_id"
@@ -29,17 +21,11 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label class="col-sm-2 col-form-label"
-                >Purpose</label
-            >
+            <label class="col-sm-2 col-form-label">Purpose</label>
             <div class="col-sm-4 inputGroupContainer">
                 <div class="input-group">
-                    <span
-                        class="input-group-addon"
-                        style="max-width: 100%"
-                        ><i
-                            class="glyphicon glyphicon-list"
-                        ></i
+                    <span class="input-group-addon" style="max-width: 100%"
+                        ><i class="glyphicon glyphicon-list"></i
                     ></span>
                     <select
                         class="selectpicker form-control"
@@ -54,15 +40,11 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label class="col-sm-2 col-form-label"
-                >Title</label
-            >
+            <label class="col-sm-2 col-form-label">Title</label>
             <div class="col-sm-4 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
-                        ><i
-                            class="glyphicon glyphicon-user"
-                        ></i></span
+                        ><i class="glyphicon glyphicon-user"></i></span
                     ><input
                         id="title"
                         name="title"
@@ -75,32 +57,45 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label class="col-sm-2 col-form-label"
-                >Description</label
-            >
+            <label class="col-sm-2 col-form-label">Description</label>
             <div class="col-sm-4 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
-                        ><i
-                            class="glyphicon glyphicon-user"
-                        ></i></span
-                    ><input
+                        ><i class="glyphicon glyphicon-user"></i
+                    ></span>
+                    <textarea
                         id="description"
                         name="description"
                         class="form-control"
                         value=""
-                        type="text"
+                    ></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Amount Needed</label>
+            <div class="col-sm-4 inputGroupContainer">
+                <div class="input-group">
+                    <span class="input-group-addon"
+                        ><i class="glyphicon glyphicon-user"></i></span
+                    ><input
+                        id="amount_needed"
+                        name="amount_needed"
+                        class="form-control"
+                        value=""
+                        type="number"
                     />
                 </div>
             </div>
         </div>
         <button
-            type="submit" class="btn btn-primary"
+            type="submit"
+            class="btn btn-primary"
             id="submit"
             style="margin-left: 25%"
         >
             Submit
         </button>
-</form>
+    </form>
 </div>
 {% endblock %}

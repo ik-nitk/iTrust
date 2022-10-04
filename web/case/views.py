@@ -36,6 +36,12 @@ def get_case_comments(api, session, id):
     response.raise_for_status()
     return response.json()
 
+def get_case_votes(api, session, id):
+    url = api.case_vote_list(id)
+    response = session.get(url)
+    response.raise_for_status()
+    return response.json()
+
 def get_case_initial_documents(api, session, id):
     doc_url = api.case_doc_list(id, 'INITIAL_CASE_DOC')
     response = session.get(doc_url)
@@ -59,10 +65,12 @@ def case_view(id):
         futures.append(pool.submit(get_case_details, api, session, id))
         futures.append(pool.submit(get_case_initial_documents, api, session, id))
         futures.append(pool.submit(get_case_comments, api, session, id))
+        futures.append(pool.submit(get_case_votes, api, session, id))
         wait(futures)
         case = futures[0].result()
         initial_doc_list=futures[1].result()
         case_comments=futures[2].result()
+        case_votes = futures[3].result()
         verification_comments = list(filter(lambda x: (x['comment_type'] == CommentType.VERIFICATION_COMMENTS), case_comments))
         beneficiary = get_beneficiary_details(api, session, case['beneficiary__id'])
         return render_template("cases/view.html",
@@ -71,7 +79,9 @@ def case_view(id):
             initial_doc_list=initial_doc_list,
             publish_disable=((case['case_state'] != CaseState.DRAFT) or (case['case_state'] == CaseState.DRAFT and len(initial_doc_list) == 0)),
             verification_done=(len(verification_comments) > 0), #atleast one verification comment added.
-            verification_comments=verification_comments
+            verification_comments=verification_comments,
+            voting_done = (len(case_votes) > 0),
+            case_votes = case_votes
         )
     except Exception as e:
         return render_template("error.html", error_msg=str(e))
@@ -118,9 +128,30 @@ def add_verification_details(case_id):
             api = current_app.config.get('api')
             session = current_app.config.get('session')
             comment = request.form.get('comment')
-            print(comment)
             url = api.case_verification_details(case_id)
             response = session.post(url, json = {'comment':comment})
+            response.raise_for_status()
+            return redirect('/cases/view/' + case_id)
+    except Exception as e:
+        return render_template("error.html", error_msg=str(e))
+
+@blueprint.route("/cases/<case_id>/add_vote_to_case", methods = ["GET", "POST"])
+def add_vote_to_case(case_id):
+    try:
+        if request.method == "GET":
+            api = current_app.config.get('api')
+            session = current_app.config.get('session')
+            case = get_case_details(api, session, case_id)
+            return render_template('cases/add_vote_to_case.html', case = case)
+        else:
+            api = current_app.config.get('api')
+            session = current_app.config.get('session')
+            vote = request.form.get('vote')
+            comment = request.form.get('comment')
+            amount_suggested = request.form.get('amount_suggested')
+            url = api.case_vote(case_id)
+            assert isNotBlank(comment) and isNotBlank(amount_suggested) , "values can't be empty"
+            response = session.post(url, json = {'vote':vote,'comment':comment,'amount_suggested': amount_suggested})
             response.raise_for_status()
             return redirect('/cases/view/' + case_id)
     except Exception as e:
@@ -149,13 +180,14 @@ def create_case():
                 purpose = request.form.get('purpose')
                 title = request.form.get('title')
                 description = request.form.get('description')
+                amount_needed = request.form.get('amount_needed')
                 api = current_app.config.get('api')
                 session = current_app.config.get('session')
                 url = api.cases
-                assert isNotBlank(beneficiary_id) and isNotBlank(title) and isNotBlank(description), "values can't be empty"
+                assert isNotBlank(beneficiary_id) and isNotBlank(title) and isNotBlank(description) and isNotBlank(amount_needed), "values can't be empty"
                 beneficiary = get_beneficiary_details(api, session, beneficiary_id)
                 assert beneficiary
-                response = session.post(url, json = {"beneficiary_id":beneficiary_id,"purpose":purpose,"title":title,"description":description})
+                response = session.post(url, json = {"beneficiary_id":beneficiary_id,"purpose":purpose,"title":title,"description":description,"amount_needed":amount_needed})
                 response.raise_for_status()
                 case_id = response.json()
                 return redirect('/cases/view/' + case_id)
