@@ -39,7 +39,6 @@ def get_case_comments(api, session, id):
 def get_case_votes(api, session, id):
     url = api.case_vote_list(id)
     response = session.get(url)
-    print(response)
     response.raise_for_status()
     return response.json()
 
@@ -72,7 +71,6 @@ def case_view(id):
         initial_doc_list=futures[1].result()
         case_comments=futures[2].result()
         case_votes = futures[3].result()
-        print(case_votes)
         verification_comments = list(filter(lambda x: (x['comment_type'] == CommentType.VERIFICATION_COMMENTS), case_comments))
         beneficiary = get_beneficiary_details(api, session, case['beneficiary__id'])
         return render_template("cases/view.html",
@@ -130,7 +128,6 @@ def add_verification_details(case_id):
             api = current_app.config.get('api')
             session = current_app.config.get('session')
             comment = request.form.get('comment')
-            print(comment)
             url = api.case_verification_details(case_id)
             response = session.post(url, json = {'comment':comment})
             response.raise_for_status()
@@ -150,9 +147,11 @@ def add_vote_to_case(case_id):
             api = current_app.config.get('api')
             session = current_app.config.get('session')
             vote = request.form.get('vote')
+            comment = request.form.get('comment')
             amount_suggested = request.form.get('amount_suggested')
             url = api.case_vote(case_id)
-            response = session.post(url, json = {'vote':vote,'amount_suggested': amount_suggested})
+            assert isNotBlank(comment) and isNotBlank(amount_suggested) , "values can't be empty"
+            response = session.post(url, json = {'vote':vote,'comment':comment,'amount_suggested': amount_suggested})
             response.raise_for_status()
             return redirect('/cases/view/' + case_id)
     except Exception as e:

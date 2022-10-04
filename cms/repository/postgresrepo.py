@@ -237,14 +237,15 @@ class PostgresRepo:
                 vote_id = q.vote_id,
                 voted_by=q.voted__by,
                 amount_suggested=q.amount_suggested,
-                vote=q.vote
+                vote=q.vote,
+                comment= q.comment
             )
             for q in results
         ]
 
-    def create_case_vote(self, case_id, vote, amount_suggested, v_by):
+    def create_case_vote(self, case_id, vote,comment, amount_suggested):
         vote_id = f"i.vote.{generate()}"
-        new_vote = CaseVotes(vote_id = vote_id, case_id=case_id, vote=vote,amount_suggested = amount_suggested, voted__by=v_by)
+        new_vote = CaseVotes(vote_id = vote_id, case_id=case_id, vote=vote,comment = comment,amount_suggested = amount_suggested)
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         session.add(new_vote)

@@ -64,9 +64,10 @@ class CaseVotes(Base):
     __tablename__ = "t_case_votes"
     vote_id = Column(String(40), primary_key=True)
     case_id = Column(String(40), ForeignKey("t_case.case_id"))
-    voted__by = Column(String(40))
+    voted__by = Column(String(40), ForeignKey("member.member_id"))
     amount_suggested = Column(Integer)
     vote = Column(Enum(VoteType))
+    comment = Column(String)
 
 
 class Case(Base):

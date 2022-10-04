@@ -9,6 +9,7 @@ class CaseVote:
     voted_by: str
     amount_suggested:int
     vote: VoteType
+    comment:str
 
     @classmethod
     def from_dict(self, d):

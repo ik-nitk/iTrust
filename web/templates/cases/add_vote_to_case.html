@@ -11,12 +11,22 @@
                 <option>REJECT</option>
             </select>
             <br />
-            <label for="comment">Amount needed</label>
+            <label for="comment">Comment</label>
             <input
                 type="text"
                 name="comment"
                 class="form-control"
                 id="comment"
+                required="true"
+                placeholder="Enter details"
+            />
+            <br />
+            <label for="comment">Amount needed</label>
+            <input
+                type="text"
+                name="amount_needed"
+                class="form-control"
+                id="amount_needed"
                 readonly
                 value="{{case.amount_needed}}"
             />
@@ -27,7 +37,8 @@
                 name="amount_suggested"
                 class="form-control"
                 id="amount_suggested"
-                placeholder="Enter details"
+                required="true"
+                placeholder="Enter Amount"
             />
         </div>
         <br />

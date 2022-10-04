@@ -64,7 +64,8 @@ class CaseVoteJsonEncoder(json.JSONEncoder):
                 "vote_id": o.vote_id,
                 "voted_by": o.voted_by,
                 "amount_suggested":o.amount_suggested,
-                "vote": o.vote
+                "vote": o.vote,
+                "comment": o.comment
             }
             return to_serialize
         except AttributeError:  # pragma: no cover

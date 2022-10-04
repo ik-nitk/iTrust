@@ -78,10 +78,11 @@ def comments_list_api(id):
 @blueprint.route("/api/v1/cases/<case_id>/add_vote_to_case", methods=["POST"])
 def add_vote_to_case(case_id):
     vote = request.json['vote']
+    comment = request.json['comment']
     amount_suggested = request.json['amount_suggested']
-    response = add_vote(current_app.config.get('REPO'), case_id, vote,amount_suggested,'test')
+    response = add_vote(current_app.config.get('REPO'), case_id, vote,comment,amount_suggested)
     return Response(
-        json.dumps(response.value, cls=CaseJsonEncoder),
+        json.dumps(response.value, cls=CaseVoteJsonEncoder),
         mimetype="application/json",
         status=STATUS_CODES[response.type],
     )

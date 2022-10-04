@@ -127,7 +127,8 @@
                 <ul class="list-group">
                     {% for vote in case_votes %}
                     <li class="list-group-item">
-                        [{{vote.voted_by}}] : {{vote.vote}} : Amount Suggested -
+                        [{{vote.voted_by}}] : {{vote.vote}} : Comment-
+                        {{vote.comment}} : Amount Suggested -
                         {{vote.amount_suggested}}
                     </li>
                     {% endfor %}

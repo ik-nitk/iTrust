@@ -105,8 +105,8 @@ def test_create_case_add_votes(
     repo = postgresrepo.PostgresRepo(app_configuration)
     case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.555', purpose=CaseType.EDUCATION, description='',amount_needed= 1000)
     # Add 2 votes to the case
-    vote1 = repo.create_case_vote(case_id, vote=VoteType.APPROVE, amount_suggested=1000,  v_by='i.mem.1111')
-    vote2 = repo.create_case_vote(case_id, vote=VoteType.APPROVE, amount_suggested=1000,  v_by='i.mem.2222')
+    vote1 = repo.create_case_vote(case_id, vote=VoteType.APPROVE,comment='comment', amount_suggested=1000)
+    vote2 = repo.create_case_vote(case_id, vote=VoteType.APPROVE,comment='comment', amount_suggested=1000)
 
     case_votes = repo.case_vote_list(case_id)
     repo.delete_case_vote(vote1)
