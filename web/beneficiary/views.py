@@ -48,7 +48,7 @@ def beneficiary_search():
         return jsonify({'htmlresponse': render_template("beneficiaries/search_response.html", beneficiaries=beneficiaries)})
 
 def get_case_details_with_beneficiary_id(api, session, id):
-    url = api.case_list(id)
+    url = api.case_list_for_beneficiary(id)
     response = session.get(url)
     response.raise_for_status()
     return response.json()

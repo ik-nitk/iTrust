@@ -55,7 +55,7 @@ def member_search():
         return jsonify({'htmlresponse': render_template("members/search_response.html", members=members)})
 
 def get_case_details_with_member_id(api, session, id):
-    url = api.case_list(id)
+    url = api.case_list_for_member(id)
     response = session.get(url)
     response.raise_for_status()
     return response.json()

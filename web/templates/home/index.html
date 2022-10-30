@@ -2,4 +2,18 @@
 
 <h1>Welcome to iTrust: Zakat management application</h1>
 <h3>Under Construction ...</h3>
-{% endblock %}
+
+{% for case in cases %}
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Title : {{case.title}}</h4>
+        <h4 class="card-title">Purpose : {{case.purpose}}</h4>
+        <a
+            href="{{ url_for('case.case_view', id=case.case_id) }}"
+            class="card-link"
+            >view case</a
+        >
+    </div>
+</div>
+</br>
+{% endfor %} {% endblock %}

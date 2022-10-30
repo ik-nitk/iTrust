@@ -85,8 +85,11 @@ class BackendApiBuilder:
         """
         return self.cases + '/{}'.format(case_id)
 
-    def case_list(self,id):
-        if id.startswith("i.ben"):
-            return self.cases +  '?filter_beneficiary_id__eq={}'.format(id)
-        elif id.startswith("i.mem"):
-            return self.cases +  '?filter_member_id__eq={}'.format(id)
+    def case_list_for_beneficiary(self,id):
+        return self.cases +  '?filter_beneficiary_id__eq={}'.format(id)
+        
+    def case_list_for_member(self,id):
+        return self.cases +  '?filter_member_id__eq={}'.format(id)
+
+    def case_list_from_case_state(self,case_state):
+        return self.cases +  '?filter_case_state__eq={}'.format(case_state)
