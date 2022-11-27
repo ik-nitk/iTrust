@@ -35,6 +35,13 @@ def view_member(repo, member_id):
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
+def view_member_by_email(repo, email_id):
+    try:
+        member = repo.view_member_by_email(email_id)
+        return ResponseSuccess(member)
+    except Exception as exc:
+        return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
+
 def update_member(repo, member_id,govt_id,id_type,fname,mname,lname,is_core,phone,email):
     try:
         member = repo.update_member(member_id,govt_id,id_type,fname,mname,lname,is_core,phone,email)

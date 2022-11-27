@@ -22,6 +22,14 @@ class BackendApiBuilder:
         """
         return self.members + '/{}'.format(member_id)
 
+    def member_email_id(self, email_id):
+        """
+        Generates endpoint for retrieving/updating task with given member_id
+        :param member_id: unique member id
+        :return: member endpoint
+        """
+        return self.members + '?email_id'.format(email_id)
+
     @property
     def member_search(self):
         return self.members + '/search'

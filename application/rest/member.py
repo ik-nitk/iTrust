@@ -9,6 +9,7 @@ from common.responses import ResponseTypes
 from cms.use_cases.member import create_new_member
 from cms.use_cases.member import search_member
 from cms.use_cases.member import view_member
+from cms.use_cases.member import view_member_by_email
 from cms.use_cases.member import update_member
 
 blueprint = Blueprint("member", __name__)
@@ -23,6 +24,14 @@ STATUS_CODES = {
 
 @blueprint.route("/api/v1/members", methods=["GET"])
 def member_list():
+    email_id = request.args.get('email_id')
+    if email_id is not None:
+        response = view_member_by_email(current_app.config.get('REPO'), email_id)
+        return Response(
+            json.dumps(response.value, cls=MemberJsonEncoder),
+            mimetype="application/json",
+            status=STATUS_CODES[response.type],
+        )
     qrystr_params = {
         "filters": {},
     }

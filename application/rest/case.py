@@ -1,6 +1,6 @@
 import json
 
-from flask import Blueprint, request, Response, current_app,jsonify
+from flask import Blueprint, request, Response, current_app, jsonify
 
 from cms.use_cases.case import (
     case_list_use_case,

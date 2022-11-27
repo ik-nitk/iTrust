@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, current_app, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, current_app, session, request, redirect, url_for, jsonify
 
 blueprint = Blueprint(
             'member',
@@ -8,15 +8,17 @@ blueprint = Blueprint(
 @blueprint.route("/members")
 def member_list_view():
     api = current_app.config.get('api')
-    session = current_app.config.get('session')
+    app_session = current_app.config.get('app_session')
     url = api.members
-    response = session.get(url)
+    response = app_session.get(url)
     response.raise_for_status()
     members=response.json()
     return render_template("members/list.html", members=members)
 
 @blueprint.route("/members/create",methods = ["GET","POST"])
 def create_member():
+    if "google_id" not in session:
+        return render_template("error.html", error_msg="please login to create member")
     if request.method == 'GET':
         return render_template("members/create.html")
     else:
@@ -33,9 +35,9 @@ def create_member():
         phone = request.form.get('phone_no')
         email = request.form.get('email')
         api = current_app.config.get('api')
-        session = current_app.config.get('session')
+        app_session = current_app.config.get('app_session')
         url = api.members
-        response = session.post(url, json = {"govtId":govtId,"idType":idType,"firstName":firstName,"lastName":lastName,"middleName":middleName,"isCore":isCore,"phone":phone,"email":email})
+        response = app_session.post(url, json = {"govtId":govtId,"idType":idType,"firstName":firstName,"lastName":lastName,"middleName":middleName,"isCore":isCore,"phone":phone,"email":email})
         response.raise_for_status()
         return redirect(url_for('member.member_list_view'))
 
@@ -47,26 +49,26 @@ def member_search():
     else:
         search_input = request.form.get('query')
         api = current_app.config.get('api')
-        session = current_app.config.get('session')
+        app_session = current_app.config.get('app_session')
         url = api.member_search
-        response = session.post(url, json = {"search_input":search_input})
+        response = app_session.post(url, json = {"search_input":search_input})
         response.raise_for_status()
         members = response.json()
         return jsonify({'htmlresponse': render_template("members/search_response.html", members=members)})
 
-def get_case_details_with_member_id(api, session, id):
+def get_case_details_with_member_id(api, app_session, id):
     url = api.case_list(id)
-    response = session.get(url)
+    response = app_session.get(url)
     response.raise_for_status()
     return response.json()
 
 @blueprint.route("/members/view/<id>",methods = ["GET"])
 def member_view(id):
     api = current_app.config.get('api')
-    session = current_app.config.get('session')
-    cases = get_case_details_with_member_id(api,session,id)
+    app_session = current_app.config.get('app_session')
+    cases = get_case_details_with_member_id(api,app_session,id)
     url = api.member_id(id)
-    response = session.get(url)
+    response = app_session.get(url)
     response.raise_for_status()
     members = response.json()
     return render_template("members/view.html", members=members,cases = cases)
@@ -74,11 +76,13 @@ def member_view(id):
 
 @blueprint.route("/members/update/<id>",methods = ["GET","POST"])
 def member_update(id):
+    if "google_id" not in session:
+        return render_template("error.html", error_msg="please login to update member")
     if request.method == "GET":
         api = current_app.config.get('api')
-        session = current_app.config.get('session')
+        app_session = current_app.config.get('app_session')
         url = api.member_id(id)
-        response = session.get(url)
+        response = app_session.get(url)
         response.raise_for_status()
         members = response.json()
         return render_template("members/update.html", members=members)
@@ -96,7 +100,7 @@ def member_update(id):
         phone = request.form.get('phone_no')
         email = request.form.get('email')
         api = current_app.config.get('api')
-        session = current_app.config.get('session')
+        app_session = current_app.config.get('app_session')
         url =  api.member_id(id)
-        response = session.post(url, json = {"govtId":govtId,"idType":idType,"firstName":firstName,"lastName":lastName,"middleName":middleName,"isCore":isCore,"phone":phone,"email":email}) 
+        response = app_session.post(url, json = {"govtId":govtId,"idType":idType,"firstName":firstName,"lastName":lastName,"middleName":middleName,"isCore":isCore,"phone":phone,"email":email}) 
         return redirect("/members")
