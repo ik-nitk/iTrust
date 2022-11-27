@@ -140,6 +140,18 @@ def test_repository_list_with_phone_equal_filter(
     assert repo_members[0].member_id == "i.mem.1111"
 
 
+def test_repository_get_member_by_email(
+    app_configuration, pg_session, pg_test_data
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+
+    repo_members = repo.view_member_by_email(
+        email_id='sample.1111@gmail.com'
+    )
+
+    assert len(repo_members) == 1
+    assert repo_members[0].member_id == "i.mem.1111"
+
 def test_repository_list_with_member_id_equal_filter(
     app_configuration, pg_session, pg_test_data
 ):

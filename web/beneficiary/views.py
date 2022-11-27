@@ -1,5 +1,5 @@
 from crypt import methods
-from flask import Blueprint, render_template, current_app, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, current_app, session, request, redirect, url_for, jsonify
 
 blueprint = Blueprint(
             'beneficiary',
@@ -9,15 +9,17 @@ blueprint = Blueprint(
 @blueprint.route("/beneficiaries")
 def beneficiary_list_view():
     api = current_app.config.get('api')
-    session = current_app.config.get('session')
+    app_session = current_app.config.get('app_session')
     url = api.beneficiaries
-    response = session.get(url)
+    response = app_session.get(url)
     response.raise_for_status()
     beneficiaries=response.json()
     return render_template("beneficiaries/list.html", beneficiaries=beneficiaries)
 
 @blueprint.route("/beneficiaries/create",methods = ["GET","POST"])
 def create_beneficiary():
+    if "google_id" not in session:
+        return render_template("error.html", error_msg="please login to create beneficiary")
     if request.method == 'GET':
         return render_template("beneficiaries/create.html")
     else:
@@ -27,9 +29,9 @@ def create_beneficiary():
         phone = request.form.get('phone_no')
         email = request.form.get('email')
         api = current_app.config.get('api')
-        session = current_app.config.get('session')
+        app_session = current_app.config.get('app_session')
         url = api.beneficiaries
-        response = session.post(url, json = {"firstName":firstName,"lastName":lastName,"middleName":middleName,"phone":phone,"email":email})
+        response = app_session.post(url, json = {"firstName":firstName,"lastName":lastName,"middleName":middleName,"phone":phone,"email":email})
         response.raise_for_status()
         return redirect(url_for('beneficiary.beneficiary_list_view'))
 
@@ -40,26 +42,26 @@ def beneficiary_search():
     else:
         search_input = request.form.get('query')
         api = current_app.config.get('api')
-        session = current_app.config.get('session')
+        app_session = current_app.config.get('app_session')
         url = api.beneficiary_search
-        response = session.post(url, json = {"search_input":search_input})
+        response = app_session.post(url, json = {"search_input":search_input})
         response.raise_for_status()
         beneficiaries = response.json()
         return jsonify({'htmlresponse': render_template("beneficiaries/search_response.html", beneficiaries=beneficiaries)})
 
-def get_case_details_with_beneficiary_id(api, session, id):
+def get_case_details_with_beneficiary_id(api, app_session, id):
     url = api.case_list(id)
-    response = session.get(url)
+    response = app_session.get(url)
     response.raise_for_status()
     return response.json()
 
 @blueprint.route("/beneficiaries/view/<id>",methods = ["GET"])
 def beneficiary_view(id):
     api = current_app.config.get('api')
-    session = current_app.config.get('session')
-    cases = get_case_details_with_beneficiary_id(api,session,id)
+    app_session = current_app.config.get('app_session')
+    cases = get_case_details_with_beneficiary_id(api,app_session,id)
     url = api.beneficiary_id(id)
-    response = session.get(url)
+    response = app_session.get(url)
     response.raise_for_status()
     beneficiaries = response.json()
     return render_template("beneficiaries/view.html", beneficiaries=beneficiaries,cases = cases)
@@ -67,11 +69,13 @@ def beneficiary_view(id):
 
 @blueprint.route("/beneficiaries/update/<id>",methods = ["GET","POST"])
 def beneficiary_update(id):
+    if "google_id" not in session:
+        return render_template("error.html", error_msg="please login to update beneficiary")
     if request.method == "GET":
         api = current_app.config.get('api')
-        session = current_app.config.get('session')
+        app_session = current_app.config.get('app_session')
         url = api.beneficiary_id(id)
-        response = session.get(url)
+        response = app_session.get(url)
         response.raise_for_status()
         beneficiaries = response.json()
         return render_template("beneficiaries/update.html", beneficiaries=beneficiaries)
@@ -82,9 +86,9 @@ def beneficiary_update(id):
         phone = request.form.get('phone_no')
         email = request.form.get('email')
         api = current_app.config.get('api')
-        session = current_app.config.get('session')
+        app_session = current_app.config.get('app_session')
         url = api.beneficiary_id(id)
-        response = session.post(url, json = {"firstName":firstName,"lastName":lastName,"middleName":middleName,"phone":phone,"email":email}) 
+        response = app_session.post(url, json = {"firstName":firstName,"lastName":lastName,"middleName":middleName,"phone":phone,"email":email}) 
         return redirect("/beneficiaries")
 
 

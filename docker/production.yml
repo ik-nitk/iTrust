@@ -60,6 +60,7 @@ services:
     environment:
       FLASK_ENV: ${FLASK_ENV}
       FLASK_CONFIG: ${FLASK_CONFIG}
+      AUTH_ENABLED: ${AUTH_ENABLED}
     command: gunicorn -w 4 -b 0.0.0.0 wsgi_web:app
     volumes:
       - ${PWD}:/opt/code

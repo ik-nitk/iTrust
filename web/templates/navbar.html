@@ -42,6 +42,12 @@
                     >
                 </li>
             </ul>
+            {% if logged_in == true %}
+                <span>{{user}}</span>
+                <a class="nav-link active" href="{{ url_for('home.logout')}}">logout</a>
+            {% else %}
+                <a class="nav-link active" href="{{ url_for('home.login')}}">login</a>
+            {% endif %}
             <form class="d-flex">
                 <input
                     class="form-control me-2"

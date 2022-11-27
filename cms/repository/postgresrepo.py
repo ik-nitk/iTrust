@@ -251,7 +251,7 @@ class PostgresRepo:
         session.add(new_vote)
         session.commit()
         return new_vote.vote_id
-    
+
     def case_vote_list(self, case_id):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
@@ -266,7 +266,7 @@ class PostgresRepo:
         vote = session.query(CaseVotes).get(vote_id)
         session.delete(vote)
         session.commit()
-            
+
     def create_case_doc(self, case_id, doc_type, doc_name, doc_url):
         doc_id = f"i.doc.{generate()}"
         new_doc = CaseDocs(doc_id=doc_id, doc_type=doc_type, case_id=case_id, doc_url=doc_url, doc_name=doc_name)
@@ -344,6 +344,14 @@ class PostgresRepo:
         query = session.query(Beneficiary)\
             .with_entities(Beneficiary)\
                 .filter(Beneficiary.fname.ilike("%"+search_input+"%") | Beneficiary.mname.ilike("%"+search_input+"%") | Beneficiary.lname.ilike("%"+search_input+"%") ).all()
+        return query
+
+    def view_member_by_email(self, email_id):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        query = session.query(Member)\
+            .with_entities(Member)\
+                .filter_by(email = email_id ).all()
         return query
 
     def view_member(self, member_id):

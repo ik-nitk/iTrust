@@ -10,3 +10,7 @@ requests
 redis
 rq
 rq-dashboard
+google-auth
+google-auth-oauthlib
+oauthlib
+requests-oauthlib
