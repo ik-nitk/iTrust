@@ -14,7 +14,8 @@ def beneficiary_dicts():
             "lname": 'lname1',
             "phone" : "984561111",
             "mname" : None,
-            "email" : 'sample.1111@gmail.com'
+            "email" : 'sample.1111@gmail.com',
+            "updated__by": "i.mem.1111"
          },
          {
             "beneficiary_id": "i.ben.2222",
@@ -22,7 +23,8 @@ def beneficiary_dicts():
             "lname": 'lname2',
             "phone" : "984562222",
             "mname" : None,
-            "email" : 'sample.2222@gmail.com'
+            "email" : 'sample.2222@gmail.com',
+            "updated__by": "i.mem.1111"
          },
          {
             "beneficiary_id": "i.ben.3333",
@@ -30,7 +32,8 @@ def beneficiary_dicts():
             "lname": 'lname3',
             "phone" : "984563333",
             "mname" : None,
-            "email" : 'sample.3333@gmail.com'
+            "email" : 'sample.3333@gmail.com',
+            "updated__by": "i.mem.1111"
          },
     ]
 

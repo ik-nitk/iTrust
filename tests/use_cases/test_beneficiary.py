@@ -15,7 +15,8 @@ def domain_beneficiaries():
         lname='lname1',
         mname='maname1',
         phone='968611',
-        email='bsample@gmail.com'
+        email='bsample@gmail.com',
+        updated__by='i.mem.111'
     )
 
     beneficiary_2 =  Beneficiary(
@@ -24,7 +25,8 @@ def domain_beneficiaries():
         lname='lname2',
         mname='maname2',
         phone='968612',
-        email='bsample2@gmail.com'
+        email='bsample2@gmail.com',
+        updated__by='i.mem.111'
     )
 
     beneficiary_3 =  Beneficiary(
@@ -33,7 +35,8 @@ def domain_beneficiaries():
         lname='lname3',
         mname='maname3',
         phone='968613',
-        email='bsample3@gmail.com'
+        email='bsample3@gmail.com',
+        updated__by='i.mem.111'
     )
 
     beneficiary_4 =  Beneficiary(
@@ -42,7 +45,8 @@ def domain_beneficiaries():
         lname='lname4',
         mname='maname4',
         phone='968614',
-        email='bsample4@gmail.com'
+        email='bsample4@gmail.com',
+        updated__by='i.mem.111'
     )
 
     return [beneficiary_1, beneficiary_2,beneficiary_3,beneficiary_4]
@@ -51,20 +55,20 @@ def test_create_beneficiary():
     repo = mock.Mock()
     repo.create_beneficiary.return_value = "i.ben.xxxx"
 
-    response = create_new_beneficiary(repo, "fname","mname","lname","968612","sample@gmail.com")
+    response = create_new_beneficiary(repo, "fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
 
     assert bool(response) is True
-    repo.create_beneficiary.assert_called_with("fname","mname","lname","968612","sample@gmail.com")
+    repo.create_beneficiary.assert_called_with("fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
     assert response.value == "i.ben.xxxx"
 
 def test_create_beneficiary_exception():
     repo = mock.Mock()
     repo.create_beneficiary.side_effect = Exception("error")
 
-    response = create_new_beneficiary(repo, "fname","mname","lname","968612","sample@gmail.com")
+    response = create_new_beneficiary(repo, "fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
 
     assert bool(response) is False
-    repo.create_beneficiary.assert_called_with("fname","mname","lname","968612","sample@gmail.com")
+    repo.create_beneficiary.assert_called_with("fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
 
 
 def test_member_list_without_parameters(domain_beneficiaries):

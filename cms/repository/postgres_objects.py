@@ -31,6 +31,7 @@ class Member(Base):
     is_core = Column(BOOLEAN)
     phone = Column(String(20))
     email = Column(String)
+    updated__by = Column(String(40), ForeignKey("member.member_id"), nullable=False)
 
 class Beneficiary(Base):
     __tablename__ = "beneficiary"
@@ -41,6 +42,7 @@ class Beneficiary(Base):
     mname = Column(String)
     phone = Column(String(20))
     email = Column(String)
+    updated__by = Column(String(40), ForeignKey("member.member_id"), nullable=False)
 
 class CaseDocs(Base):
     __tablename__ = "t_case_docs"
@@ -49,22 +51,23 @@ class CaseDocs(Base):
     doc_url = Column(String)
     case_id = Column(String(40), ForeignKey("t_case.case_id"))
     doc_name = Column(String)
+    updated__by = Column(String(40), ForeignKey("member.member_id"), nullable=False)
 
 
 class CaseComments(Base):
     __tablename__ = "t_case_comments"
     comment_id = Column(String(40), primary_key=True)
     comment_type = Column(Enum(CommentType))
-    case_id = Column(String(40), ForeignKey("t_case.case_id"))
+    case_id = Column(String(40), ForeignKey("t_case.case_id"), nullable=False)
     comment = Column(String)
-    commented__by = Column(String(40))
+    commented__by = Column(String(40), ForeignKey("member.member_id"), nullable=False)
     comment_data = Column(JSON)
 
 class CaseVotes(Base):
     __tablename__ = "t_case_votes"
     vote_id = Column(String(40), primary_key=True)
-    case_id = Column(String(40), ForeignKey("t_case.case_id"))
-    voted__by = Column(String(40), ForeignKey("member.member_id"))
+    case_id = Column(String(40), ForeignKey("t_case.case_id"), nullable=False)
+    voted__by = Column(String(40), ForeignKey("member.member_id"), nullable=False)
     amount_suggested = Column(Integer)
     vote = Column(Enum(VoteType))
     comment = Column(String)
@@ -77,7 +80,7 @@ class Case(Base):
     case_state = Column(Enum(CaseState))
     is_flagged = Column(BOOLEAN, server_default=expression.false())
     is_urgent = Column(BOOLEAN, server_default=expression.false())
-    beneficiary__id = Column(String(40), ForeignKey("beneficiary.beneficiary_id"))
+    beneficiary__id = Column(String(40), ForeignKey("beneficiary.beneficiary_id"), nullable=False)
     purpose = Column(Enum(CaseType))
     title = Column(String)
     description = Column(String)
@@ -88,5 +91,5 @@ class Case(Base):
     contact_details = Column(String)
     contact_address = Column(String)
     referred__by = Column(String(40), ForeignKey("member.member_id"))
-    closed__by = Column(String(40))
-    updated_by = Column(String(40))
+    closed__by = Column(String(40), ForeignKey("member.member_id"))
+    updated__by = Column(String(40), ForeignKey("member.member_id"), nullable=False)

@@ -10,7 +10,8 @@ class BeneficiaryJsonEncoder(json.JSONEncoder):
                 "lname": o.lname,
                 "mname": o.mname,
                 "phone": o.phone,
-                "email": o.email
+                "email": o.email,
+                "updated__by": o.updated__by
             }
             return to_serialize
         except AttributeError:  # pragma: no cover

@@ -36,10 +36,10 @@ def test_create_case():
     repo = mock.Mock()
     repo.create_case.return_value = "i.case.xxxx"
 
-    response = create_new_case(repo, beneficiary_id="i.ben.1235", purpose="", title="", description="",amount_needed=0)
+    response = create_new_case(repo, beneficiary_id="i.ben.1235", purpose="", title="", description="",amount_needed=0, created_by='i.mem.111')
 
     assert bool(response) is True
-    repo.create_case.assert_called_with(beneficiary_id="i.ben.1235", purpose="", title="", description="",amount_needed=0)
+    repo.create_case.assert_called_with(beneficiary_id="i.ben.1235", purpose="", title="", description="",amount_needed=0, created_by='i.mem.111')
     assert response.value == "i.case.xxxx"
 
 def test_add_documents():
@@ -50,7 +50,7 @@ def test_add_documents():
         purpose=CaseType.EDUCATION,
         beneficiary__id='i.ben.1234'
     )
-    response = add_initial_documents_use_case(repo, case_id='case_id', doc_list=[
+    response = add_initial_documents_use_case(repo, case_id='case_id', created_by='i.mem.1111' ,doc_list=[
         {"doc_url":"url1", "doc_name": "doc_name1"},
         {"doc_url":"url2", "doc_name": "doc_name2"}
     ])

@@ -28,7 +28,7 @@ class BackendApiBuilder:
         :param member_id: unique member id
         :return: member endpoint
         """
-        return self.members + '?email_id'.format(email_id)
+        return self.members + '?email_id={}'.format(email_id)
 
     @property
     def member_search(self):

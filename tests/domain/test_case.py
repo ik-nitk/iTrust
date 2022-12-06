@@ -24,7 +24,7 @@ def test_case_model_init():
         contact_address= "",
         referred__by= "",
         closed__by= "",
-        updated_by= ""
+        updated__by= ""
     )
 
     assert case.case_id == id
@@ -54,7 +54,7 @@ def test_case_model_from_dict():
         "contact_address": "",
         "referred__by": "",
         "closed__by": "",
-        "updated_by": ""
+        "updated__by": ""
     }
 
     case = Case.from_dict(init_dict)
@@ -86,7 +86,7 @@ def test_case_to_dict():
         "contact_address": "",
         "referred__by": "",
         "closed__by": "",
-        "updated_by": ""
+        "updated__by": ""
     }
 
     case = Case.from_dict(init_dict)
@@ -112,7 +112,7 @@ def test_case_model_comparison():
         "contact_address": "",
         "referred__by": "",
         "closed__by": "",
-        "updated_by": ""
+        "updated__by": ""
     }
 
     case1 = Case.from_dict(init_dict)

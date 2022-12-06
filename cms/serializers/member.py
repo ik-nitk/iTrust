@@ -13,7 +13,8 @@ class MemberJsonEncoder(json.JSONEncoder):
                 "govt_id": o.govt_id,
                 "id_type": o.id_type,
                 "phone": o.phone,
-                "email": o.email
+                "email": o.email,
+                "updated__by": o.updated__by
             }
             return to_serialize
         except AttributeError:  # pragma: no cover

@@ -63,7 +63,8 @@ def create_member():
     isCore = request.json['isCore']
     phone = request.json['phone']
     email = request.json['email']
-    response = create_new_member(current_app.config['REPO'],govtId,idType,firstName,lastName,middleName,isCore,phone,email)
+    created_by = request.json['created_by']
+    response = create_new_member(current_app.config['REPO'],govtId,idType,firstName,lastName,middleName,isCore,phone,email, created_by)
     return Response(
         json.dumps(response.value, cls=MemberJsonEncoder),
         mimetype="application/json",
@@ -100,7 +101,8 @@ def member_update(id):
     isCore = request.json['isCore']
     phone = request.json['phone']
     email = request.json['email']
-    response = update_member(current_app.config['REPO'],id,govtId,idType,firstName,middleName,lastName,isCore,phone,email)
+    updated_by = request.json['updated_by']
+    response = update_member(current_app.config['REPO'],id,govtId,idType,firstName,middleName,lastName,isCore,phone,email, updated_by)
     return Response(
         json.dumps(response.value, cls=MemberJsonEncoder),
         mimetype="application/json",

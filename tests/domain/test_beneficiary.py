@@ -10,7 +10,8 @@ def test_beneficiary_model_init():
         lname='lname',
         phone='9983100200',
         mname=None,
-        email='bsample.1234@gmail.com'
+        email='bsample.1234@gmail.com',
+        updated__by='i.mem.1111',
     )
 
     assert beneficiary.beneficiary_id == id
@@ -28,7 +29,8 @@ def test_beneficiary_model_from_dict():
         "lname": 'lname',
         "phone" : "9983100200",
         "mname" : None,
-        "email" : 'bsample.1234@gmail.com'
+        "email" : 'bsample.1234@gmail.com',
+        "updated__by": 'i.mem.1111',
     }
 
     beneficiary = Beneficiary.from_dict(init_dict)
@@ -48,7 +50,8 @@ def test_room_beneficiary_to_dict():
         "lname": 'lname',
         "phone" : "9983100200",
         "mname" : None,
-        "email" : 'bsample.1234@gmail.com'
+        "email" : 'bsample.1234@gmail.com',
+        "updated__by": 'i.mem.1111',
     }
 
     beneficiary = Beneficiary.from_dict(init_dict)
@@ -63,7 +66,8 @@ def test_room_model_comparison():
         "lname": 'lname',
         "phone" : "9983100200",
         "mname" : None,
-        "email" : 'bsample.1234@gmail.com'
+        "email" : 'bsample.1234@gmail.com',
+        "updated__by": 'i.mem.1111',
     }
 
     beneficiary1 = Beneficiary.from_dict(init_dict)
