@@ -20,7 +20,8 @@ member_dict = {
     "phone" : "984561111",
     "mname" : None,
     "is_core": False,
-    "email" : 'sample.1111@gmail.com'
+    "email" : 'sample.1111@gmail.com',
+    "updated__by": "i.mem.1111"
 }
 
 members = [Member.from_dict(member_dict)]

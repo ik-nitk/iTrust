@@ -31,11 +31,6 @@ def create_app(config_name):
     app.config['api'] = api
     app.config['app_session'] = app_session
 
-    admins_file = os.path.join(pathlib.Path(__file__).parent, "admins.json")
-    with open(admins_file, 'r') as f:
-        admins_data = json.load(f)
-        app.config['admins'] = admins_data["admins"]
-
     ## Authentication module if enabled.
     if os.environ.get("AUTH_ENABLED", "false").lower() == "true":
         os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"

@@ -18,7 +18,8 @@ def test_serialize_domain_member():
         id_type=IDType.AADHAAR,
         phone='9983100200',
         mname=None,
-        email='sample.1234@gmail.com'
+        email='sample.1234@gmail.com',
+        updated__by='i.mem.111'
     )
 
     expected_json = f"""
@@ -31,7 +32,8 @@ def test_serialize_domain_member():
             "phone" : "9983100200",
             "mname" : null,
             "is_core": false,
-            "email" : "sample.1234@gmail.com"
+            "email" : "sample.1234@gmail.com",
+            "updated__by" : "i.mem.111"
         }}
     """
 

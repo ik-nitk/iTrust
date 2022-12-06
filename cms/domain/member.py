@@ -12,6 +12,7 @@ class Member:
     id_type: IDType
     phone: str
     email: str
+    updated__by: str
 
     @classmethod
     def from_dict(self, d):

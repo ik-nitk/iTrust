@@ -1,7 +1,7 @@
 import sqlalchemy
 import pytest
 
-from cms.repository.postgres_objects import Base, Member, Beneficiary, Case
+from cms.repository.postgres_objects import Base, Member, Beneficiary, Case, CaseVotes, CaseDocs, CaseComments
 from cms.domain.id_type import IDType
 
 
@@ -41,7 +41,8 @@ def pg_test_data():
             "phone" : "984561111",
             "mname" : None,
             "is_core": False,
-            "email" : 'sample.1111@gmail.com'
+            "email" : 'sample.1111@gmail.com',
+            "updated__by": "i.mem.1111",
          },
          {
             "member_id": "i.mem.2222",
@@ -52,7 +53,8 @@ def pg_test_data():
             "phone" : "984562222",
             "mname" : None,
             "is_core": False,
-            "email" : 'sample.2222@gmail.com'
+            "email" : 'sample.2222@gmail.com',
+            "updated__by": "i.mem.1111",
          },
          {
             "member_id": "i.mem.3333",
@@ -63,7 +65,8 @@ def pg_test_data():
             "phone" : "984563333",
             "mname" : None,
             "is_core": False,
-            "email" : 'sample.3333@gmail.com'
+            "email" : 'sample.3333@gmail.com',
+            "updated__by": "i.mem.1111",
          },
          {
             "member_id": "i.mem.4444",
@@ -74,7 +77,8 @@ def pg_test_data():
             "phone" : "984564444",
             "mname" : None,
             "is_core": False,
-            "email" : 'sample.4444@gmail.com'
+            "email" : 'sample.4444@gmail.com',
+            "updated__by": "i.mem.1111",
          },
     ]
 
@@ -83,9 +87,13 @@ def pg_test_data_case():
     return [
         {
             "case_id": "i.case.1111",
+            "beneficiary__id": "i.ben.1111",
+            "updated__by": "i.mem.1111"
         },
         {
             "case_id": "i.case.2222",
+            "beneficiary__id": "i.ben.2222",
+            "updated__by": "i.mem.1111"
         }
     ]
 
@@ -98,7 +106,8 @@ def pg_test_data_beneficiary():
             "lname": 'lname1',
             "phone" : "984561111",
             "mname" : None,
-            "email" : 'sample.1111@gmail.com'
+            "email" : 'sample.1111@gmail.com',
+            "updated__by": "i.mem.1111",
          },
          {
             "beneficiary_id": "i.ben.2222",
@@ -106,7 +115,8 @@ def pg_test_data_beneficiary():
             "lname": 'lname2',
             "phone" : "984562222",
             "mname" : None,
-            "email" : 'sample.2222@gmail.com'
+            "email" : 'sample.2222@gmail.com',
+            "updated__by": "i.mem.1111",
          },
          {
             "beneficiary_id": "i.ben.3333",
@@ -114,7 +124,8 @@ def pg_test_data_beneficiary():
             "lname": 'lname3',
             "phone" : "984563333",
             "mname" : None,
-            "email" : 'sample.3333@gmail.com'
+            "email" : 'sample.3333@gmail.com',
+            "updated__by": "i.mem.1111",
          },
          {
             "beneficiary_id": "i.ben.4444",
@@ -122,7 +133,8 @@ def pg_test_data_beneficiary():
             "lname": 'lname4',
             "phone" : "984564444",
             "mname" : None,
-            "email" : 'sample.4444@gmail.com'
+            "email" : 'sample.4444@gmail.com',
+            "updated__by": "i.mem.1111",
          },
     ]
 
@@ -142,7 +154,8 @@ def pg_session(pg_session_empty,
             govt_id=r["govt_id"],
             id_type=r["id_type"],
             fname=r["fname"],
-            lname=r["lname"]
+            lname=r["lname"],
+            updated__by=r["updated__by"]
         )
         pg_session_empty.add(new_member)
         pg_session_empty.commit()
@@ -153,21 +166,27 @@ def pg_session(pg_session_empty,
             phone=r["phone"],
             email=r["email"],
             fname=r["fname"],
-            lname=r["lname"]
+            lname=r["lname"],
+            updated__by=r["updated__by"]
         )
         pg_session_empty.add(new_beneficiary)
         pg_session_empty.commit()
 
     for r in pg_test_data_case:
         new_case = Case(
-            case_id=r["case_id"]
+            case_id=r["case_id"],
+            beneficiary__id=r["beneficiary__id"],
+            updated__by=r["updated__by"]
         )
         pg_session_empty.add(new_case)
         pg_session_empty.commit()
 
     yield pg_session_empty
 
+    pg_session_empty.query(CaseComments).delete()
+    pg_session_empty.query(CaseVotes).delete()
+    pg_session_empty.query(CaseDocs).delete()
     pg_session_empty.query(Case).delete()
-    pg_session_empty.query(Member).delete()
     pg_session_empty.query(Beneficiary).delete()
+    pg_session_empty.query(Member).delete()
 

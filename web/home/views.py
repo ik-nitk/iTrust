@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, session, redirect, request, curren
 import requests
 import os
 from google.oauth2 import id_token
+import json
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
 
@@ -31,7 +32,7 @@ def callback():
         audience=google_client_id
     )
 
-    session["google_id"] = id_info.get("sub")  #defing the results to show on the page
+    session["google_id"] = id_info.get("email")  #defing the results to show on the page
     session["name"] = id_info.get("name")
     return redirect("/")  #the final page where the authorized users will end up
 

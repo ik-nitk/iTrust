@@ -16,7 +16,8 @@ beneficiary_dict = {
     "lname": 'lname1',
     "phone" : "984561111",
     "mname" : None,
-    "email" : 'bsample.1111@gmail.com'
+    "email" : 'bsample.1111@gmail.com',
+    "updated__by": "i.mem.1111"
 }
 
 beneficiaries = [Beneficiary.from_dict(beneficiary_dict)]

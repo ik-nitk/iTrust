@@ -17,7 +17,8 @@ def member_dicts():
             "phone" : "984561111",
             "mname" : None,
             "is_core": False,
-            "email" : 'sample.1111@gmail.com'
+            "email" : 'sample.1111@gmail.com',
+            "updated__by": "i.mem.1111",
          },
          {
             "member_id": "i.mem.2222",
@@ -28,7 +29,8 @@ def member_dicts():
             "phone" : "984562222",
             "mname" : None,
             "is_core": False,
-            "email" : 'sample.2222@gmail.com'
+            "email" : 'sample.2222@gmail.com',
+            "updated__by": "i.mem.1111",
          },
          {
             "member_id": "i.mem.3333",
@@ -39,7 +41,8 @@ def member_dicts():
             "phone" : "984563333",
             "mname" : None,
             "is_core": False,
-            "email" : 'sample.3333@gmail.com'
+            "email" : 'sample.3333@gmail.com',
+            "updated__by": "i.mem.1111",
          },
          {
             "member_id": "i.mem.4444",
@@ -50,7 +53,8 @@ def member_dicts():
             "phone" : "984564444",
             "mname" : None,
             "is_core": False,
-            "email" : 'sample.4444@gmail.com'
+            "email" : 'sample.4444@gmail.com',
+            "updated__by": "i.mem.1111",
          },
     ]
 

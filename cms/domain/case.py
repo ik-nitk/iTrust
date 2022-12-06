@@ -17,7 +17,7 @@ class Case:
     contact_address: str = ""
     referred__by: str = ""
     closed__by: str = ""
-    updated_by: str = ""
+    updated__by: str = ""
     case_state: CaseState = CaseState.DRAFT
     is_flagged: bool = False
     is_urgent: bool = False

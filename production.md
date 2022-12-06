@@ -15,7 +15,10 @@ set value of "REDIRECT_URL" to DNS of the application. For local testing set it 
 Download the client_secret.json from the Google application registered and copy to
 web/client_secret.json
 
-add valid email address as admins in web/admins.json.
+add valid email address as admins
+```
+./manage.py add-admin-member -e <you_email> -n <name>
+```
 
 ### Disable Authentication
 If working on local, disable Authentication.

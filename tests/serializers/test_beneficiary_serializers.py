@@ -14,7 +14,8 @@ def test_serialize_domain_beneficiary():
         lname='lname',
         phone='9983100200',
         mname=None,
-        email='sample.1234@gmail.com'
+        email='sample.1234@gmail.com',
+        updated__by='i.mem.111'
     )
 
     expected_json = f"""
@@ -24,7 +25,8 @@ def test_serialize_domain_beneficiary():
             "lname": "lname",
             "phone" : "9983100200",
             "mname" : null,
-            "email" : "sample.1234@gmail.com"
+            "email" : "sample.1234@gmail.com",
+            "updated__by" : "i.mem.111"
         }}
     """
 
