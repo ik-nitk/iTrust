@@ -28,7 +28,8 @@ STATUS_CODES = {
 
 @blueprint.route("/api/v1/cases/<case_id>/publish", methods=["POST"])
 def publish_case(case_id):
-    response = publish_case_use_case(current_app.config.get('REPO'), case_id)
+    updated_by = request.json['updated_by']
+    response = publish_case_use_case(current_app.config.get('REPO'), case_id, updated_by)
     return Response(
         json.dumps(response.value, cls=CaseJsonEncoder),
         mimetype="application/json",
@@ -38,7 +39,8 @@ def publish_case(case_id):
 @blueprint.route("/api/v1/cases/<case_id>/add_initial_documents", methods=["POST"])
 def add_initial_documents(case_id):
     doc_list = request.json['doc_list']
-    response = add_initial_documents_use_case(current_app.config.get('REPO'), case_id, doc_list)
+    created_by = request.json['created_by']
+    response = add_initial_documents_use_case(current_app.config.get('REPO'), case_id, created_by, doc_list)
     return Response(
         json.dumps(response.value, cls=CaseJsonEncoder),
         mimetype="application/json",
@@ -57,8 +59,8 @@ def case_view(id):
 @blueprint.route("/api/v1/cases/<case_id>/add_case_verification_details", methods=["POST"])
 def add_verification_comment_to_case(case_id):
     comment = request.json['comment']
-    # TODO - update the verified by
-    response = add_case_verification_details(current_app.config.get('REPO'), case_id, comment, 'test')
+    verified_by = request.json['verified_by']
+    response = add_case_verification_details(current_app.config.get('REPO'), case_id, comment, verified_by)
     return Response(
         json.dumps(response.value, cls=CaseJsonEncoder),
         mimetype="application/json",
@@ -80,7 +82,8 @@ def add_vote_to_case(case_id):
     vote = request.json['vote']
     comment = request.json['comment']
     amount_suggested = request.json['amount_suggested']
-    response = add_vote(current_app.config.get('REPO'), case_id, vote,comment,amount_suggested)
+    created_by = request.json['created_by']
+    response = add_vote(current_app.config.get('REPO'), case_id, vote,comment,amount_suggested,created_by)
     return Response(
         json.dumps(response.value, cls=CaseVoteJsonEncoder),
         mimetype="application/json",
@@ -136,7 +139,8 @@ def create_case():
     title = request.json['title']
     description = request.json['description']
     amount_needed = request.json['amount_needed']
-    response = create_new_case(current_app.config['REPO'],beneficiary_id, purpose, title, description,amount_needed)
+    created_by = request.json['created_by']
+    response = create_new_case(current_app.config['REPO'],beneficiary_id, purpose, title, description,amount_needed,created_by)
     return Response(
         json.dumps(response.value, cls=CaseJsonEncoder),
         mimetype="application/json",

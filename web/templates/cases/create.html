@@ -5,7 +5,7 @@
             <label class="col-sm-2 col-form-label"
                 >{{beneficiary.fname}} Id</label
             >
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-user"></i></span
@@ -16,13 +16,14 @@
                         required="true"
                         value="{{beneficiary.beneficiary_id if beneficiary else ''}}"
                         type="text"
+                        readonly="{{true if beneficiary else false}}"
                     />
                 </div>
             </div>
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Purpose</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon" style="max-width: 100%"
                         ><i class="glyphicon glyphicon-list"></i
@@ -41,7 +42,7 @@
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Title</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-user"></i></span
@@ -58,12 +59,12 @@
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Description</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-user"></i
                     ></span>
-                    <textarea
+                    <textarea rows="6"
                         id="description"
                         name="description"
                         class="form-control"
@@ -74,7 +75,7 @@
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Amount Needed</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-user"></i></span

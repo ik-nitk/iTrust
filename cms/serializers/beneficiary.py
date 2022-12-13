@@ -10,6 +10,8 @@ class BeneficiaryJsonEncoder(json.JSONEncoder):
                 "lname": o.lname,
                 "mname": o.mname,
                 "phone": o.phone,
+                "govt_id": o.govt_id,
+                "id_type": o.id_type,
                 "email": o.email,
                 "updated__by": o.updated__by
             }

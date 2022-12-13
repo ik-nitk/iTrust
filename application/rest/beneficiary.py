@@ -43,12 +43,15 @@ def beneficiary_list():
 
 @blueprint.route("/api/v1/beneficiaries", methods=["POST"])
 def create_beneficiary():
+    govtId = request.json['govtId']
+    idType = request.json['idType']
     firstName = request.json['firstName']
     lastName = request.json['lastName']
     middleName = request.json['middleName']
     phone = request.json['phone']
     email = request.json['email']
-    response = create_new_beneficiary(current_app.config['REPO'],firstName,lastName,middleName,phone,email)
+    created_by = request.json['created_by']
+    response = create_new_beneficiary(current_app.config['REPO'],govtId, idType,firstName,lastName,middleName,phone,email,created_by)
     return Response(
         json.dumps(response.value, cls=BeneficiaryJsonEncoder),
         mimetype="application/json",
@@ -76,16 +79,17 @@ def beneficiary_view(id):
 
 @blueprint.route("/api/v1/beneficiaries/<id>", methods=["POST"])
 def beneficiary_update(id):
+    govtId = request.json['govtId']
+    idType = request.json['idType']
     firstName = request.json['firstName']
     lastName = request.json['lastName']
     middleName = request.json['middleName']
     phone = request.json['phone']
     email = request.json['email']
-    response = update_beneficiary(current_app.config['REPO'],id,firstName,lastName,middleName,phone,email)
+    updated_by = request.json['updated_by']
+    response = update_beneficiary(current_app.config['REPO'],id,govtId,idType,firstName,lastName,middleName,phone,email,updated_by)
     return Response(
         json.dumps(response.value, cls=BeneficiaryJsonEncoder),
         mimetype="application/json",
         status=STATUS_CODES[response.type],
     )
-
-    

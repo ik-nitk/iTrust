@@ -1,5 +1,6 @@
 import json
 from unittest import mock
+from cms.domain.id_type import IDType
 
 import pytest
 
@@ -13,6 +14,8 @@ from common.responses import (
 beneficiary_dict = {
     "beneficiary_id": "i.ben.1111",
     "fname": 'fname1',
+    "govt_id": 'abcd1234',
+    "id_type": IDType.AADHAAR,
     "lname": 'lname1',
     "phone" : "984561111",
     "mname" : None,
@@ -85,9 +88,9 @@ def test_get_response_failures(
 
 @mock.patch("application.rest.beneficiary.create_new_beneficiary")
 def test_post(mock_use_case, client):
-    
+
     mock_use_case.return_value = ResponseSuccess(beneficiaries)
-    data = {"firstName": "fname", "lastName":"lname", "middleName":"mname", "phone":"23456","email":"abc@gmail.com" }
+    data = {"govtId": "abcd1234", "idType": "AADHAAR", "firstName": "fname", "lastName":"lname", "middleName":"mname", "phone":"23456","email":"abc@gmail.com", "created_by": "i.mem.1111" }
 
     res = client.post("/api/v1/beneficiaries",json=data)
 

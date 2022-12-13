@@ -1,10 +1,12 @@
 from flask import Flask, render_template, session
+import traceback
 import requests
 import os
 import pathlib
 from google_auth_oauthlib.flow import Flow
 from flask_bootstrap import Bootstrap
 import json
+from logging.config import dictConfig
 from web.member import views as members
 from web.case import views as cases
 from web.home import views as home
@@ -12,6 +14,35 @@ from web.upload import views as upload
 from web.beneficiary import views as beneficiaries
 
 from web.backend_api_builder import BackendApiBuilder
+
+
+# Logging configuration
+dictConfig(
+    {
+        "version": 1,
+        "formatters": {
+            "default": {
+                "format": "[%(asctime)s] %(levelname)s in %(module)s: %(message)s",
+            }
+        },
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "stream": "ext://sys.stdout",
+                "formatter": "default",
+            },
+            "file": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": "/var/log/web.log",
+                "maxBytes": 1000000,
+                "backupCount": 3,
+                "formatter": "default",
+            }
+        },
+        "root": {"level": "INFO", "handlers": ["console", "file"]},
+    }
+)
+
 
 
 def create_app(config_name):
@@ -29,7 +60,14 @@ def create_app(config_name):
     app.register_blueprint(beneficiaries.blueprint)
     app.register_blueprint(cases.blueprint)
     app.config['api'] = api
+
+    def print_response_on_error(r, *args, **kwargs):
+        if r.status_code == 500:
+            print("Error with downstream URL", r.url, r.text)
+            app.logger.error("Error with downstream URL %s %s", r.url, r.text)
+
     app.config['app_session'] = app_session
+    app_session.hooks['response'].append(print_response_on_error)
 
     ## Authentication module if enabled.
     if os.environ.get("AUTH_ENABLED", "false").lower() == "true":
@@ -57,4 +95,10 @@ def create_app(config_name):
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template("404.html")
+
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        print(traceback.format_exc())
+        app.logger.error(traceback.format_exc())
+        return render_template("error.html", error_msg=str(e)), 500
     return app

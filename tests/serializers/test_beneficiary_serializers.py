@@ -3,6 +3,7 @@ from nanoid import generate
 
 from cms.serializers.beneficiary import BeneficiaryJsonEncoder
 from cms.domain.beneficiary import Beneficiary
+from cms.domain.id_type import IDType
 
 
 def test_serialize_domain_beneficiary():
@@ -12,6 +13,8 @@ def test_serialize_domain_beneficiary():
         beneficiary_id=id,
         fname='fname',
         lname='lname',
+        govt_id='abcd1234',
+        id_type=IDType.AADHAAR,
         phone='9983100200',
         mname=None,
         email='sample.1234@gmail.com',
@@ -23,6 +26,8 @@ def test_serialize_domain_beneficiary():
             "beneficiary_id": "{id}",
             "fname": "fname",
             "lname": "lname",
+            "govt_id": "abcd1234",
+            "id_type": "AADHAAR",
             "phone" : "9983100200",
             "mname" : null,
             "email" : "sample.1234@gmail.com",

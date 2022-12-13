@@ -37,6 +37,8 @@ class Beneficiary(Base):
     __tablename__ = "beneficiary"
 
     beneficiary_id = Column(String(40), primary_key=True)
+    govt_id = Column(String, nullable=False)
+    id_type = Column(Enum(IDType))
     fname = Column(String, nullable=False)
     lname = Column(String)
     mname = Column(String)

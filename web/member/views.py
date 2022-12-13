@@ -21,6 +21,8 @@ def create_member():
     current_member = ''
     try:
         current_member = get_member_from_session()
+        if not current_member["is_core"]:
+            raise Exception("Only Core member can create members")
     except Exception as e:
         return render_template("error.html", error_msg=str(e))
     if request.method == 'GET':
@@ -43,7 +45,7 @@ def create_member():
         url = api.members
         response = app_session.post(url, json = {"govtId":govtId,"idType":idType,"firstName":firstName,"lastName":lastName,"middleName":middleName,"isCore":isCore,"phone":phone,"email":email, "created_by":current_member['member_id']})
         response.raise_for_status()
-        return redirect(url_for('member.member_list_view'))
+        return redirect(url_for('member.member_view', id=response.json()))
 
 
 @blueprint.route("/members/search",methods = ["GET","POST"])
@@ -85,6 +87,8 @@ def member_update(id):
     current_member = ''
     try:
         current_member = get_member_from_session()
+        if not current_member["is_core"]:
+            raise Exception("Only Core member can update members")
     except Exception as e:
         return render_template("error.html", error_msg=str(e))
     if request.method == "GET":
@@ -112,4 +116,4 @@ def member_update(id):
         app_session = current_app.config.get('app_session')
         url =  api.member_id(id)
         response = app_session.post(url, json = {"govtId":govtId,"idType":idType,"firstName":firstName,"lastName":lastName,"middleName":middleName,"isCore":isCore,"phone":phone,"email":email, "updated_by":current_member['member_id']})
-        return redirect("/members")
+        return redirect(url_for('member.member_view', id=id))

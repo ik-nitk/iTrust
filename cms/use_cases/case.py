@@ -20,7 +20,7 @@ def case_list_use_case(repo, request):
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
-def publish_case_use_case(repo, case_id):
+def publish_case_use_case(repo, case_id, updated_by):
     try:
         case = repo.find_case(case_id)
         if case is None:
@@ -28,7 +28,7 @@ def publish_case_use_case(repo, case_id):
         if case.case_state is not CaseState.DRAFT:
             return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Publishing non Draft case is not allowed!!")
         ## change case state to publish.
-        repo.update_case_state(case_id, CaseState.PUBLISHED)
+        repo.update_case_state(case_id, CaseState.PUBLISHED, updated_by)
         return ResponseSuccess('case_published')
     except Exception as e:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, e)
@@ -41,7 +41,7 @@ def add_case_verification_details(repo, case_id, comment, verification_by):
         if case.case_state is not CaseState.PUBLISHED:
             return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Verification comments now not allowed")
         comment_id = repo.create_case_comment(case_id, comment_type=CommentType.VERIFICATION_COMMENTS, comment=comment, comment_data={}, c_by=verification_by)
-        repo.update_case_state(case_id, CaseState.VERIFICATION)
+        repo.update_case_state(case_id, CaseState.VERIFICATION, verification_by)
         return ResponseSuccess(comment_id)
     except Exception as e:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, e)
@@ -62,7 +62,7 @@ def add_vote(repo, case_id, vote,comment,amount_suggested, created_by):
             return ResponseFailure(ResponseTypes.PARAMETERS_ERROR, "Voting not allowed")
         vote_id = repo.create_case_vote(case_id, vote,comment, amount_suggested, created_by)
         if case.case_state is CaseState.VERIFICATION:
-            repo.update_case_state(case_id, CaseState.VOTING)
+            repo.update_case_state(case_id, CaseState.VOTING, created_by)
         return ResponseSuccess(vote_id)
     except Exception as e:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, e)

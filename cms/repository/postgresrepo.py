@@ -72,6 +72,8 @@ class PostgresRepo:
                 beneficiary_id=q.beneficiary_id,
                 fname=q.fname,
                 lname=q.lname,
+                govt_id=q.govt_id,
+                id_type=q.id_type,
                 mname=q.mname,
                 phone=q.phone,
                 email=q.email,
@@ -304,9 +306,9 @@ class PostgresRepo:
         session.delete(doc)
         session.commit()
 
-    def create_beneficiary(self, fname,lname, mname, phone, email, created_by):
+    def create_beneficiary(self, govt_id, id_type, fname,lname, mname, phone, email, created_by):
         beneficiary_id = f"i.ben.{generate()}"
-        new_beneficiary = Beneficiary(beneficiary_id = beneficiary_id,fname = fname,lname=lname,mname = mname,phone = phone,email=email, updated__by=created_by)
+        new_beneficiary = Beneficiary(beneficiary_id = beneficiary_id,govt_id=govt_id, id_type=id_type, fname=fname,lname=lname,mname = mname,phone = phone,email=email, updated__by=created_by)
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         session.add(new_beneficiary)
@@ -393,13 +395,15 @@ class PostgresRepo:
                     .filter_by(beneficiary_id = beneficiary_id ).all()
             return query
 
-    def update_beneficiary(self, beneficiary_id,fname,lname,mname, phone, email, updated_by):
+    def update_beneficiary(self, beneficiary_id,govt_id, id_type, fname,lname,mname, phone, email, updated_by):
             DBSession = sessionmaker(bind=self.engine)
             session = DBSession()
             beneficiary = session.query(Beneficiary)\
                 .with_entities(Beneficiary)\
                     .filter_by(beneficiary_id = beneficiary_id ).first()
             beneficiary.fname = fname
+            beneficiary.govt_id = govt_id
+            beneficiary.id_type = id_type
             beneficiary.mname = mname
             beneficiary.lname = lname
             beneficiary.phone = phone

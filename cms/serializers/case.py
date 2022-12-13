@@ -21,7 +21,7 @@ class CaseJsonEncoder(json.JSONEncoder):
                 "contact_address": o.contact_address,
                 "referred__by": o.referred__by,
                 "closed__by": o.closed__by,
-                "updated__by": o.updated_by
+                "updated__by": o.updated__by
             }
             return to_serialize
         except AttributeError:  # pragma: no cover
@@ -35,7 +35,8 @@ class CaseDocsJsonEncoder(json.JSONEncoder):
                 "doc_type": o.doc_type,
                 "doc_id": o.doc_id,
                 "doc_name": o.doc_name,
-                "doc_url": o.doc_url
+                "doc_url": o.doc_url,
+                "updated__by": o.updated__by
             }
             return to_serialize
         except AttributeError:  # pragma: no cover
@@ -62,11 +63,10 @@ class CaseVoteJsonEncoder(json.JSONEncoder):
             to_serialize = {
                 "case_id": o.case_id,
                 "vote_id": o.vote_id,
-                "voted_by": o.voted_by,
                 "amount_suggested":o.amount_suggested,
                 "vote": o.vote,
                 "comment": o.comment,
-                "updated__by": o.updated_by
+                "voted__by": o.voted__by
             }
             return to_serialize
         except AttributeError:  # pragma: no cover

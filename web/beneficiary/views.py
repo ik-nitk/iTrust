@@ -1,5 +1,6 @@
 from crypt import methods
 from flask import Blueprint, render_template, current_app, session, request, redirect, url_for, jsonify
+from web.utils import get_member_from_session, get_member_details
 
 blueprint = Blueprint(
             'beneficiary',
@@ -18,11 +19,16 @@ def beneficiary_list_view():
 
 @blueprint.route("/beneficiaries/create",methods = ["GET","POST"])
 def create_beneficiary():
-    if "google_id" not in session:
-        return render_template("error.html", error_msg="please login to create beneficiary")
+    current_member = ''
+    try:
+        current_member = get_member_from_session()
+    except Exception as e:
+        return render_template("error.html", error_msg=str(e))
     if request.method == 'GET':
         return render_template("beneficiaries/create.html")
     else:
+        govtId = request.form.get('govt_id')
+        idType = request.form.get('id_type')
         firstName = request.form.get('first_name')
         lastName = request.form.get('last_name')
         middleName = request.form.get('middle_name')
@@ -31,9 +37,9 @@ def create_beneficiary():
         api = current_app.config.get('api')
         app_session = current_app.config.get('app_session')
         url = api.beneficiaries
-        response = app_session.post(url, json = {"firstName":firstName,"lastName":lastName,"middleName":middleName,"phone":phone,"email":email})
+        response = app_session.post(url, json = {"govtId":govtId,"idType":idType,"firstName":firstName,"lastName":lastName,"middleName":middleName,"phone":phone,"email":email,"created_by":current_member['member_id']})
         response.raise_for_status()
-        return redirect(url_for('beneficiary.beneficiary_list_view'))
+        return redirect(url_for('beneficiary.beneficiary_view', id=response.json()))
 
 @blueprint.route("/beneficiaries/search",methods = ["GET","POST"])
 def beneficiary_search():
@@ -64,13 +70,17 @@ def beneficiary_view(id):
     response = app_session.get(url)
     response.raise_for_status()
     beneficiaries = response.json()
-    return render_template("beneficiaries/view.html", beneficiaries=beneficiaries,cases = cases)
+    updated_by = get_member_details(api, app_session, beneficiaries[0]["updated__by"])
+    return render_template("beneficiaries/view.html", beneficiaries=beneficiaries,cases = cases, updated_by=updated_by)
 
 
 @blueprint.route("/beneficiaries/update/<id>",methods = ["GET","POST"])
 def beneficiary_update(id):
-    if "google_id" not in session:
-        return render_template("error.html", error_msg="please login to update beneficiary")
+    current_member = ''
+    try:
+        current_member = get_member_from_session()
+    except Exception as e:
+        return render_template("error.html", error_msg=str(e))
     if request.method == "GET":
         api = current_app.config.get('api')
         app_session = current_app.config.get('app_session')
@@ -80,6 +90,8 @@ def beneficiary_update(id):
         beneficiaries = response.json()
         return render_template("beneficiaries/update.html", beneficiaries=beneficiaries)
     else:
+        govtId = request.form.get('govt_id')
+        idType = request.form.get('id_type')
         firstName = request.form.get('first_name')
         lastName = request.form.get('last_name')
         middleName = request.form.get('middle_name')
@@ -88,8 +100,8 @@ def beneficiary_update(id):
         api = current_app.config.get('api')
         app_session = current_app.config.get('app_session')
         url = api.beneficiary_id(id)
-        response = app_session.post(url, json = {"firstName":firstName,"lastName":lastName,"middleName":middleName,"phone":phone,"email":email}) 
-        return redirect("/beneficiaries")
+        response = app_session.post(url, json = {"govtId":govtId,"idType":idType,"firstName":firstName,"lastName":lastName,"middleName":middleName,"phone":phone,"email":email,"updated_by":current_member['member_id']})
+        return redirect(url_for('beneficiary.beneficiary_view', id=id))
 
 
 

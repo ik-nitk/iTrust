@@ -5,6 +5,7 @@ from unittest import mock
 from cms.domain.beneficiary import Beneficiary
 from cms.use_cases.beneficiary import beneficiary_list_use_case,create_new_beneficiary
 from cms.requests.beneficiary_list import build_beneficiary_list_request
+from cms.domain.id_type import IDType
 from common.responses import ResponseTypes
 
 @pytest.fixture
@@ -14,6 +15,8 @@ def domain_beneficiaries():
         fname='fname1',
         lname='lname1',
         mname='maname1',
+        govt_id='3333',
+        id_type=IDType.AADHAAR,
         phone='968611',
         email='bsample@gmail.com',
         updated__by='i.mem.111'
@@ -24,6 +27,8 @@ def domain_beneficiaries():
         fname='fname2',
         lname='lname2',
         mname='maname2',
+        govt_id='3333',
+        id_type=IDType.AADHAAR,
         phone='968612',
         email='bsample2@gmail.com',
         updated__by='i.mem.111'
@@ -33,6 +38,8 @@ def domain_beneficiaries():
         beneficiary_id=generate(size=10),
         fname='fname3',
         lname='lname3',
+        govt_id='3333',
+        id_type=IDType.AADHAAR,
         mname='maname3',
         phone='968613',
         email='bsample3@gmail.com',
@@ -43,6 +50,8 @@ def domain_beneficiaries():
         beneficiary_id=generate(size=10),
         fname='fname4',
         lname='lname4',
+        govt_id='3333',
+        id_type=IDType.AADHAAR,
         mname='maname4',
         phone='968614',
         email='bsample4@gmail.com',
@@ -55,20 +64,20 @@ def test_create_beneficiary():
     repo = mock.Mock()
     repo.create_beneficiary.return_value = "i.ben.xxxx"
 
-    response = create_new_beneficiary(repo, "fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
+    response = create_new_beneficiary(repo, "gid-111", IDType.AADHAAR,"fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
 
     assert bool(response) is True
-    repo.create_beneficiary.assert_called_with("fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
+    repo.create_beneficiary.assert_called_with("gid-111", IDType.AADHAAR, "fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
     assert response.value == "i.ben.xxxx"
 
 def test_create_beneficiary_exception():
     repo = mock.Mock()
     repo.create_beneficiary.side_effect = Exception("error")
 
-    response = create_new_beneficiary(repo, "fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
+    response = create_new_beneficiary(repo, "gid-111", IDType.AADHAAR, "fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
 
     assert bool(response) is False
-    repo.create_beneficiary.assert_called_with("fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
+    repo.create_beneficiary.assert_called_with("gid-111", IDType.AADHAAR, "fname","mname","lname","968612","sample@gmail.com", "i.mem.111")
 
 
 def test_member_list_without_parameters(domain_beneficiaries):

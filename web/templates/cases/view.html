@@ -12,10 +12,11 @@
         <div class="card" style="width: 40rem">
             <div class="card-body">
                 {% include 'cases/view_next_action.html' %}
+                <div class="col-xs-12" style="height: 20px"></div>
                 <form class="well form-horizontal">
                     <div class="row mb-3">
                         <label class="col-sm-2 col-form-label">Title</label>
-                        <div class="col-sm-4 inputGroupContainer">
+                        <div class="col-md-8 inputGroupContainer">
                             <div class="input-group">
                                 <span class="input-group-addon"
                                     ><i
@@ -37,12 +38,12 @@
                         <label class="col-sm-2 col-form-label"
                             >Description</label
                         >
-                        <div class="col-sm-4 inputGroupContainer">
+                        <div class="col-md-8 inputGroupContainer">
                             <div class="input-group">
                                 <span class="input-group-addon"
                                     ><i class="glyphicon glyphicon-user"></i
                                 ></span>
-                                <textarea
+                                <textarea rows="6"
                                     id="description"
                                     name="description"
                                     class="form-control"
@@ -58,7 +59,7 @@
                         <label class="col-sm-2 col-form-label"
                             >Amount Needed</label
                         >
-                        <div class="col-sm-4 inputGroupContainer">
+                        <div class="col-md-8 inputGroupContainer">
                             <div class="input-group">
                                 <span class="input-group-addon"
                                     ><i
@@ -75,6 +76,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Updated by</label>
+                        <div class="col-md-8 inputGroupContainer">
+                        <a
+                            href="{{ url_for('member.member_view', id=updated_by.member_id) }}"
+                            >{{updated_by.fname}}</a
+                        >
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -88,6 +98,7 @@
                         >Upload supporting documents</a
                     >
                 </div>
+                <div class="col-xs-12" style="height: 20px"></div>
                 <ul class="list-group">
                     {% for doc in initial_doc_list %}
                     <li class="list-group-item">
@@ -111,7 +122,10 @@
                 <ul class="list-group">
                     {% for x in verification_comments %}
                     <li class="list-group-item">
-                        [{{x.commented_by}}] : {{x.comment}}
+                        [<a
+                            href="{{ url_for('member.member_view', id=x.commented_by) }}"
+                            >Verified by</a
+                        >] : {{x.comment}}
                     </li>
                     {% endfor %}
                 </ul>
@@ -127,9 +141,12 @@
                 <ul class="list-group">
                     {% for vote in case_votes %}
                     <li class="list-group-item">
-                        [{{vote.voted_by}}] : {{vote.vote}} : Comment-
-                        {{vote.comment}} : Amount Suggested -
-                        {{vote.amount_suggested}}
+                        [<a
+                            href="{{ url_for('member.member_view', id=vote.voted__by) }}"
+                            >Voted by</a
+                        >] : {{vote.vote}} : Amount Suggested
+                        {{vote.amount_suggested}} : Comment
+                        {{vote.comment}}
                     </li>
                     {% endfor %}
                 </ul>

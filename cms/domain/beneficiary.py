@@ -1,4 +1,5 @@
 import dataclasses
+from cms.domain.id_type import IDType
 
 @dataclasses.dataclass
 class Beneficiary:
@@ -7,6 +8,8 @@ class Beneficiary:
     lname: str
     mname: str
     phone: str
+    govt_id: str
+    id_type: IDType
     email: str
     updated__by: str
 
