@@ -141,13 +141,17 @@ def case_list():
     qrystr_params = {
         "filters": {},
     }
+    limit = 100
+    if request.args.get('limit'):
+        limit = request.args.get('limit')
 
     for arg, values in request.args.items():
         if arg.startswith("filter_"):
             qrystr_params["filters"][arg.replace("filter_", "")] = values
 
     request_object = build_case_list_request(
-        filters=qrystr_params["filters"]
+        filters=qrystr_params["filters"],
+        limit=limit
     )
 
     response = case_list_use_case(current_app.config.get('REPO'), request_object)

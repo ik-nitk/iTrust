@@ -12,8 +12,8 @@ from sqlalchemy.ext.declarative import declarative_base
 class Base(object):
     def __tablename__(self):
         return self.__name__.lower()
-    created = Column(TIMESTAMP, nullable=False, server_default=func.now())
-    modified = Column(TIMESTAMP, nullable=False, server_default=func.now(), onupdate=func.current_timestamp())
+    created = Column(TIMESTAMP, name='created', nullable=False, server_default=func.now())
+    modified = Column(TIMESTAMP, name='modified', nullable=False, server_default=func.now(), onupdate=func.current_timestamp())
 
 
 Base = declarative_base(cls=Base)

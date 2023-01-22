@@ -5,9 +5,10 @@ import os
 from google.oauth2 import id_token
 import json
 from pip._vendor import cachecontrol
+from concurrent.futures import ThreadPoolExecutor, wait
 import google.auth.transport.requests
 
-
+pool = ThreadPoolExecutor(10)
 blueprint = Blueprint(
             'home',
              __name__
@@ -54,12 +55,45 @@ def login():
     return redirect(authorization_url)
 
 
+def get_case_list(api, app_session, state, limit=3):
+    url = api.case_list_from_case_state(state, limit)
+    response = app_session.get(url)
+    response.raise_for_status()
+    return response.json()
+
 @blueprint.route("/")
 def home_page():
     api = current_app.config.get('api')
-    session = current_app.config.get('session')
-    url = api.case_list_from_case_state('PUBLISHED')
-    response = session.get(url)
-    response.raise_for_status()
-    cases = response.json()
-    return render_template("home/index.html",cases = cases)
+    app_session = current_app.config.get('app_session')
+    futures = []
+    futures.append(pool.submit(get_case_list, api, app_session, 'CLOSE'))
+    futures.append(pool.submit(get_case_list, api, app_session, 'PUBLISHED'))
+    futures.append(pool.submit(get_case_list, api, app_session, 'VERIFICATION'))
+    futures.append(pool.submit(get_case_list, api, app_session, 'VOTING'))
+    futures.append(pool.submit(get_case_list, api, app_session, 'APPROVED'))
+    futures.append(pool.submit(get_case_list, api, app_session, 'REJECTED'))
+    futures.append(pool.submit(get_case_list, api, app_session, 'PAYMENT_DONE'))
+    wait(futures)
+    closed_cases = futures[0].result()
+    published_cases = futures[1].result()
+    verified_cases = futures[2].result()
+    voting_cases = futures[3].result()
+    approved_cases = futures[4].result()
+    rejected_cases = futures[5].result()
+    payment_done_cases = futures[6].result()
+    return render_template("home/index.html",
+        closed_cases = closed_cases,
+        is_closed_cases=(len(closed_cases) > 0),
+        published_cases = published_cases,
+        is_published_cases = (len(published_cases) > 0),
+        verified_cases = verified_cases,
+        is_verified_cases = (len(verified_cases) > 0),
+        voting_cases = voting_cases,
+        is_voting_cases = (len(voting_cases) > 0),
+        approved_cases = approved_cases,
+        is_approved_cases = (len(approved_cases) > 0),
+        rejected_cases = rejected_cases,
+        is_rejected_cases = (len(rejected_cases) > 0),
+        payment_done_cases = payment_done_cases,
+        is_payment_done_cases = (len(payment_done_cases) > 0)
+    )

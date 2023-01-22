@@ -16,15 +16,16 @@ class CaseListInvalidRequest:
 
 
 class CaseListValidRequest:
-    def __init__(self, filters=None):
+    def __init__(self, filters=None, limit=100):
         self.filters = filters
+        self.limit = limit
 
     def __bool__(self):
         return True
 
 
-def build_case_list_request(filters=None):
-    accepted_filters = ["case_id__eq", "title__eq", "epurpose__eq","beneficiary_id__eq","member_id__eq","case_state__eq"]
+def build_case_list_request(filters=None, limit=100):
+    accepted_filters = ["beneficiary_id__eq","member_id__eq","case_state__eq"]
     invalid_req = CaseListInvalidRequest()
 
     if filters is not None:
@@ -41,4 +42,4 @@ def build_case_list_request(filters=None):
         if invalid_req.has_errors():
             return invalid_req
 
-    return CaseListValidRequest(filters=filters)
+    return CaseListValidRequest(filters=filters, limit=limit)

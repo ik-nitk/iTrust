@@ -1,16 +1,152 @@
 {% extends "base.html" %} {% block content %}
+<div class="container-fluid" style="overflow-wrap: 100%">
+    <div class="container-fluid" style="width: 40rem">
 
-{% for case in cases %}
-<div class="card">
-    <div class="card-body">
-        <h4 class="card-title">Title : {{case.title}}</h4>
-        <h4 class="card-title">Purpose : {{case.purpose}}</h4>
-        <a
-            href="{{ url_for('case.case_view', id=case.case_id) }}"
-            class="card-link"
-            >view case</a
-        >
+    {% if is_published_cases == true %}
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex">
+                <h5>Pending verification</h5>
+                <a
+                        class="nav-link active"
+                        aria-current="page"
+                        href="{{ url_for('case.case_list_view', filter_case_state__eq='PUBLISHED') }}"
+                        >view more</a
+                    >
+            </div>
+            <ul class="list-group">
+                {% for case in published_cases %}
+                <li class="list-group-item">
+                       <a
+                                href="{{ url_for('case.case_view', id=case.case_id) }}"
+                                >{{ case.title }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
+
+    {% endif %}
+
+    {% if is_verified_cases == true or is_voting_cases == true %}
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex">
+                <h5>Pending voting</h5>
+                <a
+                        class="nav-link active"
+                        aria-current="page"
+                        href="{{ url_for('case.case_list_view', filter_case_state__eq=['PUBLISHED', 'VOTING']) }}"
+                        >view more</a
+                    >
+            </div>
+            <ul class="list-group">
+                {% for case in voting_cases %}
+                <li class="list-group-item">
+                       <a
+                                href="{{ url_for('case.case_view', id=case.case_id) }}"
+                                >{{ case.title }}</a>
+                </li>
+                {% endfor %}
+                {% for case in verified_cases %}
+                <li class="list-group-item">
+                       <a
+                                href="{{ url_for('case.case_view', id=case.case_id) }}"
+                                >{{ case.title }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    {% endif %}
+
+    {% if is_approved_cases == true %}
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex">
+                <h5>Pending payment</h5>
+                <a
+                        class="nav-link active"
+                        aria-current="page"
+                        href="{{ url_for('case.case_list_view', filter_case_state__eq='APPROVED') }}"
+                        >view more</a
+                    >
+            </div>
+            <ul class="list-group">
+                {% for case in approved_cases %}
+                <li class="list-group-item">
+                       <a
+                                href="{{ url_for('case.case_view', id=case.case_id) }}"
+                                >{{ case.title }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    {% endif %}
+
+    {% if is_payment_done_cases == true or is_rejected_cases == true %}
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex">
+                <h5>Pending closure</h5>
+                <a
+                        class="nav-link active"
+                        aria-current="page"
+                        href="{{ url_for('case.case_list_view', filter_case_state__eq=['PAYMENT_DONE', 'REJECTED']) }}"
+                        >view more</a
+                    >
+            </div>
+            <ul class="list-group">
+                {% for case in payment_done_cases %}
+                <li class="list-group-item">
+                       <a
+                                href="{{ url_for('case.case_view', id=case.case_id) }}"
+                                >{{ case.title }}</a>
+                </li>
+                {% endfor %}
+                {% for case in rejected_cases %}
+                <li class="list-group-item">
+                       <a
+                                href="{{ url_for('case.case_view', id=case.case_id) }}"
+                                >{{ case.title }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    {% endif %}
+
+
+    {% if is_closed_cases == true %}
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex">
+                <h5>Recent Closed cases</h5>
+                <div class="justify-content-end">
+                    <a
+                    class="nav-link active"
+                    aria-current="page"
+                    href="{{ url_for('case.case_list_view', filter_case_state__eq='CLOSE') }}"
+                    >view more</a>
+                </div>
+            </div>
+            <ul class="list-group">
+                {% for case in closed_cases %}
+                <li class="list-group-item">
+                       <a
+                                href="{{ url_for('case.case_view', id=case.case_id) }}"
+                                >{{ case.title }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    {% endif %}
 </div>
-</br>
-{% endfor %} {% endblock %}
+</div>
+{% endblock %}

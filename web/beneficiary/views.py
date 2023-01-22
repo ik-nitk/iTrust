@@ -57,7 +57,7 @@ def beneficiary_search():
 
 
 def get_case_details_with_beneficiary_id(api, app_session, id):
-    url = api.case_list(id)
+    url = api.case_list_for_beneficiary(id)
     response = app_session.get(url)
     response.raise_for_status()
     return response.json()
