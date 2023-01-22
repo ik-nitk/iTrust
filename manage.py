@@ -150,9 +150,11 @@ def test(args):
     configure_app(os.getenv("APPLICATION_CONFIG"))
 
     cmdline = docker_compose_cmdline("up -d")
+    print("Starting docker command: " + " ".join(cmdline))
     subprocess.call(cmdline)
 
     cmdline = docker_compose_cmdline("logs postgres")
+    print("wait_for_logs: " + " ".join(cmdline))
     wait_for_logs(cmdline, "ready to accept connections")
 
     run_sql([f"CREATE DATABASE {os.getenv('APPLICATION_DB')}"])
@@ -164,9 +166,11 @@ def test(args):
         "--cov-report=term-missing",
     ]
     cmdline.extend(args)
+    print("running tests: " + " ".join(cmdline))
     subprocess.call(cmdline)
 
     cmdline = docker_compose_cmdline("down")
+    print("Shutting down tests: " + " ".join(cmdline))
     subprocess.call(cmdline)
 
 

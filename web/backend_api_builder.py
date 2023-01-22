@@ -82,6 +82,12 @@ class BackendApiBuilder:
     def case_vote(self, case_id):
          return self.cases + '/{}'.format(case_id) + '/add_vote_to_case'
 
+    def close_case(self, case_id):
+         return self.cases + '/{}'.format(case_id) + '/close'
+
+    def add_payment_details(self, case_id):
+         return self.cases + '/{}'.format(case_id) + '/add_payment_details'
+
     def case_vote_list(self, case_id):
         return self.case_id(case_id) + '/votes'
 

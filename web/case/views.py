@@ -1,5 +1,4 @@
 import traceback
-from turtle import title
 from cms.domain.case_state import CaseState
 from cms.domain.comment_type import CommentType
 from flask import Blueprint, render_template, current_app, session, request, redirect, url_for, Response
@@ -49,6 +48,12 @@ def get_case_initial_documents(api, app_session, id):
     response.raise_for_status()
     return response.json()
 
+def get_case_payment_documents(api, app_session, id):
+    doc_url = api.case_doc_list(id, 'CASE_PAYMENT_RECEIPTS')
+    response = app_session.get(doc_url)
+    response.raise_for_status()
+    return response.json()
+
 def get_beneficiary_details(api, app_session, id):
     url = api.beneficiary_id(id)
     response = app_session.get(url)
@@ -72,12 +77,16 @@ def case_view(id):
         futures.append(pool.submit(get_case_initial_documents, api, app_session, id))
         futures.append(pool.submit(get_case_comments, api, app_session, id))
         futures.append(pool.submit(get_case_votes, api, app_session, id))
+        futures.append(pool.submit(get_case_payment_documents, api, app_session, id))
         wait(futures)
         case = futures[0].result()
         initial_doc_list=futures[1].result()
         case_comments=futures[2].result()
         case_votes = futures[3].result()
+        payment_documents = futures[4].result()
         verification_comments = list(filter(lambda x: (x['comment_type'] == CommentType.VERIFICATION_COMMENTS), case_comments))
+        payment_done_comments = list(filter(lambda x: (x['comment_type'] == CommentType.PAYMENT_COMMENTS), case_comments))
+        closing_comments = list(filter(lambda x: (x['comment_type'] == CommentType.CLOSING_COMMENTS), case_comments))
         beneficiary = get_beneficiary_details(api, app_session, case['beneficiary__id'])
         updated_by = get_member_details(api, app_session, case["updated__by"])
         return render_template("cases/view.html",
@@ -88,6 +97,11 @@ def case_view(id):
             verification_done=(len(verification_comments) > 0), #atleast one verification comment added.
             verification_comments=verification_comments,
             voting_done = (len(case_votes) > 0),
+            payment_done = (len(payment_documents) > 0),
+            payment_done_comments = payment_done_comments,
+            case_closed=(len(closing_comments) > 0),
+            closing_comments = closing_comments,
+            payment_documents = payment_documents,
             case_votes = case_votes,
             updated_by = updated_by
         )
@@ -125,8 +139,6 @@ def add_initial_case_documents(id):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print('ERROR: Uploading failed for case: ' + id)
-        print(e)
         return Response(
             json.dumps({'error': response.reason}),
             mimetype="application/json",
@@ -137,6 +149,28 @@ def add_initial_case_documents(id):
         mimetype="application/json",
         status=200,
     )
+
+@blueprint.route("/cases/<case_id>/close", methods = ["GET", "POST"])
+def add_closing_details(case_id):
+    current_member = ''
+    try:
+        current_member = get_member_from_session()
+    except Exception as e:
+        return render_template("error.html", error_msg=str(e))
+    try:
+        if request.method == "GET":
+            return render_template('cases/add_closing_details.html', case_id=case_id)
+        else:
+            api = current_app.config.get('api')
+            app_session = current_app.config.get('app_session')
+            comment = request.form.get('comment')
+            url = api.close_case(case_id)
+            response = app_session.post(url, json = {'comment':comment, "closed_by":current_member['member_id']})
+            response.raise_for_status()
+            return redirect('/cases/view/' + case_id)
+    except Exception as e:
+        print(traceback.format_exc())
+        return render_template("error.html", error_msg=str(e))
 
 @blueprint.route("/cases/<case_id>/add_verification_details", methods = ["GET", "POST"])
 def add_verification_details(case_id):
@@ -156,6 +190,44 @@ def add_verification_details(case_id):
             response = app_session.post(url, json = {'comment':comment, "verified_by":current_member['member_id']})
             response.raise_for_status()
             return redirect('/cases/view/' + case_id)
+    except Exception as e:
+        print(traceback.format_exc())
+        return render_template("error.html", error_msg=str(e))
+
+
+@blueprint.route("/cases/<case_id>/add_payment_details", methods = ["GET", "POST"])
+def add_payment_details(case_id):
+    current_member = ''
+    try:
+        current_member = get_member_from_session()
+    except Exception as e:
+        return render_template("error.html", error_msg=str(e))
+    try:
+        if request.method == "GET":
+            return render_template('cases/add_payment_details.html', case_id=case_id)
+        else:
+            try:
+                api = current_app.config.get('api')
+                app_session = current_app.config.get('app_session')
+                url = api.add_payment_details(case_id)
+                comment = request.json['comment']
+                amount_paid = request.json['amount_paid']
+                doc_list = request.json['doc_list']
+                response = app_session.post(url, json = {'amount_paid': amount_paid, 'doc_list':doc_list, 'comment':comment, "created_by":current_member['member_id']})
+                response.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                print('ERROR: Payment failed for case: ' + case_id)
+                print(e)
+                return Response(
+                    json.dumps({'error': response.reason}),
+                    mimetype="application/json",
+                    status=response.status_code,
+                )
+            return Response(
+                json.dumps({'redirect': '/cases/view/' + case_id}),
+                mimetype="application/json",
+                status=200,
+            )
     except Exception as e:
         print(traceback.format_exc())
         return render_template("error.html", error_msg=str(e))

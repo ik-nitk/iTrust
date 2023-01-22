@@ -62,5 +62,9 @@
     {
         "name": "REDIRECT_URL",
         "value": "http://127.0.0.1:8080/callback"
+    },
+    {
+        "name": "MINIMUM_CASE_APPROVER",
+        "value": "1"
     }
 ]

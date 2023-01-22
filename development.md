@@ -83,6 +83,13 @@ Init the database:
 
 ```
 ./manage.py init-postgres
+
+tear down the server for database tables can be updated now.
+./manage.py compose down
+
+Bring it up again
+./manage.py compose up -d
+
 ```
 
 Create default admin

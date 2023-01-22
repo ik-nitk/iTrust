@@ -77,6 +77,27 @@
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label"
+                            >Amount Approved</label
+                        >
+                        <div class="col-md-8 inputGroupContainer">
+                            <div class="input-group">
+                                <span class="input-group-addon"
+                                    ><i
+                                        class="glyphicon glyphicon-user"
+                                    ></i></span
+                                ><input
+                                    id="description"
+                                    name="description"
+                                    class="form-control"
+                                    value="{{case.amount_approved}}"
+                                    type="text"
+                                    readonly
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <label class="col-sm-2 col-form-label">Updated by</label>
                         <div class="col-md-8 inputGroupContainer">
                         <a
@@ -147,6 +168,57 @@
                         >] : {{vote.vote}} : Amount Suggested
                         {{vote.amount_suggested}} : Comment
                         {{vote.comment}}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {% endif %} {% if payment_done == true %}
+        <div class="card" style="width: 40rem">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h5>Payment details</h5>
+                </div>
+                <ul class="list-group">
+                    {% for x in payment_done_comments %}
+                    <li class="list-group-item">
+                        [<a
+                            href="{{ url_for('member.member_view', id=x.commented_by) }}"
+                            >Paid by</a
+                        >] : {{x.comment}}
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="col-xs-12" style="height: 20px"></div>
+                <ul class="list-group">
+                    {% for doc in payment_documents %}
+                    <li class="list-group-item">
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="{{ doc.doc_url }}"
+                            >{{doc.doc_name}}</a
+                        >
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {% endif %} {% if case_closed == true %}
+        <div class="card" style="width: 40rem">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h5>Closing details</h5>
+                </div>
+                <ul class="list-group">
+                    {% for x in closing_comments %}
+                    <li class="list-group-item">
+                        [<a
+                            href="{{ url_for('member.member_view', id=x.commented_by) }}"
+                            >Closed by</a
+                        >] : {{x.comment}}
                     </li>
                     {% endfor %}
                 </ul>
