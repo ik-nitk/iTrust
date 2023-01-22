@@ -176,8 +176,8 @@ class PostgresRepo:
         if "member_id__eq" in filters:
             query = query.filter(Case.referred__by == filters["member_id__eq"])
 
-        if "purpose__eq" in filters:
-            query = query.filter(Beneficiary.email == filters["purpose__eq"])
+        if "case_state__eq" in filters:
+            query = query.filter(Case.case_state == filters["case_state__eq"])
 
 
         return self._create_case_objects(query.all())

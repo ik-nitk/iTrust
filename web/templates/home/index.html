@@ -1,11 +1,16 @@
 {% extends "base.html" %} {% block content %}
 
-<div class="container-fluid" style="width: 40rem;">
-    <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Welcome to iTrust: Zakat management application</h5>
-          <p class="card-text">Under Construction ...</p>
-        </div>
-      </div>
+{% for case in cases %}
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Title : {{case.title}}</h4>
+        <h4 class="card-title">Purpose : {{case.purpose}}</h4>
+        <a
+            href="{{ url_for('case.case_view', id=case.case_id) }}"
+            class="card-link"
+            >view case</a
+        >
+    </div>
 </div>
-{% endblock %}
+</br>
+{% endfor %} {% endblock %}

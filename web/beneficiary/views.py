@@ -55,6 +55,7 @@ def beneficiary_search():
         beneficiaries = response.json()
         return jsonify({'htmlresponse': render_template("beneficiaries/search_response.html", beneficiaries=beneficiaries)})
 
+
 def get_case_details_with_beneficiary_id(api, app_session, id):
     url = api.case_list(id)
     response = app_session.get(url)

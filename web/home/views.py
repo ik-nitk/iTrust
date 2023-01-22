@@ -1,3 +1,4 @@
+
 from flask import Blueprint, render_template, session, redirect, request, current_app
 import requests
 import os
@@ -55,4 +56,10 @@ def login():
 
 @blueprint.route("/")
 def home_page():
-    return render_template("home/index.html")
+    api = current_app.config.get('api')
+    session = current_app.config.get('session')
+    url = api.case_list_from_case_state('PUBLISHED')
+    response = session.get(url)
+    response.raise_for_status()
+    cases = response.json()
+    return render_template("home/index.html",cases = cases)
