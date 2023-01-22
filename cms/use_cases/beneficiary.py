@@ -2,12 +2,12 @@ from common.responses import (
     ResponseSuccess,
     ResponseFailure,
     ResponseTypes,
-    build_response_from_invalid_request, 
+    build_response_from_invalid_request,
 )
 
-def create_new_beneficiary(repo,fname,mname,lname,phone,email):
+def create_new_beneficiary(repo,govt_id, id_type, fname,mname,lname,phone,email, created_by):
     try:
-        id = repo.create_beneficiary(fname,mname,lname,phone,email)
+        id = repo.create_beneficiary(govt_id, id_type, fname,mname,lname,phone,email, created_by)
         return ResponseSuccess(id)
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
@@ -36,9 +36,9 @@ def view_beneficiary(repo, beneficiary_id):
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
-def update_beneficiary(repo, beneficiary_id,fname,mname,lname,phone,email):
+def update_beneficiary(repo, beneficiary_id,govt_id, id_type, fname,mname,lname,phone,email, updated_by):
     try:
-        beneficiary = repo.update_beneficiary(beneficiary_id,fname,mname,lname,phone,email)
+        beneficiary = repo.update_beneficiary(beneficiary_id, govt_id, id_type, fname,mname,lname,phone,email, updated_by)
         return ResponseSuccess(beneficiary)
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)

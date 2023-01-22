@@ -5,9 +5,9 @@ from common.responses import (
     build_response_from_invalid_request,
 )
 
-def create_new_member(repo,govt_id,id_type,fname,mname,lname,is_core,phone,email):
+def create_new_member(repo,govt_id,id_type,fname,mname,lname,is_core,phone,email, created_by):
     try:
-        id = repo.create_member(govt_id,id_type,fname,mname,lname,is_core,phone,email)
+        id = repo.create_member(govt_id,id_type,fname,mname,lname,is_core,phone,email, created_by)
         return ResponseSuccess(id)
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
@@ -35,9 +35,16 @@ def view_member(repo, member_id):
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
 
-def update_member(repo, member_id,govt_id,id_type,fname,mname,lname,is_core,phone,email):
+def view_member_by_email(repo, email_id):
     try:
-        member = repo.update_member(member_id,govt_id,id_type,fname,mname,lname,is_core,phone,email)
+        member = repo.view_member_by_email(email_id)
+        return ResponseSuccess(member)
+    except Exception as exc:
+        return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)
+
+def update_member(repo, member_id,govt_id,id_type,fname,mname,lname,is_core,phone,email, updated_by):
+    try:
+        member = repo.update_member(member_id,govt_id,id_type,fname,mname,lname,is_core,phone,email, updated_by)
         return ResponseSuccess(member)
     except Exception as exc:
         return ResponseFailure(ResponseTypes.SYSTEM_ERROR, exc)

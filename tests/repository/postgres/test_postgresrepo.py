@@ -27,7 +27,7 @@ def test_create_case(
     app_configuration, pg_session, pg_test_data_case
 ):
     repo = postgresrepo.PostgresRepo(app_configuration)
-    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.121', purpose=CaseType.EDUCATION, description='',amount_needed= 0)
+    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.121', created_by='i.mem.1111', purpose=CaseType.EDUCATION, description='',amount_needed= 0)
     repo_case = repo.find_case(case_id)
 
     assert repo_case.title == 't.121'
@@ -45,8 +45,8 @@ def test_create_case_change_state(
     app_configuration, pg_session, pg_test_data_case
 ):
     repo = postgresrepo.PostgresRepo(app_configuration)
-    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.121', purpose=CaseType.EDUCATION, description='',amount_needed= 0)
-    repo.update_case_state(case_id, CaseState.PUBLISHED)
+    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.121', created_by='i.mem.1111', purpose=CaseType.EDUCATION, description='',amount_needed= 0)
+    repo.update_case_state(case_id, CaseState.PUBLISHED, updated_by='i.mem.1111')
     repo_case = repo.find_case(case_id)
     assert repo_case.case_state == CaseState.PUBLISHED
 
@@ -55,17 +55,18 @@ def test_create_case_add_doc(
     app_configuration, pg_session, pg_test_data_case
 ):
     repo = postgresrepo.PostgresRepo(app_configuration)
-    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.555', purpose=CaseType.EDUCATION, description='',amount_needed= 0)
+    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.555', created_by='i.mem.1111', purpose=CaseType.EDUCATION, description='',amount_needed= 0)
     # Add 2 docuemnts to the case
-    doc1 = repo.create_case_doc(case_id, doc_type=DocType.INITIAL_CASE_DOC, doc_name='', doc_url='some_url')
-    doc2 = repo.create_case_doc(case_id, doc_type=DocType.INITIAL_CASE_DOC, doc_name='', doc_url='some_url')
+    doc1 = repo.create_case_doc(case_id, doc_type=DocType.INITIAL_CASE_DOC, doc_name='', doc_url='some_url', updated_by='i.mem.1111')
+    doc2 = repo.create_case_doc(case_id, doc_type=DocType.INITIAL_CASE_DOC, doc_name='', doc_url='some_url', updated_by='i.mem.1111')
     docs = [
         case_docs.CaseDocs(
             case_id=case_id,
             doc_id=str(i),
             doc_name=str(i),
             doc_url=str(i),
-            doc_type=DocType.CASE_PAYMENT_RECEIPTS
+            doc_type=DocType.CASE_PAYMENT_RECEIPTS,
+            updated__by='i.mem.1111'
         )
         for i in range(2)
     ]
@@ -85,7 +86,7 @@ def test_create_case_add_comments(
     app_configuration, pg_session, pg_test_data_case
 ):
     repo = postgresrepo.PostgresRepo(app_configuration)
-    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.555', purpose=CaseType.EDUCATION, description='',amount_needed= 0)
+    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.555', created_by='i.mem.1111', purpose=CaseType.EDUCATION, description='',amount_needed= 0)
     # Add 2 docuemnts to the case
     comment1 = repo.create_case_comment(case_id, comment_type=CommentType.APPROVAL_COMMENTS, comment='comment', comment_data={}, c_by='i.mem.2222')
     comment2 = repo.create_case_comment(case_id, comment_type=CommentType.VERIFICATION_COMMENTS, comment='comment', comment_data={'data': 'sample'}, c_by='i.mem.2222')
@@ -103,16 +104,15 @@ def test_create_case_add_votes(
     app_configuration, pg_session, pg_test_data_case
 ):
     repo = postgresrepo.PostgresRepo(app_configuration)
-    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.555', purpose=CaseType.EDUCATION, description='',amount_needed= 1000)
+    case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.555', created_by='i.mem.1111', purpose=CaseType.EDUCATION, description='',amount_needed= 1000)
     # Add 2 votes to the case
-    vote1 = repo.create_case_vote(case_id, vote=VoteType.APPROVE,comment='comment', amount_suggested=1000)
-    vote2 = repo.create_case_vote(case_id, vote=VoteType.APPROVE,comment='comment', amount_suggested=1000)
+    vote1 = repo.upsert_case_vote(case_id, vote=VoteType.APPROVE,comment='comment', amount_suggested=1000, created_by='i.mem.1111')
+    vote2 = repo.upsert_case_vote(case_id, vote=VoteType.APPROVE,comment='comment', amount_suggested=1000, created_by='i.mem.1111')
 
     case_votes = repo.case_vote_list(case_id)
     repo.delete_case_vote(vote1)
-    repo.delete_case_vote(vote2)
-
-    assert len(case_votes) == 2
+    assert vote1 == vote2
+    assert len(case_votes) == 1
 
 ## MEMBERS TESTING -------------------------------
 def test_repository_list_without_parameters(
@@ -139,6 +139,18 @@ def test_repository_list_with_phone_equal_filter(
     assert len(repo_members) == 1
     assert repo_members[0].member_id == "i.mem.1111"
 
+
+def test_repository_get_member_by_email(
+    app_configuration, pg_session, pg_test_data
+):
+    repo = postgresrepo.PostgresRepo(app_configuration)
+
+    repo_members = repo.view_member_by_email(
+        email_id='sample.1111@gmail.com'
+    )
+
+    assert len(repo_members) == 1
+    assert repo_members[0].member_id == "i.mem.1111"
 
 def test_repository_list_with_member_id_equal_filter(
     app_configuration, pg_session, pg_test_data

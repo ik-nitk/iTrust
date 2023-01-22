@@ -16,10 +16,38 @@
     >
     {% elif case.case_state == 'VERIFICATION' or case.case_state == 'VOTING' %}
     <a
+        href="/cases/{{case.case_id}}/close"
+        class="btn btn-info"
+        role="button"
+        >Close</a
+    >
+    <span>&nbsp;&nbsp;&nbsp;</span>
+    <a
         href="/cases/{{case.case_id}}/add_vote_to_case"
         class="btn btn-info"
         role="button"
         >Approve or Reject</a
+    >
+    {% elif case.case_state == 'APPROVED' %}
+    <a
+        href="/cases/{{case.case_id}}/close"
+        class="btn btn-info"
+        role="button"
+        >Close
+    </a>
+    <span>&nbsp;&nbsp;&nbsp;</span>
+    <a
+        href="/cases/{{case.case_id}}/add_payment_details"
+        class="btn btn-info"
+        role="button"
+        >Add payment details</a
+    >
+    {% elif case.case_state == 'PAYMENT_DONE' or case.case_state == 'REJECTED' %}
+    <a
+        href="/cases/{{case.case_id}}/close"
+        class="btn btn-info"
+        role="button"
+        >Close</a
     >
     {% endif %}
 </div>

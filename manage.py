@@ -5,6 +5,7 @@ import json
 import signal
 import subprocess
 import time
+from nanoid import generate
 
 import click
 import psycopg2
@@ -76,9 +77,9 @@ def docker_compose_cmdline(commands_string=None):
     return command_line
 
 
-def run_sql(statements):
+def run_sql(statements, db=os.getenv("POSTGRES_DB")):
     conn = psycopg2.connect(
-        dbname=os.getenv("POSTGRES_DB"),
+        dbname=db,
         user=os.getenv("POSTGRES_USER"),
         password=os.getenv("POSTGRES_PASSWORD"),
         host=os.getenv("POSTGRES_HOSTNAME"),
@@ -129,6 +130,18 @@ def init_postgres():
             )
         )
 
+@cli.command()
+@click.option('--email', '-e', required=True, type=str)
+@click.option('--name', '-n', required=False, type=str)
+def add_admin_member(email, name):
+    configure_app(os.getenv("APPLICATION_CONFIG"))
+    member_id = f"i.mem.{generate()}"
+
+    try:
+        run_sql([f"insert into member (member_id, govt_id, email, fname, is_core, updated__by) values ('{member_id}', 'need-update', '{email}', '{name}', true, '{member_id}')"], 'application')
+    except Exception as e:
+        print("Error in adding admin", str(e))
+
 
 @cli.command()
 @click.argument("args", nargs=-1)
@@ -137,9 +150,11 @@ def test(args):
     configure_app(os.getenv("APPLICATION_CONFIG"))
 
     cmdline = docker_compose_cmdline("up -d")
+    print("Starting docker command: " + " ".join(cmdline))
     subprocess.call(cmdline)
 
     cmdline = docker_compose_cmdline("logs postgres")
+    print("wait_for_logs: " + " ".join(cmdline))
     wait_for_logs(cmdline, "ready to accept connections")
 
     run_sql([f"CREATE DATABASE {os.getenv('APPLICATION_DB')}"])
@@ -151,9 +166,11 @@ def test(args):
         "--cov-report=term-missing",
     ]
     cmdline.extend(args)
+    print("running tests: " + " ".join(cmdline))
     subprocess.call(cmdline)
 
     cmdline = docker_compose_cmdline("down")
+    print("Shutting down tests: " + " ".join(cmdline))
     subprocess.call(cmdline)
 
 

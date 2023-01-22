@@ -20,7 +20,8 @@ member_dict = {
     "phone" : "984561111",
     "mname" : None,
     "is_core": False,
-    "email" : 'sample.1111@gmail.com'
+    "email" : 'sample.1111@gmail.com',
+    "updated__by": "i.mem.1111"
 }
 
 members = [Member.from_dict(member_dict)]
@@ -90,7 +91,7 @@ def test_get_response_failures(
 def test_post(mock_use_case, client):
     
     mock_use_case.return_value = ResponseSuccess(members)
-    data = {"govtId": "g-123", "idType":"lname", "firstName":"fname","lastName":"lname","middleName":"mname","isCore":True, "phone":"23456","email":"abc@gmail.com" }
+    data = {"govtId": "g-123", "idType":"lname", "firstName":"fname","lastName":"lname","middleName":"mname","isCore":True, "phone":"23456","email":"abc@gmail.com", "created_by":"sample@gmail.com" }
 
     res = client.post("/api/v1/members",json=data)
 

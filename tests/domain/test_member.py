@@ -15,7 +15,8 @@ def test_member_model_init():
         id_type=IDType.AADHAAR,
         phone='9983100200',
         mname=None,
-        email='sample.1234@gmail.com'
+        email='sample.1234@gmail.com',
+        updated__by=id
     )
 
     assert member.member_id == id
@@ -37,7 +38,8 @@ def test_member_model_from_dict():
         "phone" : "9983100200",
         "mname" : None,
         "is_core": False,
-        "email" : 'sample.1234@gmail.com'
+        "email" : 'sample.1234@gmail.com',
+        "updated__by": id
     }
 
     member = Member.from_dict(init_dict)
@@ -63,7 +65,8 @@ def test_room_member_to_dict():
         "phone" : "9983100200",
         "mname" : None,
         "is_core": False,
-        "email" : 'sample.1234@gmail.com'
+        "email" : 'sample.1234@gmail.com',
+        "updated__by": id
     }
 
     member = Member.from_dict(init_dict)
@@ -81,7 +84,8 @@ def test_room_model_comparison():
         "phone" : "9983100200",
         "mname" : None,
         "is_core": False,
-        "email" : 'sample.1234@gmail.com'
+        "email" : 'sample.1234@gmail.com',
+        "updated__by": id
     }
 
     member1 = Member.from_dict(init_dict)

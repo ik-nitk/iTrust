@@ -12,25 +12,34 @@ def beneficiary_dicts():
             "beneficiary_id": "i.ben.1111",
             "fname": 'fname1',
             "lname": 'lname1',
+            "govt_id": 'abcd1234',
+            "id_type": IDType.AADHAAR,
             "phone" : "984561111",
             "mname" : None,
-            "email" : 'sample.1111@gmail.com'
+            "email" : 'sample.1111@gmail.com',
+            "updated__by": "i.mem.1111"
          },
          {
             "beneficiary_id": "i.ben.2222",
             "fname": 'fname2',
             "lname": 'lname2',
+            "govt_id": 'abcd1234',
+            "id_type": IDType.AADHAAR,
             "phone" : "984562222",
             "mname" : None,
-            "email" : 'sample.2222@gmail.com'
+            "email" : 'sample.2222@gmail.com',
+            "updated__by": "i.mem.1111"
          },
          {
             "beneficiary_id": "i.ben.3333",
             "fname": 'fname3',
             "lname": 'lname3',
+            "govt_id": 'abcd1234',
+            "id_type": IDType.AADHAAR,
             "phone" : "984563333",
             "mname" : None,
-            "email" : 'sample.3333@gmail.com'
+            "email" : 'sample.3333@gmail.com',
+            "updated__by": "i.mem.1111"
          },
     ]
 

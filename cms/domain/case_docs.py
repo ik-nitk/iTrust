@@ -8,6 +8,7 @@ class CaseDocs:
     doc_id: str
     doc_name: str
     doc_url: str
+    updated__by: str
 
     @classmethod
     def from_dict(self, d):

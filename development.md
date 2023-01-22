@@ -83,36 +83,31 @@ Init the database:
 
 ```
 ./manage.py init-postgres
+
+tear down the server for database tables can be updated now.
+./manage.py compose down
+
+Bring it up again
+./manage.py compose up -d
+
 ```
 
-Running psql command inside database
+Create default admin
+```
+./manage.py add-admin-member -e itrust_test@gmail.com -n itrust_test
+```
+
+open http://localhost:8080/
+click `login` to login as default.
+
+You can follow also instructions from [this](https://www.thedigitalcatbooks.com/pycabook-chapter-08/)
+
+
+### Running psql command inside database
 
 ```
 ./manage.py compose exec db psql -U postgres -d application
 ```
-
-Insert some values into the member table
-
-```
-insert into member (member_id, govt_id, id_type, fname, is_core, phone, email) values ('sample-111', 'gid-1111', 'AADHAAR' , 'sample' , false,  '99872000', 'email@sample');
-```
-
-Insert some values into the beneficiary table
-
-```
-insert into beneficiary (beneficiary_id,  fname, phone, email) values ('sample-301', 'sample' , '9946000', 'bemail@sample');
-```
-
-Insert some values into the case table (not complete - need to update the not null fields)
-
-```
-insert into case (case_id, title, purpose, contact_details) values ('case-111', 'edu 2rd grade', 'education' , '599872000');
-```
-
-open http://localhost:8080/members with your browser you will see a successful response, with data above.
-
-You can follow also instructions from [this](https://www.thedigitalcatbooks.com/pycabook-chapter-08/)
-
 #### Debugging
 
 For now you can use the below code to print the logs to stderror

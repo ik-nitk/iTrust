@@ -50,5 +50,9 @@
   {
     "name": "REDIS_URL",
     "value": "redis://redis:6379/0"
+  },
+  {
+    "name": "AUTH_ENABLED",
+    "value": "false"
   }
 ]

@@ -6,7 +6,8 @@ from cms.domain.vote_type import VoteType
 class CaseVote:
     vote_id:str
     case_id: str
-    voted_by: str
+    voted__by: str
+    is_core: bool
     amount_suggested:int
     vote: VoteType
     comment:str

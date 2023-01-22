@@ -1,10 +1,17 @@
 {% extends "base.html" %} {% block content %}
 
 <div class="container-fluid" style="width: 40rem;">
+    <a
+        class="btn btn-primary"
+        href="{{ url_for('member.member_update', id=members[0].member_id) }}"
+        role="button"
+        >Update</a
+    >
+    <div class="col-xs-12" style="height: 25px"></div>
     <form class="well form-horizontal">
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Govt Id</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-user"></i></span
@@ -22,7 +29,7 @@
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">ID TYPE</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-user"></i></span
@@ -40,7 +47,7 @@
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">First Name</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-user"></i></span
@@ -58,7 +65,7 @@
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Middle Name</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-user"></i></span
@@ -75,7 +82,7 @@
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Last Name</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-user"></i></span
@@ -92,7 +99,7 @@
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Is Core</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-user"></i></span
@@ -110,7 +117,7 @@
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Phone Number</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-earphone"></i></span
@@ -128,7 +135,7 @@
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Email</label>
-            <div class="col-sm-4 inputGroupContainer">
+            <div class="col-md-8 inputGroupContainer">
                 <div class="input-group">
                     <span class="input-group-addon"
                         ><i class="glyphicon glyphicon-envelope"></i></span
@@ -142,6 +149,15 @@
                         readonly
                     />
                 </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Updated by</label>
+            <div class="col-md-8 inputGroupContainer">
+            <a
+                href="{{ url_for('member.member_view', id=updated_by.member_id) }}"
+                >{{updated_by.fname}}</a
+            >
             </div>
         </div>
     </form>

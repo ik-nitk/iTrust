@@ -37,7 +37,8 @@ class PostgresRepo:
                 govt_id=q.govt_id,
                 id_type=q.id_type,
                 phone=q.phone,
-                email=q.email
+                email=q.email,
+                updated__by=q.updated__by
             )
             for q in results
         ]
@@ -49,7 +50,8 @@ class PostgresRepo:
                 doc_type=q.doc_type,
                 doc_id=q.doc_id,
                 doc_name=q.doc_name,
-                doc_url=q.doc_url
+                doc_url=q.doc_url,
+                updated__by=q.updated__by
             )
             for q in results
         ]
@@ -70,9 +72,12 @@ class PostgresRepo:
                 beneficiary_id=q.beneficiary_id,
                 fname=q.fname,
                 lname=q.lname,
+                govt_id=q.govt_id,
+                id_type=q.id_type,
                 mname=q.mname,
                 phone=q.phone,
-                email=q.email
+                email=q.email,
+                updated__by=q.updated__by
             )
             for q in results
         ]
@@ -103,7 +108,7 @@ class PostgresRepo:
                 contact_address= q.contact_address,
                 referred__by= q.referred__by,
                 closed__by= q.closed__by,
-                updated_by= q.updated_by
+                updated__by= q.updated__by
             )
 
     def _create_case_objects(self, results):
@@ -177,9 +182,9 @@ class PostgresRepo:
 
         return self._create_case_objects(query.all())
 
-    def create_member(self, govt_id, id_type, fname,lname,mname, is_core, phone, email):
+    def create_member(self, govt_id, id_type, fname,lname,mname, is_core, phone, email, created_by):
         member_id = f"i.mem.{generate()}"
-        new_member = Member(member_id = member_id,govt_id = govt_id,id_type = id_type,fname = fname,lname=lname,mname = mname,is_core = is_core,phone = phone,email=email)
+        new_member = Member(member_id = member_id,govt_id = govt_id,id_type = id_type,fname = fname,lname=lname,mname = mname,is_core = is_core,phone = phone,email=email, updated__by=created_by)
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         session.add(new_member)
@@ -235,7 +240,8 @@ class PostgresRepo:
             case_votes.CaseVote(
                 case_id=q.case_id,
                 vote_id = q.vote_id,
-                voted_by=q.voted__by,
+                voted__by=q.voted__by,
+                is_core=q.is_core,
                 amount_suggested=q.amount_suggested,
                 vote=q.vote,
                 comment= q.comment
@@ -243,15 +249,33 @@ class PostgresRepo:
             for q in results
         ]
 
-    def create_case_vote(self, case_id, vote,comment, amount_suggested):
-        vote_id = f"i.vote.{generate()}"
-        new_vote = CaseVotes(vote_id = vote_id, case_id=case_id, vote=vote,comment = comment,amount_suggested = amount_suggested)
+    def find_case_vote(self, case_id, voted_by):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
-        session.add(new_vote)
-        session.commit()
-        return new_vote.vote_id
-    
+        query = session.query(CaseVotes)\
+            .with_entities(CaseVotes)\
+                .filter_by(case_id = case_id, voted__by = voted_by ).first()
+        print(query, type(query))
+        return query
+
+    def upsert_case_vote(self, case_id, vote,comment, amount_suggested, created_by):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        member = self.view_member(created_by)[0]
+        caseVote = session.query(CaseVotes).filter(CaseVotes.case_id == case_id, CaseVotes.voted__by == created_by).first()
+        if caseVote is None:
+            vote_id = f"i.vote.{generate()}"
+            new_vote = CaseVotes(vote_id = vote_id, case_id=case_id, vote=vote,comment = comment,amount_suggested = amount_suggested, voted__by=created_by, is_core=member.is_core)
+            session.add(new_vote)
+            session.commit()
+            return new_vote.vote_id
+        else:
+            caseVote.vote = vote
+            caseVote.comment = comment
+            caseVote.amout_suggested = amount_suggested
+            session.commit()
+            return caseVote.vote_id
+
     def case_vote_list(self, case_id):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
@@ -266,10 +290,10 @@ class PostgresRepo:
         vote = session.query(CaseVotes).get(vote_id)
         session.delete(vote)
         session.commit()
-            
-    def create_case_doc(self, case_id, doc_type, doc_name, doc_url):
+
+    def create_case_doc(self, case_id, doc_type, doc_name, doc_url, updated_by):
         doc_id = f"i.doc.{generate()}"
-        new_doc = CaseDocs(doc_id=doc_id, doc_type=doc_type, case_id=case_id, doc_url=doc_url, doc_name=doc_name)
+        new_doc = CaseDocs(doc_id=doc_id, doc_type=doc_type, case_id=case_id, doc_url=doc_url, doc_name=doc_name, updated__by=updated_by)
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         session.add(new_doc)
@@ -283,7 +307,8 @@ class PostgresRepo:
                 doc_type=q.doc_type,
                 doc_id=q.doc_id if q.doc_id else f"i.doc.{generate()}",
                 doc_name=q.doc_name,
-                doc_url=q.doc_url
+                doc_url=q.doc_url,
+                updated__by=q.updated__by
             )
             for q in doc_list
         ]
@@ -300,25 +325,25 @@ class PostgresRepo:
         session.delete(doc)
         session.commit()
 
-    def create_beneficiary(self, fname,lname, mname, phone, email):
+    def create_beneficiary(self, govt_id, id_type, fname,lname, mname, phone, email, created_by):
         beneficiary_id = f"i.ben.{generate()}"
-        new_beneficiary = Beneficiary(beneficiary_id = beneficiary_id,fname = fname,lname=lname,mname = mname,phone = phone,email=email)
+        new_beneficiary = Beneficiary(beneficiary_id = beneficiary_id,govt_id=govt_id, id_type=id_type, fname=fname,lname=lname,mname = mname,phone = phone,email=email, updated__by=created_by)
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         session.add(new_beneficiary)
         session.commit()
         return new_beneficiary.beneficiary_id
 
-    def create_case(self, beneficiary_id, purpose, title, description='',amount_needed = 0, contact_details='', contact_address=''):
+    def create_case(self, beneficiary_id, purpose, title, created_by, description='',amount_needed = 0, contact_details='', contact_address=''):
         case_id = f"i.case.{generate()}"
-        new_case = Case(case_id = case_id, beneficiary__id=beneficiary_id, case_state=CaseState.DRAFT, title=title, purpose=purpose, description=description,amount_needed =  amount_needed,contact_details=contact_details,contact_address=contact_address)
+        new_case = Case(case_id = case_id, beneficiary__id=beneficiary_id, case_state=CaseState.DRAFT, title=title, purpose=purpose, description=description,amount_needed =  amount_needed,contact_details=contact_details,contact_address=contact_address, updated__by=created_by)
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         session.add(new_case)
         session.commit()
         return new_case.case_id
 
-    def update_case_state(self, case_id, new_state):
+    def update_approved_amount(self, case_id, amount_paid, updated_by):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         session.query(
@@ -326,7 +351,21 @@ class PostgresRepo:
         ).filter(
             Case.case_id == case_id
         ).update({
-            Case.case_state: new_state
+            Case.amount_approved: amount_paid,
+            Case.updated__by: updated_by
+        })
+        session.commit()
+
+    def update_case_state(self, case_id, new_state, updated_by):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        session.query(
+            Case
+        ).filter(
+            Case.case_id == case_id
+        ).update({
+            Case.case_state: new_state,
+            Case.updated__by: updated_by
         })
         session.commit()
 
@@ -346,6 +385,17 @@ class PostgresRepo:
                 .filter(Beneficiary.fname.ilike("%"+search_input+"%") | Beneficiary.mname.ilike("%"+search_input+"%") | Beneficiary.lname.ilike("%"+search_input+"%") ).all()
         return query
 
+    def view_member_by_email(self, email_id):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        query = session.query(Member)\
+            .with_entities(Member)\
+                .filter_by(email = email_id ).all()
+        return query
+
+    def find_member(self, member_id):
+        return self.view_member(member_id)[0]
+
     def view_member(self, member_id):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
@@ -354,7 +404,7 @@ class PostgresRepo:
                 .filter_by(member_id = member_id ).all()
         return query
 
-    def update_member(self, member_id,govt_id,id_type,fname,mname,lname,is_core,phone,email):
+    def update_member(self, member_id, govt_id, id_type, fname, mname, lname, is_core, phone, email, updated_by):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
         member = session.query(Member)\
@@ -368,6 +418,7 @@ class PostgresRepo:
         member.is_core = is_core
         member.phone = phone
         member.email = email
+        member.updated__by = updated_by
         session.commit()
         return member
 
@@ -379,17 +430,20 @@ class PostgresRepo:
                     .filter_by(beneficiary_id = beneficiary_id ).all()
             return query
 
-    def update_beneficiary(self, beneficiary_id,fname,lname,mname, phone, email):
+    def update_beneficiary(self, beneficiary_id,govt_id, id_type, fname,lname,mname, phone, email, updated_by):
             DBSession = sessionmaker(bind=self.engine)
             session = DBSession()
             beneficiary = session.query(Beneficiary)\
                 .with_entities(Beneficiary)\
                     .filter_by(beneficiary_id = beneficiary_id ).first()
             beneficiary.fname = fname
+            beneficiary.govt_id = govt_id
+            beneficiary.id_type = id_type
             beneficiary.mname = mname
             beneficiary.lname = lname
             beneficiary.phone = phone
             beneficiary.email = email
+            beneficiary.updated__by = updated_by
             session.commit()
             return beneficiary
 

@@ -20,7 +20,8 @@ def domain_members():
         id_type=IDType.AADHAAR,
         phone='111100200',
         mname=None,
-        email='sample.1111@gmail.com'
+        email='sample.1111@gmail.com',
+        updated__by='i.mem.111'
     )
 
     member_2 =  Member(
@@ -32,7 +33,8 @@ def domain_members():
         id_type=IDType.AADHAAR,
         phone='222200200',
         mname=None,
-        email='sample.2222@gmail.com'
+        email='sample.2222@gmail.com',
+        updated__by='i.mem.111'
     )
 
     member_3 =  Member(
@@ -44,7 +46,8 @@ def domain_members():
         id_type=IDType.AADHAAR,
         phone='333300200',
         mname=None,
-        email='sample.3333@gmail.com'
+        email='sample.3333@gmail.com',
+        updated__by='i.mem.111'
     )
 
     member_4 =  Member(
@@ -56,7 +59,8 @@ def domain_members():
         id_type=IDType.AADHAAR,
         phone='333300200',
         mname=None,
-        email='sample.3333@gmail.com'
+        email='sample.3333@gmail.com',
+        updated__by='i.mem.111'
     )
 
     return [member_1, member_2, member_3, member_4]
@@ -65,20 +69,20 @@ def test_create_member():
     repo = mock.Mock()
     repo.create_member.return_value = "i.mem.xxxx"
 
-    response = create_new_member(repo, "gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com")
+    response = create_new_member(repo, "gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com", "i.mem.xxxx")
 
     assert bool(response) is True
-    repo.create_member.assert_called_with("gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com")
+    repo.create_member.assert_called_with("gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com", "i.mem.xxxx")
     assert response.value == "i.mem.xxxx"
 
 def test_create_member_exception():
     repo = mock.Mock()
     repo.create_member.side_effect = Exception("error")
 
-    response = create_new_member(repo, "gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com")
+    response = create_new_member(repo, "gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com", "i.mem.xxxx")
 
     assert bool(response) is False
-    repo.create_member.assert_called_with("gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com")
+    repo.create_member.assert_called_with("gid-111", IDType.AADHAAR,"fname","mname","lname",False,"968612","sample@gmail.com", "i.mem.xxxx")
 
 
 def test_member_list_without_parameters(domain_members):
