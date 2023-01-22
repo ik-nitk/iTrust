@@ -70,6 +70,7 @@ class CaseVotes(Base):
     vote_id = Column(String(40), primary_key=True)
     case_id = Column(String(40), ForeignKey("t_case.case_id"), nullable=False)
     voted__by = Column(String(40), ForeignKey("member.member_id"), nullable=False)
+    is_core = Column(BOOLEAN)
     amount_suggested = Column(Integer)
     vote = Column(Enum(VoteType))
     comment = Column(String)

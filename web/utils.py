@@ -26,7 +26,7 @@ def get_member_details(api, app_session, id):
 
 def get_member_from_session():
     if "google_id" not in session:
-        raise Exception("Please login to create member")
+        raise Exception("Please login to perform this operation")
     api = current_app.config.get('api')
     app_session = current_app.config.get('app_session')
     member_array = get_member_id_with_email(api, app_session, session["google_id"])

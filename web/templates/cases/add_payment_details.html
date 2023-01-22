@@ -1,14 +1,35 @@
 {% extends "base.html" %}
 
-
 {% block content %}
 <div class="container-fluid" style="width: 40rem;">
-<h3> Upload case related documents here </h3>
+<h3> Upload payment related documents here </h3>
 <form action="/fms/api/v1/documents"
       class="dropzone"
       id="my-awesome-dropzone"></form>
 <h4 id="message"></h4>
 <div class="card" style="width: 40rem;">
+        <div class="form-group">
+            <br />
+            <label for="comment">Comment</label>
+            <input
+                type="text"
+                name="comment"
+                class="form-control"
+                id="comment"
+                required="true"
+                placeholder="Enter details"
+            />
+            <br />
+            <label for="amount_paid">Amount paid</label>
+            <input
+                type="number"
+                name="amount_paid"
+                class="form-control"
+                id="amount_paid"
+                required="true"
+                placeholder="Enter Amount"
+            />
+        </div>
       <div class="card-body">
           <ul id="entries" class="list-group">
           </ul>
@@ -22,20 +43,28 @@
 
   // Gobal files
   const doc_list = [];
-  const url = "/cases/{{id}}/add_initial_documents";
+  const url = "/cases/{{case_id}}/add_payment_details";
 
 async function submit_files() {
       console.log(`Submitting files ${doc_list} to ${url}`);
       document.getElementById("message").innerHTML = '';
       document.getElementById("submit").disabled = true;
+      comment = document.getElementById("comment").value;
+      amount_paid = parseInt(document.getElementById("amount_paid").value);
       try {
+            if (doc_list.length === 0 ) {
+                throw "Add payment files."
+            }
+            if (amount_paid <= 0) {
+                  throw "Paid amount cannot be zero"
+            }
             const response  = await fetch(url, {
                   method: 'POST',
                   headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                   },
-                  body: JSON.stringify({doc_list: doc_list})
+                  body: JSON.stringify({doc_list: doc_list, comment: comment, amount_paid: amount_paid})
             });
             if (!response.ok) {
                   throw response;
@@ -88,4 +117,5 @@ function add(files) {
 </script>
 </div>
 {% endblock %}
+
 

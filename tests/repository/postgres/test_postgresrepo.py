@@ -106,14 +106,13 @@ def test_create_case_add_votes(
     repo = postgresrepo.PostgresRepo(app_configuration)
     case_id = repo.create_case(beneficiary_id='i.ben.1111', title='t.555', created_by='i.mem.1111', purpose=CaseType.EDUCATION, description='',amount_needed= 1000)
     # Add 2 votes to the case
-    vote1 = repo.create_case_vote(case_id, vote=VoteType.APPROVE,comment='comment', amount_suggested=1000, created_by='i.mem.1111')
-    vote2 = repo.create_case_vote(case_id, vote=VoteType.APPROVE,comment='comment', amount_suggested=1000, created_by='i.mem.1111')
+    vote1 = repo.upsert_case_vote(case_id, vote=VoteType.APPROVE,comment='comment', amount_suggested=1000, created_by='i.mem.1111')
+    vote2 = repo.upsert_case_vote(case_id, vote=VoteType.APPROVE,comment='comment', amount_suggested=1000, created_by='i.mem.1111')
 
     case_votes = repo.case_vote_list(case_id)
     repo.delete_case_vote(vote1)
-    repo.delete_case_vote(vote2)
-
-    assert len(case_votes) == 2
+    assert vote1 == vote2
+    assert len(case_votes) == 1
 
 ## MEMBERS TESTING -------------------------------
 def test_repository_list_without_parameters(

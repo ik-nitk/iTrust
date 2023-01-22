@@ -241,6 +241,7 @@ class PostgresRepo:
                 case_id=q.case_id,
                 vote_id = q.vote_id,
                 voted__by=q.voted__by,
+                is_core=q.is_core,
                 amount_suggested=q.amount_suggested,
                 vote=q.vote,
                 comment= q.comment
@@ -248,14 +249,32 @@ class PostgresRepo:
             for q in results
         ]
 
-    def create_case_vote(self, case_id, vote,comment, amount_suggested, created_by):
-        vote_id = f"i.vote.{generate()}"
-        new_vote = CaseVotes(vote_id = vote_id, case_id=case_id, vote=vote,comment = comment,amount_suggested = amount_suggested, voted__by=created_by)
+    def find_case_vote(self, case_id, voted_by):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
-        session.add(new_vote)
-        session.commit()
-        return new_vote.vote_id
+        query = session.query(CaseVotes)\
+            .with_entities(CaseVotes)\
+                .filter_by(case_id = case_id, voted__by = voted_by ).first()
+        print(query, type(query))
+        return query
+
+    def upsert_case_vote(self, case_id, vote,comment, amount_suggested, created_by):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        member = self.view_member(created_by)[0]
+        caseVote = session.query(CaseVotes).filter(CaseVotes.case_id == case_id, CaseVotes.voted__by == created_by).first()
+        if caseVote is None:
+            vote_id = f"i.vote.{generate()}"
+            new_vote = CaseVotes(vote_id = vote_id, case_id=case_id, vote=vote,comment = comment,amount_suggested = amount_suggested, voted__by=created_by, is_core=member.is_core)
+            session.add(new_vote)
+            session.commit()
+            return new_vote.vote_id
+        else:
+            caseVote.vote = vote
+            caseVote.comment = comment
+            caseVote.amout_suggested = amount_suggested
+            session.commit()
+            return caseVote.vote_id
 
     def case_vote_list(self, case_id):
         DBSession = sessionmaker(bind=self.engine)
@@ -324,6 +343,19 @@ class PostgresRepo:
         session.commit()
         return new_case.case_id
 
+    def update_approved_amount(self, case_id, amount_paid, updated_by):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        session.query(
+            Case
+        ).filter(
+            Case.case_id == case_id
+        ).update({
+            Case.amount_approved: amount_paid,
+            Case.updated__by: updated_by
+        })
+        session.commit()
+
     def update_case_state(self, case_id, new_state, updated_by):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
@@ -360,6 +392,9 @@ class PostgresRepo:
             .with_entities(Member)\
                 .filter_by(email = email_id ).all()
         return query
+
+    def find_member(self, member_id):
+        return self.view_member(member_id)[0]
 
     def view_member(self, member_id):
         DBSession = sessionmaker(bind=self.engine)

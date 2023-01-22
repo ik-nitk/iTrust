@@ -7,6 +7,7 @@ class CaseVote:
     vote_id:str
     case_id: str
     voted__by: str
+    is_core: bool
     amount_suggested:int
     vote: VoteType
     comment:str

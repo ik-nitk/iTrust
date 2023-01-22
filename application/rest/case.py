@@ -12,7 +12,9 @@ from cms.use_cases.case import (
     add_case_verification_details,
     add_vote,
     vote_list,
-    publish_case_use_case)
+    publish_case_use_case,
+    close_case_with_details,
+    add_payment_details_use_case)
 from cms.serializers.case import CaseJsonEncoder, CaseDocsJsonEncoder, CaseCommentJsonEncoder,CaseVoteJsonEncoder
 from cms.requests.case_list import build_case_list_request
 from common.responses import ResponseTypes
@@ -61,6 +63,30 @@ def add_verification_comment_to_case(case_id):
     comment = request.json['comment']
     verified_by = request.json['verified_by']
     response = add_case_verification_details(current_app.config.get('REPO'), case_id, comment, verified_by)
+    return Response(
+        json.dumps(response.value, cls=CaseJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/cases/<case_id>/add_payment_details", methods=["POST"])
+def add_payment_details(case_id):
+    amount_paid = request.json['amount_paid']
+    comment = request.json['comment']
+    doc_list = request.json['doc_list']
+    created_by = request.json['created_by']
+    response = add_payment_details_use_case(current_app.config.get('REPO'), case_id, comment, amount_paid, created_by, doc_list)
+    return Response(
+        json.dumps(response.value, cls=CaseJsonEncoder),
+        mimetype="application/json",
+        status=STATUS_CODES[response.type],
+    )
+
+@blueprint.route("/api/v1/cases/<id>/close", methods=["POST"])
+def close_case_api(id):
+    comment = request.json['comment']
+    closed_by = request.json['closed_by']
+    response = close_case_with_details(current_app.config.get('REPO'), id, comment, closed_by)
     return Response(
         json.dumps(response.value, cls=CaseJsonEncoder),
         mimetype="application/json",
