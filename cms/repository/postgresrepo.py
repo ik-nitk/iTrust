@@ -82,12 +82,6 @@ class PostgresRepo:
             for q in results
         ]
 
-    def case_list(self, filters=None):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        query = session.query(Case)
-        return self._create_case_objects(query.all())
-
     def _create_case_object(self, q):
         if q is None:
             return None
@@ -161,14 +155,14 @@ class PostgresRepo:
 
         return self._create_beneficiary_objects(query.all())
 
-    def case_list(self, filters=None):
+    def case_list(self, filters=None, limit=100):
         DBSession = sessionmaker(bind=self.engine)
         session = DBSession()
 
         query = session.query(Case)
 
         if filters is None:
-            return self._create_case_objects(query.all())
+            return self._create_case_objects(query.order_by(Base.modified.desc()).limit(limit).all())
 
         if "beneficiary_id__eq" in filters:
             query = query.filter(Case.beneficiary__id == filters["beneficiary_id__eq"])
@@ -178,9 +172,7 @@ class PostgresRepo:
 
         if "case_state__eq" in filters:
             query = query.filter(Case.case_state == filters["case_state__eq"])
-
-
-        return self._create_case_objects(query.all())
+        return self._create_case_objects(query.order_by(Base.modified.desc()).limit(limit).all())
 
     def create_member(self, govt_id, id_type, fname,lname,mname, is_core, phone, email, created_by):
         member_id = f"i.mem.{generate()}"

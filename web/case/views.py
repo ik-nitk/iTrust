@@ -16,10 +16,12 @@ blueprint = Blueprint(
 
 @blueprint.route("/cases")
 def case_list_view():
+    if len(request.args) <= 0:
+        return render_template("error.html", error_msg="Need query params to fetch cases")
     api = current_app.config.get('api')
     app_session = current_app.config.get('app_session')
     url = api.cases
-    response = app_session.get(url)
+    response = app_session.get(url, params=request.args)
     response.raise_for_status()
     cases=response.json()
     return render_template("cases/list.html", cases=cases)
