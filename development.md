@@ -21,6 +21,7 @@ Note: Install virutalenv in local environment.(unix)
 
 ```
 virutalenv env
+or python3 -m venv env
 source env/bin/activate
 ```
 
