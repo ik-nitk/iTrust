@@ -26,8 +26,10 @@ Note that when Authentication is disabled, the user is always set as "itrust_tes
 
 ### Adding admin users to the application who have access to all operations.
 
-## Bring up the docker application in GCP
-### Create the instance in GCP
+## Bring up the docker application in prod account
+### Create the instance in GCP / AWS / digital ocean
+
+One thing to notice is that the perfomance sucks in instance with 1GB RAM. it is recommended to have more than that.
 
 ### Bringup the application
 

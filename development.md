@@ -9,13 +9,16 @@ Pulling code from git
 
 ```
 Create a copy of
-https://github.com/ik.nitk/iTrust
+git clone https://github.com/ik-nitk/iTrust.git
 
 in your github account.
 ```
 
 Upgrade to python 3.11
-
+and install pip .
+For ubuntu
+use command : curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
+sudo apt-get install python3.10-dev python3.10-venv
 Setting up virtual environment
 Note: Install virutalenv in local environment.(unix)
 
@@ -50,17 +53,23 @@ Running full test cases
 pytest -svv --cov=. --cov-report=term-missing
 ```
 
-Running unit test on single file
+#### Running unit test on single file
 
 ```
 pytest -svv --cov=cms --cov-report=term-missing tests/domain/test_member.py
 ```
 
-Running integration tests.
+#### Running integration tests.
 
 ```
 ./manage.py test -- --integration
 ```
+for ubuntu add sudo PWD=${PWD} for all below command :
+
+```
+PWD=${PWD} python3 manage.py test -- --integration
+```
+clean up volumes these after testing
 
 ## Running application in docker
 
