@@ -14,6 +14,8 @@ https://github.com/ik.nitk/iTrust
 in your github account.
 ```
 
+Upgrade to python 3.11
+
 Setting up virtual environment
 Note: Install virutalenv in local environment.(unix)
 

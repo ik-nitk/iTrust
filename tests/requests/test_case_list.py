@@ -34,7 +34,7 @@ def test_build_case_list_request_with_incorrect_filter_keys():
 
 
 @pytest.mark.parametrize(
-    "key", ["case_id__eq"]
+    "key", ["case_state__eq"]
 )
 def test_build_case_list_request_accepted_filters(key):
     filters = {key: 1}
