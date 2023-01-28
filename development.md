@@ -69,6 +69,8 @@ Build the docker container
 
 ```
 ./manage.py compose build
+for ubuntu add sudo PWD=${PWD} for all below command :
+PWD=${PWD} ./manage.py compose build
 ```
 
 If this is successful you can run Docker Compose
@@ -78,6 +80,7 @@ If this is successful you can run Docker Compose
 
 to tear down
 ./manage.py compose down
+
 ```
 
 and the output of docker ps should show three containers running
