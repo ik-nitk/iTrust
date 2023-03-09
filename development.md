@@ -62,11 +62,6 @@ pytest -svv --cov=cms --cov-report=term-missing tests/domain/test_member.py
 #### Running integration tests.
 
 ```
-./manage.py test -- --integration
-```
-for ubuntu add sudo PWD=${PWD} for all below command :
-
-```
 PWD=${PWD} python3 manage.py test -- --integration
 ```
 clean up volumes these after testing
@@ -77,18 +72,16 @@ Note: Install docker in your environment.
 Build the docker container
 
 ```
-./manage.py compose build
-for ubuntu add sudo PWD=${PWD} for all below command :
-PWD=${PWD} ./manage.py compose build
+PWD=${PWD} python3 manage.py compose build
 ```
 
 If this is successful you can run Docker Compose
 
 ```
-./manage.py compose up -d
+PWD=${PWD} python3 manage.py compose up -d
 
 to tear down
-./manage.py compose down
+PWD=${PWD} python3 manage.py compose down
 
 ```
 
@@ -97,19 +90,19 @@ and the output of docker ps should show three containers running
 Init the database:
 
 ```
-./manage.py init-postgres
+PWD=${PWD} python3 manage.py init-postgres
 
 tear down the server for database tables can be updated now.
-./manage.py compose down
+PWD=${PWD} python3 manage.py compose down
 
 Bring it up again
-./manage.py compose up -d
+PWD=${PWD} python3 manage.py compose up -d
 
 ```
 
 Create default admin
 ```
-./manage.py add-admin-member -e itrust_test@gmail.com -n itrust_test
+PWD=${PWD} python3 manage.py add-admin-member -e itrust_test@gmail.com -n itrust_test
 ```
 
 open http://localhost:8080/
@@ -121,7 +114,7 @@ You can follow also instructions from [this](https://www.thedigitalcatbooks.com/
 ### Running psql command inside database
 
 ```
-./manage.py compose exec db psql -U postgres -d application
+PWD=${PWD} python3 manage.py compose exec db psql -U postgres -d application
 ```
 #### Debugging
 
