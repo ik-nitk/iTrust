@@ -71,22 +71,23 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - 8080:8080
-  redis:
-    command: redis-server --appendonly yes
-    image: redis:6.2-alpine
-    volumes:
-      - redis-data:/data
-  worker:
-    build:
-      context: ${PWD}
-      dockerfile: docker/web/Dockerfile.production
-    environment:
-      REDIS_URL: ${REDIS_URL}
-    depends_on:
-      - redis
-    command: rq worker --url redis://redis:6379/0 --with-scheduler
-    volumes:
-      - ${PWD}:/opt/code
+  # Below redis and worker code is disabled as they were consuming lot of CPU. Currently no plan to use this feature for now.
+  # redis:
+  #   command: redis-server --appendonly yes
+  #   image: redis:6.2-alpine
+  #   volumes:
+  #     - redis-data:/data
+  # worker:
+  #   build:
+  #     context: ${PWD}
+  #     dockerfile: docker/web/Dockerfile.production
+  #   environment:
+  #     REDIS_URL: ${REDIS_URL}
+  #   depends_on:
+  #     - redis
+  #   command: rq worker --url redis://redis:6379/0 --with-scheduler
+  #   volumes:
+  #     - ${PWD}:/opt/code
 volumes:
   pgdata:
   mongodata:
