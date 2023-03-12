@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from nanoid import generate
+from contextlib import contextmanager
 
 from cms.domain import beneficiary
 from cms.domain import member
@@ -11,8 +12,21 @@ from cms.domain import case_votes
 from cms.domain.case_state import CaseState
 from cms.repository.postgres_objects import Base, Beneficiary, Member, Case, CaseDocs, CaseComments,CaseVotes
 
-
 class PostgresRepo:
+    @contextmanager
+    def session_scope(self):
+        DBSession = sessionmaker(bind=self.engine)
+        session = DBSession()
+        try:
+            yield session
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.expunge_all()
+            session.close()
+
     def __init__(self, configuration):
         connection_string = "postgresql+psycopg2://{}:{}@{}:{}/{}".format(
             configuration["POSTGRES_USER"],
@@ -57,14 +71,13 @@ class PostgresRepo:
         ]
 
     def case_doc_list(self, case_id, doc_type):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        query = session.query(CaseDocs)
-        return self._create_case_docs_objects(query.filter(
-            and_(
-                CaseDocs.case_id == case_id,
-                CaseDocs.doc_type == doc_type
-        )))
+        with self.session_scope() as session:
+            query = session.query(CaseDocs)
+            return self._create_case_docs_objects(query.filter(
+                and_(
+                    CaseDocs.case_id == case_id,
+                    CaseDocs.doc_type == doc_type
+            )))
 
     def _create_beneficiary_objects(self, results):
         return [
@@ -111,77 +124,66 @@ class PostgresRepo:
         ]
 
     def member_list(self, filters=None):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
+        with self.session_scope() as session:
+            query = session.query(Member)
 
-        query = session.query(Member)
+            if filters is None:
+                return self._create_member_objects(query.all())
 
-        if filters is None:
+            if "member_id__eq" in filters:
+                query = query.filter(Member.member_id == filters["member_id__eq"])
+
+            if "phone__eq" in filters:
+                query = query.filter(Member.phone == filters["phone__eq"])
+
+            if "email__eq" in filters:
+                query = query.filter(Member.email == filters["email__eq"])
+
+            if "govt_id__eq" in filters:
+                query = query.filter(Member.govt_id == filters["govt_id__eq"])
+
             return self._create_member_objects(query.all())
-
-        if "member_id__eq" in filters:
-            query = query.filter(Member.member_id == filters["member_id__eq"])
-
-        if "phone__eq" in filters:
-            query = query.filter(Member.phone == filters["phone__eq"])
-
-        if "email__eq" in filters:
-            query = query.filter(Member.email == filters["email__eq"])
-
-        if "govt_id__eq" in filters:
-            query = query.filter(Member.govt_id == filters["govt_id__eq"])
-
-        return self._create_member_objects(query.all())
 
 
     def beneficiary_list(self, filters=None):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
+        with self.session_scope() as session:
+            query = session.query(Beneficiary)
+            if filters is None:
+                return self._create_beneficiary_objects(query.all())
 
-        query = session.query(Beneficiary)
+            if "beneficiary_id__eq" in filters:
+                query = query.filter(Beneficiary.beneficiary_id == filters["beneficiary_id__eq"])
 
-        if filters is None:
+            if "phone__eq" in filters:
+                query = query.filter(Beneficiary.phone == filters["phone__eq"])
+
+            if "email__eq" in filters:
+                query = query.filter(Beneficiary.email == filters["email__eq"])
+
             return self._create_beneficiary_objects(query.all())
 
-        if "beneficiary_id__eq" in filters:
-            query = query.filter(Beneficiary.beneficiary_id == filters["beneficiary_id__eq"])
-
-        if "phone__eq" in filters:
-            query = query.filter(Beneficiary.phone == filters["phone__eq"])
-
-        if "email__eq" in filters:
-            query = query.filter(Beneficiary.email == filters["email__eq"])
-
-
-        return self._create_beneficiary_objects(query.all())
-
     def case_list(self, filters=None, limit=100):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
+        with self.session_scope() as session:
+            query = session.query(Case)
+            if filters is None:
+                return self._create_case_objects(query.order_by(Base.modified.desc()).limit(limit).all())
 
-        query = session.query(Case)
+            if "beneficiary_id__eq" in filters:
+                query = query.filter(Case.beneficiary__id == filters["beneficiary_id__eq"])
 
-        if filters is None:
+            if "member_id__eq" in filters:
+                query = query.filter(Case.referred__by == filters["member_id__eq"])
+
+            if "case_state__eq" in filters:
+                query = query.filter(Case.case_state == filters["case_state__eq"])
             return self._create_case_objects(query.order_by(Base.modified.desc()).limit(limit).all())
 
-        if "beneficiary_id__eq" in filters:
-            query = query.filter(Case.beneficiary__id == filters["beneficiary_id__eq"])
-
-        if "member_id__eq" in filters:
-            query = query.filter(Case.referred__by == filters["member_id__eq"])
-
-        if "case_state__eq" in filters:
-            query = query.filter(Case.case_state == filters["case_state__eq"])
-        return self._create_case_objects(query.order_by(Base.modified.desc()).limit(limit).all())
-
     def create_member(self, govt_id, id_type, fname,lname,mname, is_core, phone, email, created_by):
-        member_id = f"i.mem.{generate()}"
-        new_member = Member(member_id = member_id,govt_id = govt_id,id_type = id_type,fname = fname,lname=lname,mname = mname,is_core = is_core,phone = phone,email=email, updated__by=created_by)
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        session.add(new_member)
-        session.commit()
-        return new_member.member_id
+        with self.session_scope() as session:
+            member_id = f"i.mem.{generate()}"
+            new_member = Member(member_id = member_id,govt_id = govt_id,id_type = id_type,fname = fname,lname=lname,mname = mname,is_core = is_core,phone = phone,email=email, updated__by=created_by)
+            session.add(new_member)
+            return new_member.member_id
 
     def _create_case_comment_objects(self, results):
         return [
@@ -197,35 +199,30 @@ class PostgresRepo:
         ]
 
     def case_comment_list(self, case_id, comment_type):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        query = session.query(CaseComments)
-        if comment_type == None:
-            return self._create_case_comment_objects(query.filter(
-                CaseComments.case_id == case_id
-            ))
-        else:
-            return self._create_case_comment_objects(query.filter(
-                and_(
-                    CaseComments.case_id == case_id,
-                    CaseComments.comment_type == comment_type
-            )))
+        with self.session_scope() as session:
+            query = session.query(CaseComments)
+            if comment_type == None:
+                return self._create_case_comment_objects(query.filter(
+                    CaseComments.case_id == case_id
+                ))
+            else:
+                return self._create_case_comment_objects(query.filter(
+                    and_(
+                        CaseComments.case_id == case_id,
+                        CaseComments.comment_type == comment_type
+                )))
 
     def create_case_comment(self, case_id, comment_type, comment, comment_data, c_by):
-        comment_id = f"i.comment.{generate()}"
-        new_comment = CaseComments(comment_id=comment_id, comment_type=comment_type, case_id=case_id, comment=comment, comment_data=comment_data, commented__by=c_by)
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        session.add(new_comment)
-        session.commit()
-        return new_comment.comment_id
+        with self.session_scope() as session:
+            comment_id = f"i.comment.{generate()}"
+            new_comment = CaseComments(comment_id=comment_id, comment_type=comment_type, case_id=case_id, comment=comment, comment_data=comment_data, commented__by=c_by)
+            session.add(new_comment)
+            return new_comment.comment_id
 
     def delete_case_comment(self, comment_id):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        comment = session.query(CaseComments).get(comment_id)
-        session.delete(comment)
-        session.commit()
+        with self.session_scope() as session:
+            comment = session.query(CaseComments).get(comment_id)
+            session.delete(comment)
 
     def _create_case_votes_objects(self, results):
         return [
@@ -242,189 +239,159 @@ class PostgresRepo:
         ]
 
     def find_case_vote(self, case_id, voted_by):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        query = session.query(CaseVotes)\
-            .with_entities(CaseVotes)\
-                .filter_by(case_id = case_id, voted__by = voted_by ).first()
-        print(query, type(query))
-        return query
+        with self.session_scope() as session:
+            query = session.query(CaseVotes)\
+                .with_entities(CaseVotes)\
+                    .filter_by(case_id = case_id, voted__by = voted_by ).first()
+            return self._create_case_votes_objects(query)
 
     def upsert_case_vote(self, case_id, vote,comment, amount_suggested, created_by):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
         member = self.view_member(created_by)[0]
-        caseVote = session.query(CaseVotes).filter(CaseVotes.case_id == case_id, CaseVotes.voted__by == created_by).first()
-        if caseVote is None:
-            vote_id = f"i.vote.{generate()}"
-            new_vote = CaseVotes(vote_id = vote_id, case_id=case_id, vote=vote,comment = comment,amount_suggested = amount_suggested, voted__by=created_by, is_core=member.is_core)
-            session.add(new_vote)
-            session.commit()
-            return new_vote.vote_id
-        else:
-            caseVote.vote = vote
-            caseVote.comment = comment
-            caseVote.amout_suggested = amount_suggested
-            session.commit()
-            return caseVote.vote_id
+        with self.session_scope() as session:
+            caseVote = session.query(CaseVotes).filter(CaseVotes.case_id == case_id, CaseVotes.voted__by == created_by).first()
+            if caseVote is None:
+                vote_id = f"i.vote.{generate()}"
+                new_vote = CaseVotes(vote_id = vote_id, case_id=case_id, vote=vote,comment = comment,amount_suggested = amount_suggested, voted__by=created_by, is_core=member.is_core)
+                session.add(new_vote)
+                return new_vote.vote_id
+            else:
+                caseVote.vote = vote
+                caseVote.comment = comment
+                caseVote.amout_suggested = amount_suggested
+                return caseVote.vote_id
 
     def case_vote_list(self, case_id):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        query = session.query(CaseVotes)
-        return self._create_case_votes_objects(query.filter(
-                CaseVotes.case_id == case_id
-            ))
+        with self.session_scope() as session:
+            query = session.query(CaseVotes)
+            return self._create_case_votes_objects(query.filter(
+                    CaseVotes.case_id == case_id
+                ))
 
     def delete_case_vote(self, vote_id):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        vote = session.query(CaseVotes).get(vote_id)
-        session.delete(vote)
-        session.commit()
+        with self.session_scope() as session:
+            vote = session.query(CaseVotes).get(vote_id)
+            session.delete(vote)
 
     def create_case_doc(self, case_id, doc_type, doc_name, doc_url, updated_by):
-        doc_id = f"i.doc.{generate()}"
-        new_doc = CaseDocs(doc_id=doc_id, doc_type=doc_type, case_id=case_id, doc_url=doc_url, doc_name=doc_name, updated__by=updated_by)
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        session.add(new_doc)
-        session.commit()
-        return new_doc.doc_id
+        with self.session_scope() as session:
+            doc_id = f"i.doc.{generate()}"
+            new_doc = CaseDocs(doc_id=doc_id, doc_type=doc_type, case_id=case_id, doc_url=doc_url, doc_name=doc_name, updated__by=updated_by)
+            session.add(new_doc)
+            return new_doc.doc_id
 
     def add_case_docs(self, doc_list: list[case_docs.CaseDocs]):
-        db_doc_objs = [
-            CaseDocs(
-                case_id=q.case_id,
-                doc_type=q.doc_type,
-                doc_id=q.doc_id if q.doc_id else f"i.doc.{generate()}",
-                doc_name=q.doc_name,
-                doc_url=q.doc_url,
-                updated__by=q.updated__by
-            )
-            for q in doc_list
-        ]
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        session.add_all(db_doc_objs)
-        session.commit()
-        return
+        with self.session_scope() as session:
+            db_doc_objs = [
+                CaseDocs(
+                    case_id=q.case_id,
+                    doc_type=q.doc_type,
+                    doc_id=q.doc_id if q.doc_id else f"i.doc.{generate()}",
+                    doc_name=q.doc_name,
+                    doc_url=q.doc_url,
+                    updated__by=q.updated__by
+                )
+                for q in doc_list
+            ]
+            session.add_all(db_doc_objs)
+            return
 
     def delete_case_doc(self, doc_id):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        doc = session.query(CaseDocs).get(doc_id)
-        session.delete(doc)
-        session.commit()
+        with self.session_scope() as session:
+            doc = session.query(CaseDocs).get(doc_id)
+            session.delete(doc)
 
     def create_beneficiary(self, govt_id, id_type, fname,lname, mname, phone, email, created_by):
-        beneficiary_id = f"i.ben.{generate()}"
-        new_beneficiary = Beneficiary(beneficiary_id = beneficiary_id,govt_id=govt_id, id_type=id_type, fname=fname,lname=lname,mname = mname,phone = phone,email=email, updated__by=created_by)
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        session.add(new_beneficiary)
-        session.commit()
-        return new_beneficiary.beneficiary_id
+        with self.session_scope() as session:
+            beneficiary_id = f"i.ben.{generate()}"
+            new_beneficiary = Beneficiary(beneficiary_id = beneficiary_id,govt_id=govt_id, id_type=id_type, fname=fname,lname=lname,mname = mname,phone = phone,email=email, updated__by=created_by)
+            session.add(new_beneficiary)
+            return new_beneficiary.beneficiary_id
 
     def create_case(self, beneficiary_id, purpose, title, created_by, description='',amount_needed = 0, contact_details='', contact_address=''):
-        case_id = f"i.case.{generate()}"
-        new_case = Case(case_id = case_id, beneficiary__id=beneficiary_id, case_state=CaseState.DRAFT, title=title, purpose=purpose, description=description,amount_needed =  amount_needed,contact_details=contact_details,contact_address=contact_address, updated__by=created_by)
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        session.add(new_case)
-        session.commit()
-        return new_case.case_id
+        with self.session_scope() as session:
+            case_id = f"i.case.{generate()}"
+            new_case = Case(case_id = case_id, beneficiary__id=beneficiary_id, case_state=CaseState.DRAFT, title=title, purpose=purpose, description=description,amount_needed =  amount_needed,contact_details=contact_details,contact_address=contact_address, updated__by=created_by)
+            session.add(new_case)
+            return new_case.case_id
 
     def update_approved_amount(self, case_id, amount_paid, updated_by):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        session.query(
-            Case
-        ).filter(
-            Case.case_id == case_id
-        ).update({
-            Case.amount_approved: amount_paid,
-            Case.updated__by: updated_by
-        })
-        session.commit()
+        with self.session_scope() as session:
+            session.query(
+                Case
+            ).filter(
+                Case.case_id == case_id
+            ).update({
+                Case.amount_approved: amount_paid,
+                Case.updated__by: updated_by
+            })
 
     def update_case_state(self, case_id, new_state, updated_by):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        session.query(
-            Case
-        ).filter(
-            Case.case_id == case_id
-        ).update({
-            Case.case_state: new_state,
-            Case.updated__by: updated_by
-        })
-        session.commit()
+        with self.session_scope() as session:
+            session.query(
+                Case
+            ).filter(
+                Case.case_id == case_id
+            ).update({
+                Case.case_state: new_state,
+                Case.updated__by: updated_by
+            })
 
     def search_member(self, search_input):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        query = session.query(Member)\
-            .with_entities(Member)\
-                .filter(Member.fname.ilike("%"+search_input+"%") | Member.mname.ilike("%"+search_input+"%") | Member.lname.ilike("%"+search_input+"%") | Member.govt_id.ilike("%"+search_input+"%")).all()
-        return query
+        with self.session_scope() as session:
+            query = session.query(Member)\
+                .with_entities(Member)\
+                    .filter(Member.fname.ilike("%"+search_input+"%") | Member.mname.ilike("%"+search_input+"%") | Member.lname.ilike("%"+search_input+"%") | Member.govt_id.ilike("%"+search_input+"%")).all()
+            return query
 
     def search_beneficiary(self, search_input):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        query = session.query(Beneficiary)\
-            .with_entities(Beneficiary)\
-                .filter(Beneficiary.fname.ilike("%"+search_input+"%") | Beneficiary.mname.ilike("%"+search_input+"%") | Beneficiary.lname.ilike("%"+search_input+"%") ).all()
-        return query
+        with self.session_scope() as session:
+            query = session.query(Beneficiary)\
+                .with_entities(Beneficiary)\
+                    .filter(Beneficiary.fname.ilike("%"+search_input+"%") | Beneficiary.mname.ilike("%"+search_input+"%") | Beneficiary.lname.ilike("%"+search_input+"%") ).all()
+            return self._create_beneficiary_objects(query)
 
     def view_member_by_email(self, email_id):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        query = session.query(Member)\
-            .with_entities(Member)\
-                .filter_by(email = email_id ).all()
-        return query
+        with self.session_scope() as session:
+            query = session.query(Member)\
+                .with_entities(Member)\
+                    .filter_by(email = email_id ).all()
+            return self._create_member_objects(query)
 
     def find_member(self, member_id):
         return self.view_member(member_id)[0]
 
     def view_member(self, member_id):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        query = session.query(Member)\
-            .with_entities(Member)\
-                .filter_by(member_id = member_id ).all()
-        return query
+        with self.session_scope() as session:
+            query = session.query(Member)\
+                .with_entities(Member)\
+                    .filter_by(member_id = member_id ).all()
+            return self._create_member_objects(query)
 
     def update_member(self, member_id, govt_id, id_type, fname, mname, lname, is_core, phone, email, updated_by):
-        DBSession = sessionmaker(bind=self.engine)
-        session = DBSession()
-        member = session.query(Member)\
-            .with_entities(Member)\
-                .filter_by(member_id = member_id ).first()
-        member.govt_id = govt_id
-        member.id_type = id_type
-        member.fname = fname
-        member.mname = mname
-        member.lname = lname
-        member.is_core = is_core
-        member.phone = phone
-        member.email = email
-        member.updated__by = updated_by
-        session.commit()
-        return member
+        with self.session_scope() as session:
+            member = session.query(Member)\
+                .with_entities(Member)\
+                    .filter_by(member_id = member_id ).first()
+            member.govt_id = govt_id
+            member.id_type = id_type
+            member.fname = fname
+            member.mname = mname
+            member.lname = lname
+            member.is_core = is_core
+            member.phone = phone
+            member.email = email
+            member.updated__by = updated_by
+            return member
 
     def view_beneficiary(self, beneficiary_id):
-            DBSession = sessionmaker(bind=self.engine)
-            session = DBSession()
+         with self.session_scope() as session:
             query = session.query(Beneficiary)\
                 .with_entities(Beneficiary)\
                     .filter_by(beneficiary_id = beneficiary_id ).all()
-            return query
+            return self._create_beneficiary_objects(query)
 
     def update_beneficiary(self, beneficiary_id,govt_id, id_type, fname,lname,mname, phone, email, updated_by):
-            DBSession = sessionmaker(bind=self.engine)
-            session = DBSession()
+        with self.session_scope() as session:
             beneficiary = session.query(Beneficiary)\
                 .with_entities(Beneficiary)\
                     .filter_by(beneficiary_id = beneficiary_id ).first()
@@ -436,10 +403,8 @@ class PostgresRepo:
             beneficiary.phone = phone
             beneficiary.email = email
             beneficiary.updated__by = updated_by
-            session.commit()
             return beneficiary
 
     def find_case(self, case_id):
-            DBSession = sessionmaker(bind=self.engine)
-            session = DBSession()
+        with self.session_scope() as session:
             return self._create_case_object(session.query(Case).get(case_id))
