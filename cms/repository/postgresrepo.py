@@ -341,13 +341,13 @@ class PostgresRepo:
             query = session.query(Member)\
                 .with_entities(Member)\
                     .filter(Member.fname.ilike("%"+search_input+"%") | Member.mname.ilike("%"+search_input+"%") | Member.lname.ilike("%"+search_input+"%") | Member.govt_id.ilike("%"+search_input+"%")).all()
-            return query
+            return self._create_member_objects(query)
 
     def search_beneficiary(self, search_input):
         with self.session_scope() as session:
             query = session.query(Beneficiary)\
                 .with_entities(Beneficiary)\
-                    .filter(Beneficiary.fname.ilike("%"+search_input+"%") | Beneficiary.mname.ilike("%"+search_input+"%") | Beneficiary.lname.ilike("%"+search_input+"%") ).all()
+                    .filter(Beneficiary.fname.ilike("%"+search_input+"%") | Beneficiary.mname.ilike("%"+search_input+"%") | Beneficiary.lname.ilike("%"+search_input+"%") |  Beneficiary.govt_id.ilike("%"+search_input+"%")).all()
             return self._create_beneficiary_objects(query)
 
     def view_member_by_email(self, email_id):
