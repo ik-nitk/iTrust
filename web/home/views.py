@@ -21,7 +21,11 @@ def callback():
         return redirect("/")
     flow = current_app.config.get('FLOW')
     google_client_id = current_app.config.get('GOOGLE_CLIENT_ID')
-    flow.fetch_token(authorization_response=request.url)
+    flow.fetch_token(code=request.args['code'])
+
+    if not session["state"] == request.args["state"]:
+        #print (session["state"], request.args["state"])
+        return render_template("error.html", error_msg=str('#state does not match!')), 500  #state does not match!
 
     credentials = flow.credentials
     request_session = requests.session()
